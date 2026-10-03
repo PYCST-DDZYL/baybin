@@ -11,7 +11,7 @@ import os
 from sources import ROOT
 
 RULES = os.path.join(ROOT, "rules")
-CITIES = ["cupertino", "san_jose", "palo_alto", "los_altos"]
+CITIES = ["cupertino", "san_jose", "palo_alto", "los_altos", "berkeley"]
 
 
 def load(name):

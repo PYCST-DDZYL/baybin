@@ -1,0 +1,469 @@
+{
+ "city": "berkeley",
+ "name": "Berkeley",
+ "residence": "single-family",
+ "authority": "City of Berkeley household sorting guide. Each household has a blue recycling bin, a green compost bin, and a grey trash bin. For 1-9 unit buildings the Ecology Center supplies the recycling carts. The city's dark-blue recycling cart is for 10 or more units and is not used here.",
+ "updated": "2026-10-02",
+ "official_domains": [
+  "berkeleyca.gov"
+ ],
+ "bins": {
+  "recycling": {
+   "line1": "Recycling"
+  },
+  "compost": {
+   "line1": "Compost"
+  },
+  "landfill": {
+   "line1": "Landfill"
+  },
+  "special": {
+   "line1": "Special handling"
+  }
+ },
+ "sources": {
+  "guide": {
+   "title": "City of Berkeley: Waste Sorting Guide",
+   "url": "https://berkeleyca.gov/city-services/trash-recycling/waste-sorting-guide",
+   "sections": {
+    "compost": "The following materials are accepted in green compost bins:",
+    "recycling": [
+     "The following materials are accepted in the paper and cardboard recycling container:",
+     "The following materials are accepted in the container and bottle recycling containers:"
+    ],
+    "landfill": "The following materials can be disposed in the landfill containers:"
+   },
+   "boundaries": [
+    "Please do NOT put in green compost bins:",
+    "Please do NOT put the following items in the paper and cardboard side of your blue bin:",
+    "Please do NOT put the following items in the bottles and cans side your blue bin:",
+    "Please do NOT put in landfill containers:"
+   ]
+  },
+  "hazard": {
+   "title": "City of Berkeley: Zero Waste services guide for 1-9 unit buildings (April 2024)",
+   "url": "https://berkeleyca.gov/sites/default/files/documents/Zero%20Waste%20Residential%20Waste%20Service%20Guide_1-9%20units_0.pdf",
+   "found_via": "Linked from the Waste Sorting Guide as Residential Waste Service Guide (1-9 units)",
+   "only_bins": [
+    "special"
+   ]
+  }
+ },
+ "rules": {
+  "cardboard_box": {
+   "bin": "recycling",
+   "reason": "Flatten clean cardboard; bundle oversized pieces beside the cart.",
+   "source": "guide",
+   "quote": "Clean, dry paper Cardboard",
+   "also": [
+    {
+     "source": "guide",
+     "quote": "If you have too much cardboard to fit into your container, flatten and tie up to one 1 foot x 2 feet x 3 feet bundle and place next to your cart."
+    }
+   ]
+  },
+  "pizza_box_greasy": {
+   "bin": "compost",
+   "reason": "Greasy pizza boxes go in the green compost cart.",
+   "source": "guide",
+   "quote": "Food-soiled paper, such as pizza boxes"
+  },
+  "paper_mixed": {
+   "bin": "recycling",
+   "reason": "Clean paper and mail go in the blue recycling cart.",
+   "source": "guide",
+   "quote": "Clean, dry paper Cardboard"
+  },
+  "paperboard_box": {
+   "bin": "unknown",
+   "note": "Clean dry paper and cardboard are recycling. Cereal and cracker boxes are not named."
+  },
+  "paper_bag": {
+   "bin": "unknown",
+   "note": "Clean dry paper is recycling. Paper bags are not named."
+  },
+  "shredded_paper": {
+   "bin": "unknown",
+   "note": "Clean dry paper is recycling. Shredded paper is not named."
+  },
+  "paper_towel_napkin": {
+   "bin": "unknown",
+   "note": "Uncoated napkins are compost. Paper towels are kept out of paper recycling and are not in the compost list."
+  },
+  "tissue": {
+   "bin": "unknown",
+   "note": "Not named. Paper towels are kept out of recycling. Napkins are compost. Facial tissue is neither."
+  },
+  "paper_cup": {
+   "bin": "unknown",
+   "note": "Only BPI-certified compostable cups are sent to compost. A plain paper coffee cup is not given a bin."
+  },
+  "paper_plate_used": {
+   "bin": "unknown",
+   "note": "Compost accepts uncoated paper plates. The guide does not say every used paper plate."
+  },
+  "paper_takeout": {
+   "bin": "compost",
+   "reason": "Food-soiled paper take-out boxes go in the green cart.",
+   "source": "guide",
+   "quote": "Food-soiled paper, such as pizza boxes"
+  },
+  "carton": {
+   "bin": "landfill",
+   "reason": "Milk and juice cartons go in the gray cart.",
+   "source": "guide",
+   "quote": "Milk, juice and soup cartons"
+  },
+  "aseptic_carton": {
+   "bin": "landfill",
+   "reason": "Juice and soup cartons go in the gray cart.",
+   "source": "guide",
+   "quote": "Milk, juice and soup cartons"
+  },
+  "receipt": {
+   "bin": "unknown",
+   "note": "Not named. Clean dry paper is recycling. Thermal receipts are not named."
+  },
+  "coffee_grounds_filter": {
+   "bin": "unknown",
+   "note": "Coffee grounds are compost. Paper filters are not named, so the combined item is not settled."
+  },
+  "tea_bag": {
+   "bin": "unknown",
+   "note": "Not named on the household sorting guide."
+  },
+  "book": {
+   "bin": "unknown",
+   "note": "Not named. Clean dry paper is recycling. Books are not named."
+  },
+  "plastic_bottle": {
+   "bin": "recycling",
+   "reason": "Empty plastic bottles go in the blue cart.",
+   "source": "guide",
+   "quote": "Rigid plastic containers"
+  },
+  "plastic_jug": {
+   "bin": "recycling",
+   "reason": "Empty plastic jugs go in the blue cart.",
+   "source": "guide",
+   "quote": "Rigid plastic containers"
+  },
+  "plastic_tub": {
+   "bin": "recycling",
+   "reason": "Empty, scraped plastic tubs go in recycling.",
+   "source": "guide",
+   "quote": "Rigid plastic containers"
+  },
+  "plastic_clamshell": {
+   "bin": "recycling",
+   "reason": "Plastic containers go in recycling; empty and clean.",
+   "source": "guide",
+   "quote": "Rigid plastic containers"
+  },
+  "plastic_cup": {
+   "bin": "landfill",
+   "reason": "Plastic cups go in the gray landfill cart.",
+   "source": "guide",
+   "quote": "Plastic bags, cups, utensils, straws and films"
+  },
+  "plastic_takeout": {
+   "bin": "recycling",
+   "reason": "Plastic containers go in recycling; empty and clean.",
+   "source": "guide",
+   "quote": "Rigid plastic containers"
+  },
+  "plastic_bag": {
+   "bin": "landfill",
+   "reason": "Plastic bags and film go in the gray cart.",
+   "source": "guide",
+   "quote": "Plastic bags, cups, utensils, straws and films"
+  },
+  "bubble_wrap": {
+   "bin": "landfill",
+   "reason": "Plastic film goes in the gray landfill cart.",
+   "source": "guide",
+   "quote": "Plastic bags, cups, utensils, straws and films"
+  },
+  "plastic_utensils": {
+   "bin": "landfill",
+   "reason": "Plastic utensils go in the landfill cart.",
+   "source": "guide",
+   "quote": "Plastic bags, cups, utensils, straws and films"
+  },
+  "straw": {
+   "bin": "landfill",
+   "reason": "Straws go in the landfill cart.",
+   "source": "guide",
+   "quote": "Plastic bags, cups, utensils, straws and films"
+  },
+  "snack_wrapper": {
+   "bin": "landfill",
+   "reason": "Chip bags and wrappers go in the landfill cart.",
+   "source": "guide",
+   "quote": "Plastic bags, cups, utensils, straws and films"
+  },
+  "compostable_plastic": {
+   "bin": "unknown",
+   "note": "BPI-certified compostable paper is compost. Compostable plastic is not named."
+  },
+  "foam_food_container": {
+   "bin": "landfill",
+   "reason": "Foam and polystyrene go in the landfill cart.",
+   "source": "guide",
+   "quote": "Diapers Pet waste Styrofoam"
+  },
+  "foam_packaging": {
+   "bin": "landfill",
+   "reason": "Foam and polystyrene go in the landfill cart.",
+   "source": "guide",
+   "quote": "Diapers Pet waste Styrofoam"
+  },
+  "plastic_cap": {
+   "bin": "landfill",
+   "reason": "Small plastic lids go in the gray cart.",
+   "source": "guide",
+   "quote": "Small plastics, such as lids and utensils (put in landfill container)",
+   "exception": true
+  },
+  "coffee_pod": {
+   "bin": "unknown",
+   "note": "Not named on the household sorting guide."
+  },
+  "drink_pouch": {
+   "bin": "unknown",
+   "note": "Not named. Plastic bags and film are landfill. Drink pouches are not named."
+  },
+  "toothpaste_tube": {
+   "bin": "unknown",
+   "note": "Not named on the household sorting guide."
+  },
+  "toothbrush": {
+   "bin": "unknown",
+   "note": "Not named on the household sorting guide."
+  },
+  "plastic_toy": {
+   "bin": "unknown",
+   "note": "Not named. Rigid plastic containers are recycling. Toys are not named."
+  },
+  "aluminum_can": {
+   "bin": "recycling",
+   "reason": "Empty aluminum cans go in the blue cart.",
+   "source": "guide",
+   "quote": "Cans Foil Rigid plastic containers"
+  },
+  "food_can": {
+   "bin": "recycling",
+   "reason": "Empty, scraped metal cans go in recycling.",
+   "source": "guide",
+   "quote": "Cans Foil Rigid plastic containers"
+  },
+  "aluminum_foil": {
+   "bin": "recycling",
+   "reason": "Clean foil goes in the blue cart.",
+   "source": "guide",
+   "quote": "Cans Foil Rigid plastic containers"
+  },
+  "aluminum_tray": {
+   "bin": "unknown",
+   "note": "Cans and foil are recycling. Trays are not named."
+  },
+  "aerosol_can": {
+   "bin": "unknown",
+   "note": "Not named. Cans are recycling. Aerosol cans are not named."
+  },
+  "glass_bottle": {
+   "bin": "recycling",
+   "reason": "Empty glass bottles go in the blue cart.",
+   "source": "guide",
+   "quote": "Glass bottles and jars"
+  },
+  "glass_jar": {
+   "bin": "recycling",
+   "reason": "Empty, scraped glass jars go in recycling.",
+   "source": "guide",
+   "quote": "Glass bottles and jars"
+  },
+  "broken_glass": {
+   "bin": "unknown",
+   "note": "Not named. Dishware and window glass are sent to the Transfer Station in one list and to landfill in another."
+  },
+  "drinking_glass": {
+   "bin": "unknown",
+   "note": "Dishware and window glass are sent to the Transfer Station in one list and to landfill in another."
+  },
+  "ceramic": {
+   "bin": "unknown",
+   "note": "Ceramics are sent to the Transfer Station in one list and to landfill in another."
+  },
+  "food_scraps": {
+   "bin": "compost",
+   "reason": "Food scraps go in the green compost cart.",
+   "source": "guide",
+   "quote": "green compost bins: Food scraps"
+  },
+  "food_in_container": {
+   "bin": "compost",
+   "reason": "Scrape the food into the compost cart first, then scan the empty container.",
+   "source": "guide",
+   "quote": "green compost bins: Food scraps",
+   "also": [
+    {
+     "source": "guide",
+     "quote": "Liquids or food (food scraps can be put in compost container)"
+    }
+   ]
+  },
+  "bones": {
+   "bin": "unknown",
+   "note": "Food scraps are compost. Meat and bones are not named."
+  },
+  "yard_trimmings": {
+   "bin": "compost",
+   "reason": "Branches and leaves go in the green cart.",
+   "source": "guide",
+   "quote": "Plant and yard debris, such as branches and leaves (tree branches should be no more than 2 feet in length and no more than 2 inches in diameter if placed in compost container. Lid must close down completely with no obstructions)."
+  },
+  "flowers": {
+   "bin": "unknown",
+   "note": "Plant and yard debris, such as branches and leaves, is compost. Flowers are not named."
+  },
+  "cooking_oil": {
+   "bin": "unknown",
+   "note": "Not named. The guide sends some liquids to container recycling and does not name cooking oil."
+  },
+  "wooden_chopsticks": {
+   "bin": "unknown",
+   "note": "Not named on the household sorting guide."
+  },
+  "battery": {
+   "bin": "special",
+   "reason": "Batteries cannot go in the carts; see stopwaste.org/hhw.",
+   "source": "hazard",
+   "quote": "Household hazardous waste like batteries, fertilizers, pesticides, chemicals, paints and electronics cannot be disposed in your curbside carts.",
+   "also": [
+    {
+     "source": "hazard",
+     "quote": "For proper disposal options contact (800) 606-6606 or visit stopwaste.org/hhw."
+    }
+   ]
+  },
+  "phone_electronics": {
+   "bin": "special",
+   "reason": "Electronics cannot go in the carts; see stopwaste.org/hhw.",
+   "source": "hazard",
+   "quote": "Household hazardous waste like batteries, fertilizers, pesticides, chemicals, paints and electronics cannot be disposed in your curbside carts.",
+   "also": [
+    {
+     "source": "hazard",
+     "quote": "For proper disposal options contact (800) 606-6606 or visit stopwaste.org/hhw."
+    }
+   ]
+  },
+  "cords_cables": {
+   "bin": "unknown",
+   "note": "Electronics are kept out of the carts. Cords and cables are not named."
+  },
+  "bulb_fluorescent": {
+   "bin": "unknown",
+   "note": "Hazardous waste is kept out of the carts. Fluorescent bulbs are not named."
+  },
+  "bulb_led": {
+   "bin": "unknown",
+   "note": "Not named on the household sorting guide."
+  },
+  "bulb_incandescent": {
+   "bin": "unknown",
+   "note": "Not named on the household sorting guide."
+  },
+  "paint": {
+   "bin": "special",
+   "reason": "Paint cannot go in the carts; see stopwaste.org/hhw.",
+   "source": "hazard",
+   "quote": "Household hazardous waste like batteries, fertilizers, pesticides, chemicals, paints and electronics cannot be disposed in your curbside carts.",
+   "also": [
+    {
+     "source": "hazard",
+     "quote": "For proper disposal options contact (800) 606-6606 or visit stopwaste.org/hhw."
+    }
+   ]
+  },
+  "cleaning_product": {
+   "bin": "special",
+   "reason": "Household chemicals cannot go in the carts.",
+   "source": "hazard",
+   "quote": "Household hazardous waste like batteries, fertilizers, pesticides, chemicals, paints and electronics cannot be disposed in your curbside carts."
+  },
+  "medicine": {
+   "bin": "unknown",
+   "note": "Not named. The hazardous-waste sentence names chemicals, paints, and electronics, not medicine."
+  },
+  "sharps": {
+   "bin": "unknown",
+   "note": "Not named on the household sorting guide or the 1-9 unit hazardous-waste sentence."
+  },
+  "propane_cylinder": {
+   "bin": "unknown",
+   "note": "Not named on the household sorting guide or the 1-9 unit hazardous-waste sentence."
+  },
+  "diaper": {
+   "bin": "landfill",
+   "reason": "Diapers go in the landfill cart.",
+   "source": "guide",
+   "quote": "Diapers Pet waste Styrofoam"
+  },
+  "pet_waste": {
+   "bin": "landfill",
+   "reason": "Pet waste goes in the landfill cart.",
+   "source": "guide",
+   "quote": "Diapers Pet waste Styrofoam"
+  },
+  "kitty_litter": {
+   "bin": "unknown",
+   "note": "Pet waste is landfill. Cat litter is not named."
+  },
+  "face_mask": {
+   "bin": "unknown",
+   "note": "Not named on the household sorting guide."
+  },
+  "disposable_gloves": {
+   "bin": "unknown",
+   "note": "Not named on the household sorting guide."
+  },
+  "textiles": {
+   "bin": "unknown",
+   "note": "Not named. Furniture can be donated. Clothing is not named."
+  },
+  "shoes": {
+   "bin": "unknown",
+   "note": "Not named on the household sorting guide."
+  },
+  "cigarette": {
+   "bin": "unknown",
+   "note": "Not named on the household sorting guide."
+  },
+  "wipes": {
+   "bin": "unknown",
+   "note": "Not named on the household sorting guide."
+  },
+  "garden_hose": {
+   "bin": "unknown",
+   "note": "Not named on the household sorting guide."
+  },
+  "egg_carton_paper": {
+   "bin": "recycling",
+   "reason": "Paper egg cartons go in the blue cart.",
+   "source": "guide",
+   "quote": "Molded fiber (such as egg cartons)"
+  },
+  "egg_carton_foam": {
+   "bin": "landfill",
+   "reason": "Foam and polystyrene go in the landfill cart.",
+   "source": "guide",
+   "quote": "Diapers Pet waste Styrofoam"
+  },
+  "frozen_food_box": {
+   "bin": "unknown",
+   "note": "The gray bin mentions lined paper food cartons. Frozen food boxes are not named."
+  }
+ }
+}

@@ -45,7 +45,7 @@ Glasses: show the two lines. No network, no model, no history.
 - **Glasses** (`glasses-app`) do three things: take the photo, send it, show the result. No network permission, no model, no large library (CameraX is the only dependency, because this headset's camera HAL only returns a JPEG for that pairing). The photo is at most 1024 px, JPEG q80, and is not kept.
 - **Phone** (`phone-app`): `GlassesLink` owns the Bluetooth connection, `LinkService` is the foreground service, `Pipeline` is the recognition path (glasses and gallery share it), `QwenClient` calls Qwen, `Rules` reads the rule tables.
 - **Protocol** (`protocol`): one frame format, `"BB"` + type + length + body.
-- **Rules** (`rules/`): `items.json` is the catalog. `cupertino.json`, `san_jose.json`, `palo_alto.json`, and `los_altos.json` are the bin, reason, source, and quotation for each item. `prompt.txt` is the model prompt. The build copies them into the phone app's assets. The app and the checker read the same files.
+- **Rules** (`rules/`): `items.json` is the catalog. `cupertino.json`, `san_jose.json`, `palo_alto.json`, `los_altos.json`, and `berkeley.json` are the bin, reason, source, and quotation for each item. `prompt.txt` is the model prompt. The build copies them into the phone app's assets. The app and the checker read the same files.
 
 ### Connection: why the apps use their own Bluetooth socket
 
@@ -72,11 +72,12 @@ Measured (phone S26 Ultra ↔ RG glasses): 16 KB through 512 KB all fit in one t
 - **San José**: the per-item pages on SanJoseRecycles.org ("Where does it go?").
 - **Palo Alto** (single-family): the city What Goes Where toolkit, the single-family curbside page, and GreenWaste of Palo Alto's 2023 detailed material guide. Carts are blue recycling, green compost, and black garbage. Food goes in the green cart.
 - **Los Altos** (single-family): Mission Trail's residential service guide and its household hazardous waste page. Carts are blue recycling, green organics, and gray garbage. The gray cart's first line is "Landfill", so the lens says gray and not black.
+- **Berkeley** (household, and 1–9 unit buildings for recycling): the city waste sorting guide. Carts are blue recycling, green compost, and grey trash. The grey cart's first line is "Landfill". Recycling is split: paper on one side, bottles and cans on the other. The city's dark-blue recycling cart is for buildings of 10 or more units and is not used here.
 - `python tools\verify_rules.py --live` fetches the official pages again and checks each rule: the quotation is on the page, under the right section, the bin matches that section, and the link is on an official domain. `rules/REVIEW.md` is the side-by-side table, with sources and notes.
 - If the reason also tells the person to do something first (scrape food out of a container, for example), the rule carries an `also` field with a second official sentence. `verify_rules.py` checks `also` the same way. That sentence documents the step. It does not pick the bin.
 - Items the official pages do not cover, or where the pages disagree, are `unknown`, with the reason in `note`. Cupertino milk cartons are one case: the city page says compost, the Recology 2025 guide says recycling, so the lens shows Not sure. Recology's number is 408-725-4020, or email environmental@cupertino.gov.
 
-**The first line uses each city's own bin name.** Cupertino: Recycling / Compost / Landfill / Special handling. San José: Recycling / Garbage / Yard trimmings / Special handling. Palo Alto: Recycling / Compost / Garbage / Special handling. Los Altos: Recycling / Compost / Landfill / Special handling. Single-family San José has no compost cart. The green cart is "Yard trimmings" and the trash cart is "Garbage". Palo Alto's black cart is "Garbage", and food goes in the green cart instead. Los Altos calls the gray cart garbage; its first line stays "Landfill" so the glasses say gray, not black. The official cart color decides the word. That is intentional. To collapse San José onto four shared names, change `line1` under `bins` in `rules/san_jose.json`.
+**The first line uses each city's own bin name.** Cupertino: Recycling / Compost / Landfill / Special handling. San José: Recycling / Garbage / Yard trimmings / Special handling. Palo Alto: Recycling / Compost / Garbage / Special handling. Los Altos: Recycling / Compost / Landfill / Special handling. Berkeley: Recycling / Compost / Landfill / Special handling. Single-family San José has no compost cart. The green cart is "Yard trimmings" and the trash cart is "Garbage". Palo Alto's black cart is "Garbage", and food goes in the green cart instead. Los Altos calls the gray cart garbage; its first line stays "Landfill" so the glasses say gray, not black. The official cart color decides the word. That is intentional. To collapse San José onto four shared names, change `line1` under `bins` in `rules/san_jose.json`.
 
 ## Test results
 
@@ -135,10 +136,10 @@ The apps do not write shared storage. Install with `adb install` (streamed; no A
 ## Known limits
 
 - Criterion 2 still needs a set photographed with the glasses (see above).
-- `eval/realworld/plastic_tub__1.jpg`: a clear lid and a blue box in one frame. The model answered `plastic_cap`. Cupertino does not say what to do with that lid, so the lens shows Not sure. San José puts caps in the garbage, so the lens shows Garbage, which is not the recycling bin the box itself would use. The photo contains two objects.
+- `eval/realworld/plastic_tub__1.jpg`: a clear lid beside the blue base it came off. The model names `plastic_tub`. The phone used to stop that shape before the model; both pieces are about as wide as they are tall, so it now goes to the model and uses the tub's bin. A loose cap with no base is still `plastic_cap`.
 - Pizza still in the box is `food_in_container`: empty the food into the cart that takes it, then look at the empty box. An empty greasy pizza box is `pizza_box_greasy`. Both ids are Compost in Cupertino and Garbage in San José.
 - Cloud latency follows Model Studio load. Beijing evening (Bay Area morning) is the slow part. A key issued in the Beijing region is what this project was timed with. A key in the US (Virginia) region, with `qwen.baseUrl` set to `https://dashscope-us.aliyuncs.com/compatible-mode/v1`, saves a transpacific round trip. Open that key yourself.
 - The shutter is about 1.35 s, of which about 0.85 s is the camera HAL capturing a still. That part is not optimized.
-- Official pages leave 17 Cupertino items, 1 San José item, 12 Palo Alto items, and 19 Los Altos items unclear. Those show Not sure.
+- Official pages leave 17 Cupertino items, 1 San José item, 12 Palo Alto items, 19 Los Altos items, and 42 Berkeley items unclear. Those show Not sure.
 - Mountain View and East Palo Alto can be added later. The rule format is the same: one `rules/<city>.json`.
 - Voice trigger is not built. Input is the buttons.

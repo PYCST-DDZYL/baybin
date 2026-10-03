@@ -1,5 +1,5 @@
 {
- "version": "2026-10-02",
+ "version": "2026-10-03",
  "note": "Canonical items the vision model chooses from. One id per thing a person holds up; the city files say which bin each goes in. 'hint' tells the model what the item looks like.",
  "items": [
   {
@@ -45,7 +45,7 @@
   {
    "id": "paper_cup",
    "name": "Paper coffee cup",
-   "hint": "disposable paper hot-drink cup"
+   "hint": "disposable paper cup, including one standing on a plate"
   },
   {
    "id": "paper_plate_used",
@@ -240,17 +240,17 @@
   {
    "id": "food_scraps",
    "name": "Food scraps",
-   "hint": "peels, cores, eggshells, or moldy scraps with no take-out container; a hand holding a peel counts"
+   "hint": "peels, cores, eggshells, or moldy scraps with no plate, box, or cup under them; a hand holding a peel counts"
   },
   {
    "id": "food_in_container",
    "name": "Food still in a container",
-   "hint": "food still visible in a box, cup, bowl, or on a plate, including berries in a clear box or sauce filling a cup; not a stain and not an empty foam box"
+   "hint": "food you could pick up, still in a box or cup or on a plate, including leftovers and seafood in a box; not a stain and not an empty box"
   },
   {
    "id": "bones",
    "name": "Bones",
-   "hint": "meat, chicken, or fish bones, including when they sit in a bowl or on a plate"
+   "hint": "bones, chicken feet, or fish bones, in a pile, a bowl, or on a plate; not peels"
   },
   {
    "id": "yard_trimmings",
@@ -390,7 +390,7 @@
   {
    "id": "frozen_food_box",
    "name": "Frozen food box",
-   "hint": "paperboard box from frozen food"
+   "hint": "EMPTY paperboard box from frozen food, with no shrimp, meat, or meal left inside"
   }
  ]
 }

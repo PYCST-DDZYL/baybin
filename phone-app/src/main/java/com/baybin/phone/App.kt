@@ -406,7 +406,7 @@ class App : Application(), GlassesLink.Listener {
      *   adb shell am broadcast -a com.baybin.phone.RECONNECT -p com.baybin.phone
      *   adb shell am broadcast -a com.baybin.phone.STATUS -p com.baybin.phone
      *   adb shell am broadcast -a com.baybin.phone.CITY -p com.baybin.phone --es id san_jose
-     *     (id is one of cupertino, san_jose, palo_alto, los_altos)
+     *     (id is one of cupertino, san_jose, palo_alto, los_altos, berkeley)
      *   adb shell am broadcast -a com.baybin.phone.CLASSIFY -p com.baybin.phone --es file x.jpg
      *     (x.jpg in the app's private files/eval folder; tools/accept_7_gallery.py puts it there)
      */

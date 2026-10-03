@@ -9,8 +9,9 @@ import java.util.ArrayDeque
  * A single object, or a pile of the same thing, is left for the model.
  *
  * The check is local and conservative: two interior blobs, similar in size, different in
- * color, with a gap between them. On the checked photo sets that fires only for the lid
- * beside the blue cap. Anything less clear still goes to the model.
+ * color, with a gap between them. A lid beside the base it came off is one tub: both
+ * blobs are about as wide as they are tall, so that photo still goes to the model.
+ * Anything less clear still goes to the model.
  */
 object TwoThings {
 
@@ -172,7 +173,15 @@ object TwoThings {
         val color = Math.abs(ca[0] - cb[0]) + Math.abs(ca[1] - cb[1]) + Math.abs(ca[2] - cb[2])
         if (color < MIN_COLOR) return false
         val ratio = minOf(a[0], b[0]).toFloat() / maxOf(a[0], b[0])
-        return ratio >= MIN_RATIO
+        if (ratio < MIN_RATIO) return false
+        // Lid and the round base it came off. Two different objects are not both this compact.
+        return !(compact(a) && compact(b))
+    }
+
+    private fun compact(box: IntArray): Boolean {
+        val w = box[3] - box[1] + 1
+        val h = box[4] - box[2] + 1
+        return minOf(w, h).toFloat() / maxOf(w, h) >= 0.72f
     }
 
     private fun gap(a1: Int, a2: Int, b1: Int, b2: Int): Int = when {

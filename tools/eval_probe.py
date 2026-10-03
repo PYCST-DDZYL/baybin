@@ -152,7 +152,8 @@ def main(argv):
     model = model or p.get("qwen.model", "qwen3-vl-flash")
     items = json.load(open(os.path.join(PROJECT, "rules", "items.json"), encoding="utf-8"))["items"]
     ids = {it["id"] for it in items}
-    cities = {c: json.load(open(os.path.join(PROJECT, "rules", c + ".json"), encoding="utf-8")) for c in ("cupertino", "san_jose")}
+    city_ids = ("cupertino", "san_jose", "palo_alto", "los_altos", "berkeley")
+    cities = {c: json.load(open(os.path.join(PROJECT, "rules", c + ".json"), encoding="utf-8")) for c in city_ids}
     photos = load_photos(imgs)[:limit] if limit else load_photos(imgs)
     prompt = catalog_prompt(items)
 
@@ -177,9 +178,11 @@ def main(argv):
         rows = list(pool.map(one, photos))
     for row in rows:
         mark = "OK " if row["got"] == row["expected"] else "-- "
-        print("%s%-26s %-20s -> %-20s p1=%-5s %5d ms  CUP %s/%s  SJ %s/%s" % (
+        short = {"cupertino": "CUP", "san_jose": "SJ", "palo_alto": "PA", "los_altos": "LA", "berkeley": "BK"}
+        differ = [short[c] for c in city_ids if row[c][0] != row[c][1]]
+        print("%s%-26s %-20s -> %-20s p1=%-5s %5d ms  %s" % (
             mark, row["file"][:26], row["expected"], row["got"], "%.2f" % row["p_first"] if row["p_first"] is not None else "-",
-            row["ms"], row["cupertino"][0], row["cupertino"][1], row["san_jose"][0], row["san_jose"][1]))
+            row["ms"], ",".join(differ) or "bins-match"))
 
     n = len(rows)
     times = [r["ms"] for r in rows]

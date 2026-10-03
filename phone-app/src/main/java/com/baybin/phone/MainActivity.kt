@@ -551,6 +551,7 @@ class MainActivity : Activity(), App.Ui {
         R.id.city_sanjose -> "san_jose"
         R.id.city_paloalto -> "palo_alto"
         R.id.city_losaltos -> "los_altos"
+        R.id.city_berkeley -> "berkeley"
         else -> "cupertino"
     }
 
@@ -558,6 +559,7 @@ class MainActivity : Activity(), App.Ui {
         "san_jose" -> R.id.city_sanjose
         "palo_alto" -> R.id.city_paloalto
         "los_altos" -> R.id.city_losaltos
+        "berkeley" -> R.id.city_berkeley
         else -> R.id.city_cupertino
     }
 
@@ -565,6 +567,7 @@ class MainActivity : Activity(), App.Ui {
         "san_jose" -> "hint_sj"
         "palo_alto" -> "hint_paloalto"
         "los_altos" -> "hint_losaltos"
+        "berkeley" -> "hint_berkeley"
         else -> "hint_cupertino"
     }
 
@@ -576,6 +579,7 @@ class MainActivity : Activity(), App.Ui {
             "san_jose" to R.id.city_sanjose,
             "palo_alto" to R.id.city_paloalto,
             "los_altos" to R.id.city_losaltos,
+            "berkeley" to R.id.city_berkeley,
         )
         /** A domain written in a reason, such as hhw.org. Not an email, and not the long source address. */
         private val DOMAIN = Regex(

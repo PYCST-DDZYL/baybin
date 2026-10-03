@@ -12,6 +12,8 @@ package com.baybin.phone
  * Food goes in the green cart, not the black one.
  * Los Altos single-family (Mission Trail residential guide): blue recycling,
  * green organics, gray garbage. Line1 stays "Landfill" so the lens says gray, not black.
+ * Berkeley households: blue recycling, green compost, grey trash. Line1 stays "Landfill".
+ * Recycling for 1–9 units is the Ecology Center cart, split into paper and containers.
  */
 object BinFace {
 
@@ -44,18 +46,18 @@ object BinFace {
     }
 
     private fun words(city: String, line1: String, zh: Boolean): Pair<String, String?> = when {
-        line1.startsWith("Recycling") -> lens(line1, zh) to if (zh) {
-            if (city == "san_jose") "回收。桶身是灰的，盖子是蓝的。" else "回收。"
-        } else {
-            if (city == "san_jose") "Recycling. Gray body, blue lid." else "Recycling."
+        line1.startsWith("Recycling") -> lens(line1, zh) to when (city) {
+            "san_jose" -> if (zh) "回收。桶身是灰的，盖子是蓝的。" else "Recycling. Gray body, blue lid."
+            "berkeley" -> if (zh) "蓝桶。一边放纸，一边放瓶罐。" else "Blue cart. Paper on one side, bottles and cans on the other."
+            else -> if (zh) "回收。" else "Recycling."
         }
         line1.startsWith("Compost") -> lens(line1, zh) to when (city) {
-            "cupertino", "palo_alto", "los_altos" ->
+            "cupertino", "palo_alto", "los_altos", "berkeley" ->
                 if (zh) "厨余、食物脏了的纸、庭院。" else "Food, food-soiled paper, and yard trimmings."
             else -> null
         }
         line1.startsWith("Landfill") -> lens(line1, zh) to when (city) {
-            "cupertino", "los_altos" ->
+            "cupertino", "los_altos", "berkeley" ->
                 if (zh) "不能回收、也不能堆肥的。" else "Not recyclable and not compostable."
             else -> null
         }

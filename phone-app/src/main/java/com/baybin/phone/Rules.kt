@@ -30,7 +30,7 @@ class Rules private constructor(
         "{catalog}", items.joinToString("\n") { "- ${it.id}: ${it.name} (${it.hint})" })
 
     companion object {
-        val CITY_IDS = listOf("cupertino", "san_jose", "palo_alto", "los_altos")
+        val CITY_IDS = listOf("cupertino", "san_jose", "palo_alto", "los_altos", "berkeley")
 
         fun load(context: Context): Rules {
             fun read(name: String) = context.assets.open("rules/$name").bufferedReader().use { it.readText() }

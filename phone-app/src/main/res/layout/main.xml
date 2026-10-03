@@ -158,6 +158,18 @@
                 android:text="Los Altos"
                 android:textColor="@color/seg_text"
                 android:textSize="15sp" />
+
+            <RadioButton
+                android:id="@+id/city_berkeley"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/bg_seg"
+                android:button="@null"
+                android:gravity="center"
+                android:text="Berkeley"
+                android:textColor="@color/seg_text"
+                android:textSize="15sp" />
             </RadioGroup>
 
             <TextView
