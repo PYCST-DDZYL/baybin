@@ -29,8 +29,8 @@ Constraints from the original request. Do not break these:
 |---|---|
 | `protocol/…/Proto.kt` | Shared frames (`"BB"` + type + length + body). Types: HELLO / SCAN / RESULT / PROBE / PROBE_ACK / PREPARE |
 | `glasses-app/` v0.2.0 | `MainActivity` (button → photo → send → display, 8 s timeout), `OneShotCamera` (CameraX only; a hand-written Camera2 capture never returns a JPEG on this HAL), `PhoneLink` (insecure RFCOMM server) |
-| `phone-app/` v0.3.0 | `App.kt` (wiring, debug broadcasts), `GlassesLink` (RFCOMM client, reconnects), `LinkService` (foreground service), `Pipeline` (recognition and the bin decision; section 4), `QwenClient`, `Rules` (reads assets), `Gallery` (ImageDecoder), `Upright` |
-| `rules/` | `items.json` (78 ids), `cupertino.json`, `san_jose.json`, `prompt.txt`. Copied into the phone assets at build time. `REVIEW.md` is generated. Do not edit it by hand |
+| `phone-app/` v0.3.0 | `App.kt` (wiring, debug broadcasts), `GlassesLink` (RFCOMM client, reconnects), `LinkService` (foreground service), `Pipeline` (recognition and the bin decision; section 4), `TwoThings` (local two-object stop, before the model), `QwenClient`, `Rules` (reads assets), `Gallery` (ImageDecoder), `Upright` |
+| `rules/` | `items.json` (78 ids), `cupertino.json`, `san_jose.json`, `palo_alto.json`, `los_altos.json`, `prompt.txt`. Copied into the phone assets at build time. `REVIEW.md` is generated. Do not edit it by hand |
 | `tools/` | Section 5 |
 | `eval/commons_probe/` | 55 stock photos, one per item |
 | `eval/realworld/` | 51 real web photos, labelled by hand, 22 of them food still in a container |
@@ -119,7 +119,7 @@ Criteria 1, 3, 4, 5, and 6 need the glasses linked to the phone, and Bluetooth o
 
 ## 7. Known misses
 
-- `eval/realworld/plastic_tub__1.jpg`: a clear lid and a blue box together. The model said `plastic_cap`. San José shows Garbage, which is wrong for the box. The photo really does contain two things.
+- `eval/realworld/plastic_tub__1.jpg`: a clear lid and a blue box together. The model used to say `plastic_cap`. The phone now stops that shape before the model (`TwoThings`): Not sure, second line `Two things in the photo. Hold up one.` One object is unchanged. The check does not call a detector.
 - Pizza still in the box can show Not sure. That is the prefix case in section 4, and it does not assign the wrong bin.
 - A cup full of a drink, including bubble tea, is `plastic_cup` → Recycling, and the second line says to empty it first. It is not `food_in_container`. Recology says the compost cart does not take liquids.
 - Cloud latency follows the Beijing time of day. Beijing evening is the slow part. A US (Virginia) key is faster. The owner has to open that key.

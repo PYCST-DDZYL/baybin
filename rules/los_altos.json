@@ -1,0 +1,488 @@
+{
+ "city": "los_altos",
+ "name": "Los Altos",
+ "residence": "single-family",
+ "authority": "City of Los Altos and Mission Trail Waste Systems, its contracted hauler. The residential guide's carts are blue recycling, green organics, and gray garbage.",
+ "updated": "2026-10-02",
+ "official_domains": [
+  "losaltosca.gov",
+  "missiontrail.com"
+ ],
+ "bins": {
+  "recycling": {
+   "line1": "Recycling"
+  },
+  "compost": {
+   "line1": "Compost"
+  },
+  "landfill": {
+   "line1": "Landfill"
+  },
+  "special": {
+   "line1": "Special handling"
+  }
+ },
+ "sources": {
+  "guide": {
+   "title": "Mission Trail Waste Systems: Los Altos residential service guide",
+   "url": "https://missiontrail.com/wp-content/uploads/2021/09/residential-service-guide.pdf",
+   "found_via": "Linked from https://missiontrail.com/losaltos/ as Residential Service Guide",
+   "sections": {
+    "recycling": "Put RECYCLABLES in the Blue Cart",
+    "compost": "Put ORGANICS in the Green Cart",
+    "landfill": "Put GARBAGE in the Gray Cart"
+   }
+  },
+  "hazard": {
+   "title": "Mission Trail Waste Systems: Los Altos household hazardous waste",
+   "url": "https://missiontrail.com/los-altos/household-hazardous-waste-program/",
+   "only_bins": [
+    "special"
+   ]
+  }
+ },
+ "rules": {
+  "cardboard_box": {
+   "bin": "recycling",
+   "reason": "Flatten cardboard and paper boxes for the blue cart.",
+   "source": "guide",
+   "quote": "corrugated cardboard & paper boxes"
+  },
+  "pizza_box_greasy": {
+   "bin": "compost",
+   "reason": "Pizza boxes go in the green cart.",
+   "source": "guide",
+   "quote": "takeout containers • pizza boxes • waxed paper"
+  },
+  "paper_mixed": {
+   "bin": "recycling",
+   "reason": "Junk mail and catalogs go in the blue cart.",
+   "source": "guide",
+   "quote": "junk mail & catalogs"
+  },
+  "paperboard_box": {
+   "bin": "recycling",
+   "reason": "Paper boxes go in the blue cart.",
+   "source": "guide",
+   "quote": "corrugated cardboard & paper boxes"
+  },
+  "paper_bag": {
+   "bin": "unknown",
+   "note": "Clean paper bags are not listed. The green cart accepts paper bags only when they hold food scraps."
+  },
+  "shredded_paper": {
+   "bin": "recycling",
+   "reason": "Put shredded paper in a paper bag, then the blue cart.",
+   "source": "guide",
+   "quote": "shredded paper - contained in a paper bag or box"
+  },
+  "paper_towel_napkin": {
+   "bin": "compost",
+   "reason": "Food-soiled napkins and towels go in the green cart.",
+   "source": "guide",
+   "quote": "plates & cups • napkins & towels"
+  },
+  "tissue": {
+   "bin": "unknown",
+   "note": "Facial tissue is not named. Food-soiled napkins go in the green cart; paper used for cleaning goes in the gray cart."
+  },
+  "paper_cup": {
+   "bin": "compost",
+   "reason": "Paper plates and cups go in the green cart.",
+   "source": "guide",
+   "quote": "plates & cups • napkins & towels"
+  },
+  "paper_plate_used": {
+   "bin": "compost",
+   "reason": "Paper plates and cups go in the green cart.",
+   "source": "guide",
+   "quote": "plates & cups • napkins & towels"
+  },
+  "paper_takeout": {
+   "bin": "compost",
+   "reason": "Paper takeout containers go in the green cart.",
+   "source": "guide",
+   "quote": "takeout containers • pizza boxes"
+  },
+  "carton": {
+   "bin": "recycling",
+   "reason": "Dairy cartons go in the blue cart, not the green cart.",
+   "source": "guide",
+   "quote": "phonebooks • dairy cartons • aseptic boxes"
+  },
+  "aseptic_carton": {
+   "bin": "recycling",
+   "reason": "Juice, soup, and soy-milk boxes go in the blue cart.",
+   "source": "guide",
+   "quote": "aseptic boxes - juice, soup & soy milk"
+  },
+  "receipt": {
+   "bin": "unknown",
+   "note": "Not listed in the residential service guide."
+  },
+  "coffee_grounds_filter": {
+   "bin": "compost",
+   "reason": "Coffee grounds and filters go in the green cart.",
+   "source": "guide",
+   "quote": "coffee grounds & tea leaves"
+  },
+  "tea_bag": {
+   "bin": "compost",
+   "reason": "Tea bags go in the green cart.",
+   "source": "guide",
+   "quote": "coffee filters & tea bags"
+  },
+  "book": {
+   "bin": "recycling",
+   "reason": "Books up to 40 pounds go in the blue cart.",
+   "source": "guide",
+   "quote": "books - up to 40 lbs."
+  },
+  "plastic_bottle": {
+   "bin": "recycling",
+   "reason": "Plastic bottles and jars go in the blue cart.",
+   "source": "guide",
+   "quote": "bottles & jars • tubs & trays"
+  },
+  "plastic_jug": {
+   "bin": "recycling",
+   "reason": "Plastic bottles and jars go in the blue cart.",
+   "source": "guide",
+   "quote": "bottles & jars • tubs & trays"
+  },
+  "plastic_tub": {
+   "bin": "recycling",
+   "reason": "Plastic tubs and trays go in the blue cart.",
+   "source": "guide",
+   "quote": "bottles & jars • tubs & trays"
+  },
+  "plastic_clamshell": {
+   "bin": "recycling",
+   "reason": "Plastic tubs and trays go in the blue cart.",
+   "source": "guide",
+   "quote": "bottles & jars • tubs & trays"
+  },
+  "plastic_cup": {
+   "bin": "unknown",
+   "note": "Not listed. Glass and ceramic cups go in the gray cart. Plastic cups are not named."
+  },
+  "plastic_takeout": {
+   "bin": "recycling",
+   "reason": "Plastic tubs and trays go in the blue cart.",
+   "source": "guide",
+   "quote": "bottles & jars • tubs & trays"
+  },
+  "plastic_bag": {
+   "bin": "recycling",
+   "reason": "Stuff bags into one bag, tie it, then the blue cart.",
+   "source": "guide",
+   "quote": "plastic bags - Protect the environment by avoiding single-use bags."
+  },
+  "bubble_wrap": {
+   "bin": "landfill",
+   "reason": "Plastic film and wrap go in the gray cart.",
+   "source": "guide",
+   "quote": "plastic film & wrap • plastic plates & utensils"
+  },
+  "plastic_utensils": {
+   "bin": "landfill",
+   "reason": "Plastic plates and utensils go in the gray cart.",
+   "source": "guide",
+   "quote": "plastic plates & utensils"
+  },
+  "straw": {
+   "bin": "landfill",
+   "reason": "Plastic straws and stir sticks go in the gray cart.",
+   "source": "guide",
+   "quote": "plastic drinking straws & stir sticks"
+  },
+  "snack_wrapper": {
+   "bin": "landfill",
+   "reason": "Plastic film and wrap go in the gray cart.",
+   "source": "guide",
+   "quote": "plastic film & wrap • plastic plates & utensils"
+  },
+  "compostable_plastic": {
+   "bin": "unknown",
+   "note": "The green cart says no plastic. Compostable or PLA plastic is not named."
+  },
+  "foam_food_container": {
+   "bin": "landfill",
+   "reason": "Foam and styrofoam go in the gray cart.",
+   "source": "guide",
+   "quote": "foam & styrofoam • hose - garden or rubber"
+  },
+  "foam_packaging": {
+   "bin": "landfill",
+   "reason": "Foam and styrofoam go in the gray cart.",
+   "source": "guide",
+   "quote": "foam & styrofoam • hose - garden or rubber"
+  },
+  "plastic_cap": {
+   "bin": "unknown",
+   "note": "Loose caps are not listed in the residential service guide."
+  },
+  "coffee_pod": {
+   "bin": "unknown",
+   "note": "Not listed in the residential service guide."
+  },
+  "drink_pouch": {
+   "bin": "unknown",
+   "note": "Not listed in the residential service guide."
+  },
+  "toothpaste_tube": {
+   "bin": "landfill",
+   "reason": "Toothpaste tubes go in the gray cart.",
+   "source": "guide",
+   "quote": "rubber bands • toothpaste tubes • toys - that cannot be donated"
+  },
+  "toothbrush": {
+   "bin": "unknown",
+   "note": "Not listed in the residential service guide."
+  },
+  "plastic_toy": {
+   "bin": "landfill",
+   "reason": "Toys that cannot be donated go in the gray cart.",
+   "source": "guide",
+   "quote": "toys - that cannot be donated"
+  },
+  "aluminum_can": {
+   "bin": "recycling",
+   "reason": "Cans and pans go in the blue cart.",
+   "source": "guide",
+   "quote": "aerosol cans - empty • cans & pans"
+  },
+  "food_can": {
+   "bin": "recycling",
+   "reason": "Cans and pans go in the blue cart.",
+   "source": "guide",
+   "quote": "aerosol cans - empty • cans & pans"
+  },
+  "aluminum_foil": {
+   "bin": "unknown",
+   "note": "Not listed in the residential service guide. The what-goes-where page names foil but its extracted text does not keep each item's color."
+  },
+  "aluminum_tray": {
+   "bin": "recycling",
+   "reason": "Cans and pans go in the blue cart.",
+   "source": "guide",
+   "quote": "aerosol cans - empty • cans & pans"
+  },
+  "aerosol_can": {
+   "bin": "recycling",
+   "reason": "Empty aerosol cans go in the blue cart.",
+   "source": "guide",
+   "quote": "aerosol cans - empty"
+  },
+  "glass_bottle": {
+   "bin": "recycling",
+   "reason": "Glass bottles and jars go in the blue cart.",
+   "source": "guide",
+   "quote": "GLASS BOTTLES & JARS"
+  },
+  "glass_jar": {
+   "bin": "recycling",
+   "reason": "Glass bottles and jars go in the blue cart.",
+   "source": "guide",
+   "quote": "GLASS BOTTLES & JARS"
+  },
+  "broken_glass": {
+   "bin": "unknown",
+   "note": "Window glass goes in the gray cart. Broken bottles and jars are not named."
+  },
+  "drinking_glass": {
+   "bin": "landfill",
+   "reason": "Dishes, bowls, and cups go in the gray cart.",
+   "source": "guide",
+   "quote": "kitchenware - dishes, bowls, cups, etc."
+  },
+  "ceramic": {
+   "bin": "landfill",
+   "reason": "Ceramics go in the gray cart.",
+   "source": "guide",
+   "quote": "ceramics • kitchenware - dishes, bowls, cups"
+  },
+  "food_scraps": {
+   "bin": "compost",
+   "reason": "Food scraps, including peels and rinds, go in the green cart.",
+   "source": "guide",
+   "quote": "fruits & vegetables - including peels, pits & rinds"
+  },
+  "food_in_container": {
+   "bin": "compost",
+   "reason": "Scrape the food into the green cart first, then scan the empty container.",
+   "source": "guide",
+   "quote": "fruits & vegetables - including peels, pits & rinds"
+  },
+  "bones": {
+   "bin": "compost",
+   "reason": "Meat and bones go in the green cart.",
+   "source": "guide",
+   "quote": "coffee grounds & tea leaves • meat & bones"
+  },
+  "yard_trimmings": {
+   "bin": "compost",
+   "reason": "Leaves, grass, and small branches go in the green cart.",
+   "source": "guide",
+   "quote": "ivy & weeds • grass clippings • small branches"
+  },
+  "flowers": {
+   "bin": "compost",
+   "reason": "Flowers and leaves go in the green cart.",
+   "source": "guide",
+   "quote": "flowers & leaves • ivy & weeds"
+  },
+  "cooking_oil": {
+   "bin": "special",
+   "reason": "Seal cooking oil and set it beside the cart, not in it.",
+   "source": "guide",
+   "quote": "Motor oil & filters, cooking oil and paint should be left next to your recycling cart but not in the gutter."
+  },
+  "wooden_chopsticks": {
+   "bin": "compost",
+   "reason": "Wooden chopsticks go in the green cart.",
+   "source": "guide",
+   "quote": "waxed paper & boxes • wooden chopsticks"
+  },
+  "battery": {
+   "bin": "special",
+   "reason": "Bag batteries and set them on the blue cart, not in it.",
+   "source": "guide",
+   "quote": "Batteries, cell phones & PDAs, and fluorescent bulbs should be left on top of your recycling cart"
+  },
+  "phone_electronics": {
+   "bin": "special",
+   "reason": "Bag phones on the blue cart; take other electronics to e-waste.",
+   "source": "guide",
+   "quote": "Batteries, cell phones & PDAs, and fluorescent bulbs should be left on top of your recycling cart",
+   "also": [
+    {
+     "source": "hazard",
+     "quote": "Computers, printers, televisions, fax machines, VCRs, stereo components, video game players, and other forms of e-waste"
+    }
+   ]
+  },
+  "cords_cables": {
+   "bin": "unknown",
+   "note": "Not listed in the residential service guide or the hazardous-waste page."
+  },
+  "bulb_fluorescent": {
+   "bin": "special",
+   "reason": "Bag fluorescent bulbs and set them on the blue cart, not in it.",
+   "source": "guide",
+   "quote": "Batteries, cell phones & PDAs, and fluorescent bulbs should be left on top of your recycling cart"
+  },
+  "bulb_led": {
+   "bin": "landfill",
+   "reason": "Light bulbs other than fluorescent go in the gray cart.",
+   "source": "guide",
+   "quote": "lightbulbs - no fluorescent"
+  },
+  "bulb_incandescent": {
+   "bin": "landfill",
+   "reason": "Light bulbs other than fluorescent go in the gray cart.",
+   "source": "guide",
+   "quote": "lightbulbs - no fluorescent"
+  },
+  "paint": {
+   "bin": "special",
+   "reason": "Set water-based paint beside the cart; oil-based goes to PaintCare.",
+   "source": "guide",
+   "quote": "Motor oil & filters, cooking oil and paint should be left next to your recycling cart but not in the gutter.",
+   "also": [
+    {
+     "source": "hazard",
+     "quote": "Find a PaintCare drop-off site for the nearest drop-off location."
+    }
+   ]
+  },
+  "cleaning_product": {
+   "bin": "unknown",
+   "note": "Plastic bottles and jars go in the blue cart, and the county hazardous-waste list includes cleaning fluids. The guide does not say which one a cleaner bottle is."
+  },
+  "medicine": {
+   "bin": "special",
+   "reason": "Medications cannot go in any cart.",
+   "source": "hazard",
+   "quote": "Medications are considered hazardous and cannot safely or legally be placed in any Mission Trail cart."
+  },
+  "sharps": {
+   "bin": "special",
+   "reason": "Sharps cannot go in any cart.",
+   "source": "hazard",
+   "quote": "Where can I take sharps? Please visit Convenient Locations"
+  },
+  "propane_cylinder": {
+   "bin": "special",
+   "reason": "Propane tanks cannot go in any cart.",
+   "source": "hazard",
+   "quote": "small pressurized tanks (propane, helium, oxygen)"
+  },
+  "diaper": {
+   "bin": "landfill",
+   "reason": "Diapers go in the gray cart.",
+   "source": "guide",
+   "quote": "clothes hangers • diapers • feminine products"
+  },
+  "pet_waste": {
+   "bin": "landfill",
+   "reason": "Bag pet waste, then the gray cart.",
+   "source": "guide",
+   "quote": "pet feces & litter - please bag"
+  },
+  "kitty_litter": {
+   "bin": "landfill",
+   "reason": "Bag litter, then put it in the gray cart.",
+   "source": "guide",
+   "quote": "pet feces & litter - please bag"
+  },
+  "face_mask": {
+   "bin": "unknown",
+   "note": "Not listed in the residential service guide."
+  },
+  "disposable_gloves": {
+   "bin": "unknown",
+   "note": "Not listed in the residential service guide."
+  },
+  "textiles": {
+   "bin": "landfill",
+   "reason": "Clothing that cannot be donated goes in the gray cart.",
+   "source": "guide",
+   "quote": "shoes, clothing & stuffed animals - that cannot be donated"
+  },
+  "shoes": {
+   "bin": "landfill",
+   "reason": "Shoes that cannot be donated go in the gray cart.",
+   "source": "guide",
+   "quote": "shoes, clothing & stuffed animals - that cannot be donated"
+  },
+  "cigarette": {
+   "bin": "unknown",
+   "note": "Not listed in the residential service guide."
+  },
+  "wipes": {
+   "bin": "unknown",
+   "note": "Not listed. Food-soiled paper towels go in the green cart; wipes are not named."
+  },
+  "garden_hose": {
+   "bin": "landfill",
+   "reason": "Garden and rubber hoses go in the gray cart.",
+   "source": "guide",
+   "quote": "hose - garden or rubber"
+  },
+  "egg_carton_paper": {
+   "bin": "unknown",
+   "note": "Not listed in the residential service guide."
+  },
+  "egg_carton_foam": {
+   "bin": "landfill",
+   "reason": "Foam and styrofoam go in the gray cart.",
+   "source": "guide",
+   "quote": "foam & styrofoam • hose - garden or rubber"
+  },
+  "frozen_food_box": {
+   "bin": "unknown",
+   "note": "Waxed paper and boxes go in the green cart. A frozen-food box is not named."
+  }
+ }
+}

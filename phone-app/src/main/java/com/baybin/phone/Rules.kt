@@ -17,7 +17,7 @@ class Rules private constructor(
     class Item(val id: String, val name: String, val hint: String)
 
     /** [bin] is a key of [City.binLabels], or "unknown" when the official sources don't settle it. */
-    class Rule(val bin: String, val reason: String)
+    class Rule(val bin: String, val reason: String, val sourceUrl: String?)
 
     class City(val id: String, val name: String, val binLabels: Map<String, String>, val rules: Map<String, Rule>)
 
@@ -30,7 +30,7 @@ class Rules private constructor(
         "{catalog}", items.joinToString("\n") { "- ${it.id}: ${it.name} (${it.hint})" })
 
     companion object {
-        val CITY_IDS = listOf("cupertino", "san_jose")
+        val CITY_IDS = listOf("cupertino", "san_jose", "palo_alto", "los_altos")
 
         fun load(context: Context): Rules {
             fun read(name: String) = context.assets.open("rules/$name").bufferedReader().use { it.readText() }
@@ -45,10 +45,19 @@ class Rules private constructor(
                 val bins = o.getJSONObject("bins").let { b ->
                     b.keys().asSequence().associateWith { k -> b.getJSONObject(k).getString("line1") }
                 }
+                val sources = o.optJSONObject("sources")
+                fun page(key: String): String? {
+                    if (key.isEmpty() || sources == null || !sources.has(key)) return null
+                    val s = sources.optJSONObject(key) ?: return null
+                    val live = s.optString("live_url").trim()
+                    if (live.startsWith("http")) return live
+                    val url = s.optString("url").trim()
+                    return url.takeIf { it.startsWith("http") }
+                }
                 val rules = o.getJSONObject("rules").let { r ->
                     r.keys().asSequence().associateWith { k ->
                         val rule = r.getJSONObject(k)
-                        Rule(rule.getString("bin"), rule.optString("reason"))
+                        Rule(rule.getString("bin"), rule.optString("reason"), page(rule.optString("source")))
                     }
                 }
                 City(id, o.getString("name"), bins, rules)

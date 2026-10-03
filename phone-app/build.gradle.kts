@@ -20,7 +20,7 @@ fun local(key: String, default: String = "") =
 // tools/verify_rules.py checks against the official pages), copied into the assets.
 val rulesAssets = layout.buildDirectory.dir("generated/rulesAssets").get().asFile
 val copyRules by tasks.registering(Sync::class) {
-    from(rootProject.file("rules")) { include("items.json", "cupertino.json", "san_jose.json", "prompt.txt") }
+    from(rootProject.file("rules")) { include("*.json", "prompt.txt") }
     into(File(rulesAssets, "rules"))
 }
 tasks.named("preBuild") { dependsOn(copyRules) }

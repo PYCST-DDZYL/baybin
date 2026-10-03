@@ -1,0 +1,497 @@
+{
+ "city": "palo_alto",
+ "name": "Palo Alto",
+ "residence": "single-family",
+ "authority": "City of Palo Alto and GreenWaste of Palo Alto, its contracted hauler. Single-family carts are blue recycling, green compost, and black garbage.",
+ "updated": "2026-10-02",
+ "official_domains": [
+  "paloalto.gov",
+  "greenwaste.com"
+ ],
+ "bins": {
+  "recycling": {
+   "line1": "Recycling"
+  },
+  "compost": {
+   "line1": "Compost"
+  },
+  "garbage": {
+   "line1": "Garbage"
+  },
+  "special": {
+   "line1": "Special handling"
+  }
+ },
+ "sources": {
+  "toolkit": {
+   "title": "City of Palo Alto: What Goes Where Tools",
+   "url": "https://www.paloalto.gov/Departments/Public-Works/Zero-Waste/What-Goes-Where/Toolkit",
+   "sections": {
+    "recycling": "Recycle",
+    "compost": "Compost",
+    "garbage": "Landfill"
+   }
+  },
+  "curbside": {
+   "title": "City of Palo Alto: Curbside Collection Services (single-family section)",
+   "url": "https://www.paloalto.gov/Departments/Public-Works/Zero-Waste/What-Goes-Where/Curbside-Collection-Services"
+  },
+  "detail": {
+   "title": "GreenWaste of Palo Alto: Detailed Material Guide (revised 2023-06-02)",
+   "url": "https://www.greenwaste.com/wp-content/uploads/Detailed-Material-Guide_2023.pdf",
+   "found_via": "Linked from the single-family residential page and from https://www.greenwaste.com/palo-alto/what-goes-where/"
+  }
+ },
+ "rules": {
+  "cardboard_box": {
+   "bin": "recycling",
+   "reason": "Flatten clean cardboard so it fits in the blue cart.",
+   "source": "toolkit",
+   "quote": "Cardboard (must be flattened)"
+  },
+  "pizza_box_greasy": {
+   "bin": "compost",
+   "reason": "Greasy pizza boxes go in the green cart.",
+   "source": "toolkit",
+   "quote": "Pizza boxes ● Food packaging ● Waxed cardboard"
+  },
+  "paper_mixed": {
+   "bin": "recycling",
+   "reason": "Clean newspaper and envelopes go in the blue cart.",
+   "source": "toolkit",
+   "quote": "Envelopes ● Frozen food packaging ● Newspaper"
+  },
+  "paperboard_box": {
+   "bin": "recycling",
+   "reason": "Cereal and tissue boxes go in the blue cart.",
+   "source": "curbside",
+   "quote": "Paperboard (e.g., office supply, cereal and tissue boxes, toilet paper tubes)"
+  },
+  "paper_bag": {
+   "bin": "recycling",
+   "reason": "Clean paper bags go in the blue cart.",
+   "source": "toolkit",
+   "quote": "Bags ● Books ● Boxes ● Cardboard (must be flattened)"
+  },
+  "shredded_paper": {
+   "bin": "recycling",
+   "reason": "Tie shredded paper in a clear bag, then recycle.",
+   "source": "toolkit",
+   "quote": "Shredded paper (tie in clear plastic bag)"
+  },
+  "paper_towel_napkin": {
+   "bin": "compost",
+   "reason": "Used napkins and paper towels go in the green cart.",
+   "source": "toolkit",
+   "quote": "Napkins ● Paper towels ● Tissues"
+  },
+  "tissue": {
+   "bin": "compost",
+   "reason": "Used tissues go in the green cart.",
+   "source": "toolkit",
+   "quote": "Paper towels ● Tissues ● Milk, juice, and ice cream cartons"
+  },
+  "paper_cup": {
+   "bin": "compost",
+   "reason": "Paper cups go in the green cart.",
+   "source": "toolkit",
+   "quote": "Waxed cardboard ● Cups ● Takeout containers"
+  },
+  "paper_plate_used": {
+   "bin": "compost",
+   "reason": "Used paper plates go in the green cart.",
+   "source": "toolkit",
+   "quote": "Plates ● Trays ● Napkins ● Paper towels"
+  },
+  "paper_takeout": {
+   "bin": "compost",
+   "reason": "Food-soiled paper take-out containers go in the green cart.",
+   "source": "toolkit",
+   "quote": "Cups ● Takeout containers ● Plates"
+  },
+  "carton": {
+   "bin": "compost",
+   "reason": "Milk, juice, and ice cream cartons go in the green cart.",
+   "source": "toolkit",
+   "quote": "Milk, juice, and ice cream cartons"
+  },
+  "aseptic_carton": {
+   "bin": "garbage",
+   "reason": "Juice boxes and soup cartons go in the black cart.",
+   "source": "toolkit",
+   "quote": "Aseptic containers (juice boxes, soy milk, soup broth)"
+  },
+  "receipt": {
+   "bin": "garbage",
+   "reason": "Thermal receipts go in the black cart.",
+   "source": "toolkit",
+   "quote": "Thermal paper (receipts)"
+  },
+  "coffee_grounds_filter": {
+   "bin": "compost",
+   "reason": "Coffee grounds and filters go in the green cart.",
+   "source": "toolkit",
+   "quote": "Coffee grounds and filters"
+  },
+  "tea_bag": {
+   "bin": "compost",
+   "reason": "Non-plastic tea bags go in the green cart.",
+   "source": "toolkit",
+   "quote": "Tea bags (non-plastic)"
+  },
+  "book": {
+   "bin": "recycling",
+   "reason": "Books go in the blue cart.",
+   "source": "toolkit",
+   "quote": "Books ● Boxes ● Cardboard (must be flattened)"
+  },
+  "plastic_bottle": {
+   "bin": "recycling",
+   "reason": "Empty plastic bottles go in the blue cart.",
+   "source": "toolkit",
+   "quote": "Bottles ● Buckets ● Crates ● Takeout containers"
+  },
+  "plastic_jug": {
+   "bin": "recycling",
+   "reason": "Empty plastic jugs go in the blue cart.",
+   "source": "toolkit",
+   "quote": "Baskets ● Toys ● Trays ● Jugs"
+  },
+  "plastic_tub": {
+   "bin": "recycling",
+   "reason": "Empty yogurt cups and tubs go in the blue cart.",
+   "source": "curbside",
+   "quote": "Food containers (e.g., cottage cheese, margarine, yogurt, take-out containers)"
+  },
+  "plastic_clamshell": {
+   "bin": "recycling",
+   "reason": "Empty plastic food containers go in the blue cart.",
+   "source": "curbside",
+   "quote": "Food containers (e.g., cottage cheese, margarine, yogurt, take-out containers)"
+  },
+  "plastic_cup": {
+   "bin": "unknown",
+   "note": "Toolkit composts soiled-paper cups and plastic cups labeled COMPOSTABLE. A plain plastic cup is not listed in the blue, green, or black lists."
+  },
+  "plastic_takeout": {
+   "bin": "recycling",
+   "reason": "Empty rigid take-out containers go in the blue cart.",
+   "source": "curbside",
+   "quote": "Food containers (e.g., cottage cheese, margarine, yogurt, take-out containers)"
+  },
+  "plastic_bag": {
+   "bin": "unknown",
+   "note": "Clean, dry bags and film go in the blue cart when knotted inside one bag. The same toolkit lists single plastic bags under landfill and individual plastic bags as not accepted in recycling."
+  },
+  "bubble_wrap": {
+   "bin": "recycling",
+   "reason": "Bag clean bubble wrap, then put it in the blue cart.",
+   "source": "toolkit",
+   "quote": "Bubble wrap ● Liners (cereal box)"
+  },
+  "plastic_utensils": {
+   "bin": "garbage",
+   "reason": "Plastic utensils go in the black cart.",
+   "source": "toolkit",
+   "quote": "Cellophane ● Utensils ● Disposable razors"
+  },
+  "straw": {
+   "bin": "garbage",
+   "reason": "Plastic straws go in the black cart.",
+   "source": "toolkit",
+   "quote": "Hoses ● Tarps ● Straws ● Toothpaste and ointment tubes"
+  },
+  "snack_wrapper": {
+   "bin": "garbage",
+   "reason": "Chip bags and wrappers go in the black cart.",
+   "source": "toolkit",
+   "quote": "Snack packaging ● Aseptic containers (juice boxes, soy milk, soup broth)"
+  },
+  "compostable_plastic": {
+   "bin": "compost",
+   "reason": "Only plastic labeled COMPOSTABLE goes in the green cart.",
+   "source": "toolkit",
+   "quote": "(must be labeled COMPOSTABLE)"
+  },
+  "foam_food_container": {
+   "bin": "garbage",
+   "reason": "Foam cups, plates, and meat trays go in the black cart.",
+   "source": "toolkit",
+   "quote": "Cups and plates ● Egg cartons ● Meat trays"
+  },
+  "foam_packaging": {
+   "bin": "garbage",
+   "reason": "Foam packing and peanuts go in the black cart.",
+   "source": "toolkit",
+   "quote": "Foam packaging ● Packing peanuts"
+  },
+  "plastic_cap": {
+   "bin": "recycling",
+   "reason": "Lids and caps go in the blue cart.",
+   "source": "toolkit",
+   "quote": "Lids and caps ● Appliances (toaster, blender, etc.)"
+  },
+  "coffee_pod": {
+   "bin": "garbage",
+   "reason": "Coffee pods go in the black cart.",
+   "source": "toolkit",
+   "quote": "Coffee pods ● Instant develop photos"
+  },
+  "drink_pouch": {
+   "bin": "garbage",
+   "reason": "Foil drink pouches go in the black cart.",
+   "source": "toolkit",
+   "quote": "Foil-wrapped drink pouches"
+  },
+  "toothpaste_tube": {
+   "bin": "garbage",
+   "reason": "Toothpaste tubes go in the black cart.",
+   "source": "toolkit",
+   "quote": "Toothpaste and ointment tubes"
+  },
+  "toothbrush": {
+   "bin": "unknown",
+   "note": "The 2023 guide lists electric toothbrushes under recycling electronics. A manual toothbrush is not listed."
+  },
+  "plastic_toy": {
+   "bin": "recycling",
+   "reason": "Hard plastic toys go in the blue cart.",
+   "source": "toolkit",
+   "quote": "Baskets ● Toys ● Trays ● Jugs"
+  },
+  "aluminum_can": {
+   "bin": "recycling",
+   "reason": "Empty food and drink cans go in the blue cart.",
+   "source": "toolkit",
+   "quote": "Cans ( food, beverage, etc.)"
+  },
+  "food_can": {
+   "bin": "recycling",
+   "reason": "Empty food cans go in the blue cart.",
+   "source": "toolkit",
+   "quote": "Cans ( food, beverage, etc.)"
+  },
+  "aluminum_foil": {
+   "bin": "recycling",
+   "reason": "Foil, trays, and pans go in the blue cart.",
+   "source": "toolkit",
+   "quote": "Foil, foil trays, pans"
+  },
+  "aluminum_tray": {
+   "bin": "recycling",
+   "reason": "Foil trays and pans go in the blue cart.",
+   "source": "toolkit",
+   "quote": "Foil, foil trays, pans"
+  },
+  "aerosol_can": {
+   "bin": "unknown",
+   "note": "Empty, non-hazardous aerosol cans are listed in recycling. Aerosols that are not empty are household hazardous waste and cannot go in the carts."
+  },
+  "glass_bottle": {
+   "bin": "recycling",
+   "reason": "Glass bottles and jars go in the blue cart, not blue or red glass.",
+   "source": "toolkit",
+   "quote": "Clear and colored, except blue and red"
+  },
+  "glass_jar": {
+   "bin": "recycling",
+   "reason": "Glass bottles and jars go in the blue cart, not blue or red glass.",
+   "source": "toolkit",
+   "quote": "Clear and colored, except blue and red"
+  },
+  "broken_glass": {
+   "bin": "garbage",
+   "reason": "Bag broken glass, then put it in the black cart.",
+   "source": "detail",
+   "quote": "Broken glass (bagged)"
+  },
+  "drinking_glass": {
+   "bin": "garbage",
+   "reason": "Drinking glasses and stemware go in the black cart.",
+   "source": "toolkit",
+   "quote": "Dishware and stemware"
+  },
+  "ceramic": {
+   "bin": "garbage",
+   "reason": "Ceramics and vases go in the black cart.",
+   "source": "toolkit",
+   "quote": "Ceramics and vases ● Glass cookware"
+  },
+  "food_scraps": {
+   "bin": "compost",
+   "reason": "Food scraps go in the green cart.",
+   "source": "toolkit",
+   "quote": "Fruit and vegetables ● Bread ● Coffee grounds and filters"
+  },
+  "food_in_container": {
+   "bin": "compost",
+   "reason": "Scrape the food into the green cart first, then scan the empty container.",
+   "source": "toolkit",
+   "quote": "Fruit and vegetables ● Bread ● Coffee grounds and filters",
+   "also": [
+    {
+     "source": "detail",
+     "quote": "Empty bottles, cans, and containers only. No food or liquid."
+    }
+   ]
+  },
+  "bones": {
+   "bin": "compost",
+   "reason": "Meat and bones go in the green cart.",
+   "source": "toolkit",
+   "quote": "Meat and seafood ● Bones"
+  },
+  "yard_trimmings": {
+   "bin": "compost",
+   "reason": "Leaves, grass, and branches go in the green cart.",
+   "source": "toolkit",
+   "quote": "Grass clippings ● Leaves"
+  },
+  "flowers": {
+   "bin": "compost",
+   "reason": "Flowers and plants go in the green cart.",
+   "source": "toolkit",
+   "quote": "Flowers ● Branches and stumps"
+  },
+  "cooking_oil": {
+   "bin": "special",
+   "reason": "Cooking oil and grease do not go in the carts.",
+   "source": "detail",
+   "quote": "Cooking oil, motor oil, grease"
+  },
+  "wooden_chopsticks": {
+   "bin": "unknown",
+   "note": "Compostable plastic cutlery must be labeled COMPOSTABLE. Bamboo is not accepted in compost. Wooden chopsticks are not named."
+  },
+  "battery": {
+   "bin": "special",
+   "reason": "Batteries cannot go in any cart.",
+   "source": "detail",
+   "quote": "Batteries (including car batteries, lithium)"
+  },
+  "phone_electronics": {
+   "bin": "unknown",
+   "note": "The 2023 guide lists cell phones in the blue cart if the battery is removed, and says electronics with embedded batteries are hazardous waste and cannot go in the recycle bin."
+  },
+  "cords_cables": {
+   "bin": "unknown",
+   "note": "The toolkit says to bundle cords with electronics and remove batteries. A cord by itself is not listed."
+  },
+  "bulb_fluorescent": {
+   "bin": "special",
+   "reason": "Fluorescent bulbs cannot go in the carts.",
+   "source": "detail",
+   "quote": "Fluorescent lights (CFLs & tubes)"
+  },
+  "bulb_led": {
+   "bin": "special",
+   "reason": "LED bulbs cannot go in the carts.",
+   "source": "detail",
+   "quote": "Fluorescent lights (CFLs & tubes) • LED lights"
+  },
+  "bulb_incandescent": {
+   "bin": "garbage",
+   "reason": "Incandescent and halogen bulbs go in the black cart.",
+   "source": "toolkit",
+   "quote": "Incandescent and halogen bulbs"
+  },
+  "paint": {
+   "bin": "unknown",
+   "note": "Empty, dry paint cans are listed in recycling. Paints and paint thinner are household hazardous waste and cannot go in the carts."
+  },
+  "cleaning_product": {
+   "bin": "unknown",
+   "note": "Empty household-cleaner bottles are listed in recycling. Cleaners such as bleach are household hazardous waste and cannot go in the carts."
+  },
+  "medicine": {
+   "bin": "special",
+   "reason": "Medications cannot go in the carts.",
+   "source": "detail",
+   "quote": "Medications (no controlled substances)"
+  },
+  "sharps": {
+   "bin": "special",
+   "reason": "Sharps and syringes cannot go in the carts.",
+   "source": "detail",
+   "quote": "Sharps & Syringes (in rigid container)"
+  },
+  "propane_cylinder": {
+   "bin": "special",
+   "reason": "Propane tanks cannot go in the carts.",
+   "source": "detail",
+   "quote": "Propane tanks (BBQ or camp stove only)"
+  },
+  "diaper": {
+   "bin": "garbage",
+   "reason": "Diapers go in the black cart.",
+   "source": "toolkit",
+   "quote": "Pet waste ● Diapers ● Lint and vacuum debris"
+  },
+  "pet_waste": {
+   "bin": "garbage",
+   "reason": "Pet waste goes in the black cart.",
+   "source": "toolkit",
+   "quote": "Textiles (clothing, bedding) ● Pet waste ● Diapers"
+  },
+  "kitty_litter": {
+   "bin": "garbage",
+   "reason": "Kitty litter goes in the black cart.",
+   "source": "detail",
+   "quote": "Pet waste & Kitty litter"
+  },
+  "face_mask": {
+   "bin": "garbage",
+   "reason": "Face masks go in the black cart.",
+   "source": "toolkit",
+   "quote": "Latex gloves ● Facemasks ● Chewing gum"
+  },
+  "disposable_gloves": {
+   "bin": "garbage",
+   "reason": "Latex and nitrile gloves go in the black cart.",
+   "source": "curbside",
+   "quote": "Latex and Nitrile Gloves"
+  },
+  "textiles": {
+   "bin": "garbage",
+   "reason": "Clothing and bedding go in the black cart.",
+   "source": "toolkit",
+   "quote": "Textiles (clothing, bedding)"
+  },
+  "shoes": {
+   "bin": "unknown",
+   "note": "The 2023 guide lists clothing and shoes as donations. Landfill textiles are clothing and bedding, not shoes."
+  },
+  "cigarette": {
+   "bin": "unknown",
+   "note": "Not listed in the city What Goes Where toolkit or the 2023 detailed material guide."
+  },
+  "wipes": {
+   "bin": "unknown",
+   "note": "Not listed. Paper towels are compost; wipes are not named."
+  },
+  "garden_hose": {
+   "bin": "garbage",
+   "reason": "Garden hoses go in the black cart.",
+   "source": "toolkit",
+   "quote": "Disposable razors ● Single plastic bags ● Hoses ● Tarps"
+  },
+  "egg_carton_paper": {
+   "bin": "recycling",
+   "reason": "Clean paper egg cartons go in the blue cart.",
+   "source": "toolkit",
+   "quote": "Egg cartons (clean) ● Envelopes"
+  },
+  "egg_carton_foam": {
+   "bin": "garbage",
+   "reason": "Foam egg cartons go in the black cart.",
+   "source": "toolkit",
+   "quote": "Cups and plates ● Egg cartons ● Meat trays"
+  },
+  "frozen_food_box": {
+   "bin": "recycling",
+   "reason": "Frozen food packaging goes in the blue cart.",
+   "source": "toolkit",
+   "quote": "Frozen food packaging"
+  }
+ }
+}

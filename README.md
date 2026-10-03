@@ -13,11 +13,11 @@ Rules come only from city and hauler pages. Each rule cites its source, and a sc
 
 ## How to use it
 
-1. Build and install: `python tools\deploy.py all` (Gradle runs in WSL; see `构建.sh`). Open BayBin on the phone and type your own Qwen key. The key stays on that phone, encrypted with the Android Keystore. It is not compiled into the APK and it is not in this repository. PC test scripts read `local.properties`: copy `local.properties.example`, fill in your own key, and do not commit that file.
-2. Open **BayBin** on the glasses. Open **湾区垃圾分类** on the phone. The first time, tap 「搜索眼镜」 and pick your glasses. After that the phone reconnects on its own (a foreground service; the screen can be locked).
-3. Pick the city on the phone (Cupertino or San José).
+1. Build and install: `python tools\deploy.py all` (Gradle runs in WSL; see `构建.sh`). Open BayBin on the phone and type your own Qwen key. After it is saved, that box hides. Settings, at the top right, is where you replace it. The key stays on that phone, encrypted with the Android Keystore. It is not compiled into the APK and it is not in this repository. PC test scripts read `local.properties`: copy `local.properties.example`, fill in your own key, and do not commit that file.
+2. Open **BayBin** on the glasses. Open **湾区垃圾分类** on the phone. The first time, tap the big button. If only one pair is found, it connects by itself. After that, tap 「连接眼镜」, or the phone reconnects on its own (a foreground service; the screen can be locked). 「换一副」 searches again.
+3. On the phone, pick California, then the city under it.
 4. Aim with the viewfinder and press the ring's right button (a temple click also takes the photo). The left button leaves the app. The lens shows the bin and the item.
-5. With no glasses: tap 「相册测试」 in the phone app, pick a photo, and the same pipeline runs. The answer stays on the phone.
+5. With no glasses: tap 「相册」 in the phone app, pick a photo, and the same pipeline runs. The answer stays on the phone. The card links the official page for that ruling. The long address is not shown.
 
 ## Architecture
 
@@ -45,7 +45,7 @@ Glasses: show the two lines. No network, no model, no history.
 - **Glasses** (`glasses-app`) do three things: take the photo, send it, show the result. No network permission, no model, no large library (CameraX is the only dependency, because this headset's camera HAL only returns a JPEG for that pairing). The photo is at most 1024 px, JPEG q80, and is not kept.
 - **Phone** (`phone-app`): `GlassesLink` owns the Bluetooth connection, `LinkService` is the foreground service, `Pipeline` is the recognition path (glasses and gallery share it), `QwenClient` calls Qwen, `Rules` reads the rule tables.
 - **Protocol** (`protocol`): one frame format, `"BB"` + type + length + body.
-- **Rules** (`rules/`): `items.json` is the catalog, `cupertino.json` and `san_jose.json` are the bin, reason, source, and quotation for each item, and `prompt.txt` is the model prompt. The build copies them into the phone app's assets. The app and the checker read the same files.
+- **Rules** (`rules/`): `items.json` is the catalog. `cupertino.json`, `san_jose.json`, `palo_alto.json`, and `los_altos.json` are the bin, reason, source, and quotation for each item. `prompt.txt` is the model prompt. The build copies them into the phone app's assets. The app and the checker read the same files.
 
 ### Connection: why the apps use their own Bluetooth socket
 
@@ -57,6 +57,7 @@ Measured (phone S26 Ultra ↔ RG glasses): 16 KB through 512 KB all fit in one t
 
 - The model does one job: pick an id from the catalog of 78, or answer `unknown`. **The rule table picks the bin, not the model.**
 - Food still in a container is `food_in_container`, not the container's material. A meal, noodles, soup, rice, cake, or scattered leftovers (more than a smear of grease) count. The prompt says to use this id whether the container is foam, plastic, paper, or foil. An empty container uses its own id. Cupertino: scrape the food into the green compost cart first. San José: scrape it into the garbage cart first (single-family homes have no food-scraps cart), then look at the empty container. A cup still full of a drink, including bubble tea, is not this id. Recology says the compost cart does not take liquids, so the id stays `plastic_cup` (recycling) and the second line says to empty it first.
+- A photo that clearly shows two separate things stops before the model. The lens says Not sure, and the phone says to hold up one. One object, or a pile of the same thing, still goes to the model. The check is on the phone. It does not use a detector model.
 - The lens shows `Not sure — check city guide` when:
   1. the model says `unknown`, or something that is not in the catalog;
   2. the city's official pages do not say, or they contradict each other (the rule is `unknown`);
@@ -69,11 +70,13 @@ Measured (phone S26 Ultra ↔ RG glasses): 16 KB through 512 KB all fit in one t
 
 - **Cupertino**: the Recology South Bay 2025-26 sorting guide (PDF), Recology's sorting guide, cart pages, hazardous-waste and e-waste pages, and cupertino.gov recycling, compost, and HHW pages. The city site blocks scripts, so those pages are checked against web.archive.org snapshots.
 - **San José**: the per-item pages on SanJoseRecycles.org ("Where does it go?").
+- **Palo Alto** (single-family): the city What Goes Where toolkit, the single-family curbside page, and GreenWaste of Palo Alto's 2023 detailed material guide. Carts are blue recycling, green compost, and black garbage. Food goes in the green cart.
+- **Los Altos** (single-family): Mission Trail's residential service guide and its household hazardous waste page. Carts are blue recycling, green organics, and gray garbage. The gray cart's first line is "Landfill", so the lens says gray and not black.
 - `python tools\verify_rules.py --live` fetches the official pages again and checks each rule: the quotation is on the page, under the right section, the bin matches that section, and the link is on an official domain. `rules/REVIEW.md` is the side-by-side table, with sources and notes.
 - If the reason also tells the person to do something first (scrape food out of a container, for example), the rule carries an `also` field with a second official sentence. `verify_rules.py` checks `also` the same way. That sentence documents the step. It does not pick the bin.
 - Items the official pages do not cover, or where the pages disagree, are `unknown`, with the reason in `note`. Cupertino milk cartons are one case: the city page says compost, the Recology 2025 guide says recycling, so the lens shows Not sure. Recology's number is 408-725-4020, or email environmental@cupertino.gov.
 
-**The first line uses each city's own bin name.** Cupertino: Recycling / Compost / Landfill / Special handling. San José: Recycling / Garbage / Yard trimmings / Special handling. Single-family San José has no compost cart. The green cart is "Yard trimmings" and the trash cart is "Garbage". The official name matches the word printed on the cart. That is intentional, and it is not four identical names for both cities. To collapse San José onto four shared names, change `line1` under `bins` in `rules/san_jose.json`.
+**The first line uses each city's own bin name.** Cupertino: Recycling / Compost / Landfill / Special handling. San José: Recycling / Garbage / Yard trimmings / Special handling. Palo Alto: Recycling / Compost / Garbage / Special handling. Los Altos: Recycling / Compost / Landfill / Special handling. Single-family San José has no compost cart. The green cart is "Yard trimmings" and the trash cart is "Garbage". Palo Alto's black cart is "Garbage", and food goes in the green cart instead. Los Altos calls the gray cart garbage; its first line stays "Landfill" so the glasses say gray, not black. The official cart color decides the word. That is intentional. To collapse San José onto four shared names, change `line1` under `bins` in `rules/san_jose.json`.
 
 ## Test results
 
@@ -136,6 +139,6 @@ The apps do not write shared storage. Install with `adb install` (streamed; no A
 - Pizza still in the box is `food_in_container`: empty the food into the cart that takes it, then look at the empty box. An empty greasy pizza box is `pizza_box_greasy`. Both ids are Compost in Cupertino and Garbage in San José.
 - Cloud latency follows Model Studio load. Beijing evening (Bay Area morning) is the slow part. A key issued in the Beijing region is what this project was timed with. A key in the US (Virginia) region, with `qwen.baseUrl` set to `https://dashscope-us.aliyuncs.com/compatible-mode/v1`, saves a transpacific round trip. Open that key yourself.
 - The shutter is about 1.35 s, of which about 0.85 s is the camera HAL capturing a still. That part is not optimized.
-- Official pages leave 17 Cupertino items and 1 San José item unclear. Those show Not sure.
-- Palo Alto, Mountain View, and East Palo Alto can be added later. The rule format is the same: one `rules/<city>.json`.
+- Official pages leave 17 Cupertino items, 1 San José item, 12 Palo Alto items, and 19 Los Altos items unclear. Those show Not sure.
+- Mountain View and East Palo Alto can be added later. The rule format is the same: one `rules/<city>.json`.
 - Voice trigger is not built. Input is the buttons.

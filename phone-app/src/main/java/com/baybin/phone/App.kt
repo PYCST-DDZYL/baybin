@@ -46,23 +46,27 @@ class App : Application(), GlassesLink.Listener {
     lateinit var pipeline: Pipeline
         private set
 
-    /** Last photo (from the glasses or the gallery) and its answer, for the main screen. Only one is kept. */
-    @Volatile var lastPhoto: Bitmap? = null
-        private set
-    @Volatile var lastAnswer: Pipeline.Answer? = null
-        private set
-    @Volatile var lastSource: String = ""
-        private set
+    /**
+     * Each city keeps the last answer its own rules produced. Switching on the phone
+     * applies the new city's file to the item already recognized. It does not copy another
+     * city's bin, and the city left behind is not rewritten.
+     */
+    private class CitySlot {
+        var answer: Pipeline.Answer? = null
+        var photo: Bitmap? = null
+        var source: String = ""
+    }
 
-    /** True while a scan or a gallery photo is in the pipeline. The card shows "识别中…" instead of the previous bin. */
-    @Volatile var busy: Boolean = false
-        private set
+    private val slots = HashMap<String, CitySlot>()
+
+    /** True while a scan or a gallery photo is in the pipeline. The selected city shows "识别中…". */
+    @Volatile private var busy: Boolean = false
 
     var ui: Ui? = null
 
     private val prefs by lazy { getSharedPreferences("settings", MODE_PRIVATE) }
 
-    /** "cupertino" or "san_jose"; picked on the main screen. */
+    /** A [Rules.CITY_IDS] id; picked on the main screen. The glasses are not told. */
     var city: String
         get() = prefs.getString("city", null)?.takeIf { it in Rules.CITY_IDS } ?: Rules.CITY_IDS[0]
         set(value) { prefs.edit().putString("city", value).apply() }
@@ -177,9 +181,6 @@ class App : Application(), GlassesLink.Listener {
     private val worker = Executors.newSingleThreadExecutor { Thread(it, "baybin-pipeline") }
     private val main = Handler(Looper.getMainLooper())
 
-    /** Bumps on every city change. A scan keeps the epoch it started with, so a late result is retargeted. */
-    @Volatile private var cityEpoch = 0
-
     /** Bumps when a new scan or gallery job starts. An older job must not clear [busy]. */
     private var busyToken = 0
 
@@ -201,9 +202,8 @@ class App : Application(), GlassesLink.Listener {
     override fun onScan(reqId: Int, jpeg: ByteArray, rotation: Int) {
         val tRecv = SystemClock.elapsedRealtime()
         val cityNow = city
-        val epoch = cityEpoch
         val token = startBusy()
-        EventLog.add("scan $reqId: ${jpeg.size} B, rotation $rotation")
+        EventLog.add("scan $reqId: ${jpeg.size} B, rotation $rotation, city $cityNow")
         worker.execute {
             val a = try {
                 pipeline.run(jpeg, rotation, cityNow)
@@ -217,18 +217,18 @@ class App : Application(), GlassesLink.Listener {
             }
             val thumb = thumbnail(jpeg, rotation)
             main.post {
-                // The glasses are not told the city. The bin word was decided from the city
-                // this scan started with; a later city change only updates the phone card.
-                val name = a.itemId?.let { rules.item(it)?.name }
+                // The phone city at this moment wins. A quick switch while this was running
+                // is that city's own rule, not the one the scan started with. The glasses
+                // get this same bin once. A later switch updates only the phone.
+                val shown = settle(cityNow, a, thumb, "glasses", token)
+                val name = shown.itemId?.let { rules.item(it)?.name }
                 val sent = link.sendResult(
-                    reqId, a.kind,
-                    BinFace.lens(a.line1, Lang.zh(lang)),
-                    Lang.lensDetail(a.itemId, name, a.line2, lang),
+                    reqId, shown.kind,
+                    BinFace.lens(shown.line1, Lang.zh(lang)),
+                    Lang.lensDetail(shown.itemId, name, shown.line2, lang),
                 )
-                EventLog.add("BB_RESULT id=$reqId ${describe(a)} phone=${SystemClock.elapsedRealtime() - tRecv} sent=$sent " +
-                    "| ${a.line1} | ${a.line2}")
-                val shown = if (epoch == cityEpoch) a else pipeline.forCity(a, city)
-                show(shown, thumb, "glasses", token)
+                EventLog.add("BB_RESULT id=$reqId ${describe(shown)} phone=${SystemClock.elapsedRealtime() - tRecv} sent=$sent " +
+                    "| ${shown.line1} | ${shown.line2}")
             }
         }
     }
@@ -274,7 +274,6 @@ class App : Application(), GlassesLink.Listener {
 
     private fun classify(label: String, source: () -> ImageDecoder.Source) {
         val cityNow = city
-        val epoch = cityEpoch
         val token = startBusy()
         worker.execute {
             val t0 = SystemClock.elapsedRealtime()
@@ -288,12 +287,12 @@ class App : Application(), GlassesLink.Listener {
                 }
                 return@execute
             }
-            classifyNow(jpeg, label, t0, cityNow, epoch, token)
+            classifyNow(jpeg, label, t0, cityNow, token)
         }
     }
 
     /** Worker thread. [cityNow] is the city captured when the job started, so the log matches the answer. */
-    private fun classifyNow(jpeg: ByteArray, label: String, t0: Long, cityNow: String, epoch: Int, token: Int) {
+    private fun classifyNow(jpeg: ByteArray, label: String, t0: Long, cityNow: String, token: Int) {
         val a = try {
             pipeline.run(jpeg, 0, cityNow)
         } catch (e: Exception) {
@@ -306,21 +305,25 @@ class App : Application(), GlassesLink.Listener {
         }
         val thumb = thumbnail(jpeg, 0)
         main.post {
-            EventLog.add("BB_GALLERY file=$label city=$cityNow ${describe(a)} total=${SystemClock.elapsedRealtime() - t0} " +
-                "| ${a.line1} | ${a.line2}")
-            val shown = if (epoch == cityEpoch) a else pipeline.forCity(a, city)
-            show(shown, thumb, "gallery", token)
+            val shown = settle(cityNow, a, thumb, "gallery", token)
+            EventLog.add("BB_GALLERY file=$label city=${shown.cityId ?: cityNow} ${describe(shown)} total=${SystemClock.elapsedRealtime() - t0} " +
+                "| ${shown.line1} | ${shown.line2}")
         }
     }
 
-    /** Main thread. Re-applies the current city's rule to the item already on screen. Does not tell the glasses. */
+    /**
+     * Main thread. The phone is the city switch. Applies [id]'s own rule to the item on screen.
+     * Does not tell the glasses, and does not change the city just left.
+     */
     fun onCityChanged(id: String) {
         if (id !in Rules.CITY_IDS) return
         if (id != city) {
+            val from = answerFor(city)
+            val photo = photoFor(city)
+            val source = sourceFor(city)
             city = id
-            cityEpoch += 1
-            val prev = lastAnswer
-            if (prev != null) lastAnswer = pipeline.forCity(prev, id)
+            // A scan still running will land on this city when it finishes. Don't paint the previous item first.
+            if (!busy) from?.let { pipeline.forCity(it, id) }?.let { remember(id, it, photo, source) }
         }
         EventLog.add("city $id")
         ui?.refresh()
@@ -353,12 +356,37 @@ class App : Application(), GlassesLink.Listener {
         if (token == busyToken) busy = false
     }
 
-    private fun show(a: Pipeline.Answer, thumb: Bitmap?, source: String, token: Int) {
-        lastAnswer = a
-        lastSource = source
-        if (thumb != null) lastPhoto = thumb
+    /** The answer stored for [cityId], and only if that same city produced it. */
+    fun answerFor(cityId: String): Pipeline.Answer? =
+        slots[cityId]?.answer?.takeIf { it.cityId == cityId }
+
+    fun photoFor(cityId: String): Bitmap? = slots[cityId]?.photo
+
+    fun sourceFor(cityId: String): String = slots[cityId]?.source ?: ""
+
+    /** True while a job is running and the phone is showing this city. */
+    fun busyFor(cityId: String) = busy && cityId == city
+
+    private fun remember(cityId: String, a: Pipeline.Answer, thumb: Bitmap?, source: String) {
+        if (a.cityId != cityId) return
+        val s = slots.getOrPut(cityId) { CitySlot() }
+        s.answer = a
+        s.source = source
+        if (thumb != null) s.photo = thumb
+    }
+
+    /**
+     * Keeps [decided] on the city the job started with. If the phone has since moved,
+     * also stores that city's own ruling of the same item. Returns the answer to show now.
+     */
+    private fun settle(startCity: String, decided: Pipeline.Answer, thumb: Bitmap?, source: String, token: Int): Pipeline.Answer {
+        remember(startCity, decided, thumb, source)
+        val selected = city
+        val moved = if (selected == startCity) null else pipeline.forCity(decided, selected)
+        if (moved != null) remember(selected, moved, thumb, source)
         finishBusy(token)
         ui?.refresh()
+        return if (moved != null && moved.cityId == selected) moved else decided
     }
 
     private fun describe(a: Pipeline.Answer) = "kind=${a.kind} item=${a.itemId} bin=${a.bin} " +
@@ -378,6 +406,7 @@ class App : Application(), GlassesLink.Listener {
      *   adb shell am broadcast -a com.baybin.phone.RECONNECT -p com.baybin.phone
      *   adb shell am broadcast -a com.baybin.phone.STATUS -p com.baybin.phone
      *   adb shell am broadcast -a com.baybin.phone.CITY -p com.baybin.phone --es id san_jose
+     *     (id is one of cupertino, san_jose, palo_alto, los_altos)
      *   adb shell am broadcast -a com.baybin.phone.CLASSIFY -p com.baybin.phone --es file x.jpg
      *     (x.jpg in the app's private files/eval folder; tools/accept_7_gallery.py puts it there)
      */

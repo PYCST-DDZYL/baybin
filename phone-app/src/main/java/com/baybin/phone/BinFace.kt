@@ -8,6 +8,10 @@ package com.baybin.phone
  * San José single-family: recycling is a gray cart with a blue lid (city guide),
  * garbage is the black cart (GreenWaste San Jose; GreenTeam spec is black too),
  * yard trimmings are the green cart. San José's green cart is not for food.
+ * Palo Alto single-family (GreenWaste): blue recycling, green compost, black garbage.
+ * Food goes in the green cart, not the black one.
+ * Los Altos single-family (Mission Trail residential guide): blue recycling,
+ * green organics, gray garbage. Line1 stays "Landfill" so the lens says gray, not black.
  */
 object BinFace {
 
@@ -45,14 +49,27 @@ object BinFace {
         } else {
             if (city == "san_jose") "Recycling. Gray body, blue lid." else "Recycling."
         }
-        line1.startsWith("Compost") -> lens(line1, zh) to
-            if (zh) "厨余、食物脏了的纸、庭院。" else "Food, food-soiled paper, and yard trimmings."
-        line1.startsWith("Landfill") -> lens(line1, zh) to
-            if (zh) "不能回收、也不能堆肥的。" else "Not recyclable and not compostable."
-        line1.startsWith("Garbage") -> lens(line1, zh) to
-            if (zh) "垃圾。厨余也放这只，不要放绿桶。" else "Garbage. Food goes here too, not in the green cart."
-        line1.startsWith("Yard") -> lens(line1, zh) to
-            if (zh) "只放庭院修剪，不放食物。" else "Yard trimmings only. No food."
+        line1.startsWith("Compost") -> lens(line1, zh) to when (city) {
+            "cupertino", "palo_alto", "los_altos" ->
+                if (zh) "厨余、食物脏了的纸、庭院。" else "Food, food-soiled paper, and yard trimmings."
+            else -> null
+        }
+        line1.startsWith("Landfill") -> lens(line1, zh) to when (city) {
+            "cupertino", "los_altos" ->
+                if (zh) "不能回收、也不能堆肥的。" else "Not recyclable and not compostable."
+            else -> null
+        }
+        // Food placement is not shared. Palo Alto's black cart is not for food.
+        // San José's black cart is. Any other city keeps its own reason and no borrowed note.
+        line1.startsWith("Garbage") -> lens(line1, zh) to when (city) {
+            "palo_alto" -> if (zh) "食物放绿桶，不要放这只。" else "Food goes in the green cart, not in this one."
+            "san_jose" -> if (zh) "垃圾。厨余也放这只，不要放绿桶。" else "Garbage. Food goes here too, not in the green cart."
+            else -> null
+        }
+        line1.startsWith("Yard") -> lens(line1, zh) to when (city) {
+            "san_jose" -> if (zh) "只放庭院修剪，不放食物。" else "Yard trimmings only. No food."
+            else -> null
+        }
         line1.startsWith("Special") -> (if (zh) "别放进门口的桶" else "Not in the carts") to
             if (zh) "要另外交出去。" else "Take it somewhere else."
         line1.startsWith("Not sure") -> lens(line1, zh) to null
