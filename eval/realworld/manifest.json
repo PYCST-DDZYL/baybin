@@ -1,0 +1,515 @@
+{
+ "note": "Openly licensed real-world photos (Wikimedia Commons, Openverse/Flickr), labelled by hand. item = catalog id the app should answer.",
+ "photos": [
+  {
+   "file": "food_in_container__1.jpg",
+   "item": "food_in_container",
+   "title": "File:Take Out Pizza in Box.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Take_Out_Pizza_in_Box.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Snowjam",
+   "source": "commons",
+   "query": "chinese takeout food container"
+  },
+  {
+   "file": "food_in_container__3.jpg",
+   "item": "food_in_container",
+   "title": "File:CM khanom wun.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:CM_khanom_wun.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Takeaway",
+   "source": "commons",
+   "query": "takeaway food container"
+  },
+  {
+   "file": "food_in_container__4.jpg",
+   "item": "food_in_container",
+   "title": "File:Liat Portal for Foodie Disorder - Baklava from a Turkish Bakery in San Francisco.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Baklava_from_a_Turkish_Bakery_in_San_Francisco.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "HaJunkiyada",
+   "source": "commons",
+   "query": "takeaway food container"
+  },
+  {
+   "file": "food_in_container__5.jpg",
+   "item": "food_in_container",
+   "title": "File:020260501 Chill, cheap & protein.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:020260501_Chill,_cheap_%26_protein.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Auctor quaerendae",
+   "source": "commons",
+   "query": "takeaway food container"
+  },
+  {
+   "file": "food_in_container__6.jpg",
+   "item": "food_in_container",
+   "title": "Gyoza From Kite-ne",
+   "page": "https://www.flickr.com/photos/35237094214@N01/119742139",
+   "license": "CC BY 2.0",
+   "creator": "plindberg",
+   "source": "openverse/flickr",
+   "query": "takeaway food container"
+  },
+  {
+   "file": "food_in_container__7.jpg",
+   "item": "food_in_container",
+   "title": "Star India delivers",
+   "page": "https://www.flickr.com/photos/35034361412@N01/433243960",
+   "license": "CC BY 2.0",
+   "creator": "rick",
+   "source": "openverse/flickr",
+   "query": "styrofoam food container"
+  },
+  {
+   "file": "food_in_container__8.jpg",
+   "item": "food_in_container",
+   "title": "File:Nissin Cup Noodle (Original) - 01.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Nissin_Cup_Noodle_(Original)_-_01.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Quercus acuta",
+   "source": "commons",
+   "query": "cup noodles"
+  },
+  {
+   "file": "food_in_container__9.jpg",
+   "item": "food_in_container",
+   "title": "Nissin Cup Noodles Chicken Flavour - JetStar Inflight",
+   "page": "https://www.flickr.com/photos/10559879@N00/2589282841",
+   "license": "CC BY-SA 2.0",
+   "creator": "avlxyz",
+   "source": "openverse/flickr",
+   "query": "cup noodles"
+  },
+  {
+   "file": "food_in_container__10.jpg",
+   "item": "food_in_container",
+   "title": "File:TupperwareLeftovers.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:TupperwareLeftovers.jpg",
+   "license": "CC BY 2.0",
+   "creator": "Kathleen Franklin",
+   "source": "commons",
+   "query": "leftovers container"
+  },
+  {
+   "file": "food_in_container__11.jpg",
+   "item": "food_in_container",
+   "title": "File:Bento 002.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Bento_002.jpg",
+   "license": "CC0",
+   "creator": "Ocdp",
+   "source": "commons",
+   "query": "bento box takeout"
+  },
+  {
+   "file": "food_in_container__12.jpg",
+   "item": "food_in_container",
+   "title": "File:Florham Park Cafe lunchtime salad bar with Palm Treo.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Florham_Park_Cafe_lunchtime_salad_bar_with_Palm_Treo.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Jonathan Schilling",
+   "source": "commons",
+   "query": "salad plastic container"
+  },
+  {
+   "file": "food_in_container__13.jpg",
+   "item": "food_in_container",
+   "title": "File:Waldorf deli salad.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Waldorf_deli_salad.jpg",
+   "license": "CC BY-SA 3.0",
+   "creator": "Ewkada",
+   "source": "commons",
+   "query": "salad plastic container"
+  },
+  {
+   "file": "food_in_container__14.jpg",
+   "item": "food_in_container",
+   "title": "File:Liat Portal for Foodie Disorder - Seaweed Salad.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Seaweed_Salad.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "HaJunkiyada",
+   "source": "commons",
+   "query": "salad plastic container"
+  },
+  {
+   "file": "food_in_container__15.jpg",
+   "item": "food_in_container",
+   "title": "File:Slice Shack by Mary's - February 2024 - Sarah Stierch 02.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Slice_Shack_by_Mary%27s_-_February_2024_-_Sarah_Stierch_02.jpg",
+   "license": "CC BY 4.0",
+   "creator": "Missvain",
+   "source": "commons",
+   "query": "salad plastic container"
+  },
+  {
+   "file": "food_in_container__16.jpg",
+   "item": "food_in_container",
+   "title": "Sarasota - Meals on Wheels",
+   "page": "https://www.flickr.com/photos/24736216@N07/8045889326",
+   "license": "CC BY-SA 2.0",
+   "creator": "roger4336",
+   "source": "openverse/flickr",
+   "query": "salad plastic container"
+  },
+  {
+   "file": "food_in_container__17.jpg",
+   "item": "food_in_container",
+   "title": "File:Khao soi nuea Fueng Fah.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Khao_soi_nuea_Fueng_Fah.jpg",
+   "license": "CC BY-SA 3.0",
+   "creator": "Takeaway",
+   "source": "commons",
+   "query": "takeaway food container"
+  },
+  {
+   "file": "food_in_container__18.jpg",
+   "item": "food_in_container",
+   "title": "File:Yen tafo.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Yen_tafo.jpg",
+   "license": "CC BY-SA 3.0",
+   "creator": "Takeaway",
+   "source": "commons",
+   "query": "noodle soup takeaway"
+  },
+  {
+   "file": "food_in_container__19.jpg",
+   "item": "food_in_container",
+   "title": "Sampan Congee with Beef, Squid, Jelly Fish - Pacific Seafood BBQ House",
+   "page": "https://www.flickr.com/photos/10559879@N00/2479287633",
+   "license": "CC BY-SA 2.0",
+   "creator": "avlxyz",
+   "source": "openverse/flickr",
+   "query": "noodle soup takeaway"
+  },
+  {
+   "file": "food_in_container__20.jpg",
+   "item": "food_in_container",
+   "title": "File:Roast Goose Rice with Plum Sauce.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Roast_Goose_Rice_with_Plum_Sauce.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Ceeseven",
+   "source": "commons",
+   "query": "roast goose rice"
+  },
+  {
+   "file": "food_in_container__21.jpg",
+   "item": "food_in_container",
+   "title": "File:Roast Goose with Rice and Choy Sum.JPG",
+   "page": "https://commons.wikimedia.org/wiki/File:Roast_Goose_with_Rice_and_Choy_Sum.JPG",
+   "license": "CC BY-SA 4.0",
+   "creator": "Ceeseven",
+   "source": "commons",
+   "query": "roast goose rice"
+  },
+  {
+   "file": "food_in_container__22.jpg",
+   "item": "food_in_container",
+   "title": "File:Zunyi mutton rice noodle soup (20180220124801).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Zunyi_mutton_rice_noodle_soup_(20180220124801).jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "N509FZ",
+   "source": "commons",
+   "query": "rice noodle soup"
+  },
+  {
+   "file": "food_in_container__23.jpg",
+   "item": "food_in_container",
+   "title": "鱼蛋汤米粉 Fish Ball Rice Noodle Soup - Kum Den AUD7.80",
+   "page": "https://www.flickr.com/photos/10559879@N00/3571434590",
+   "license": "CC BY-SA 2.0",
+   "creator": "avlxyz",
+   "source": "openverse/flickr",
+   "query": "rice noodle soup"
+  },
+  {
+   "file": "foam_food_container__1.jpg",
+   "item": "foam_food_container",
+   "title": "File:Hefty square styrofoam food container open.JPG",
+   "page": "https://commons.wikimedia.org/wiki/File:Hefty_square_styrofoam_food_container_open.JPG",
+   "license": "CC BY-SA 3.0",
+   "creator": "BrokenSphere",
+   "source": "commons",
+   "query": "styrofoam food container"
+  },
+  {
+   "file": "foam_food_container__2.jpg",
+   "item": "foam_food_container",
+   "title": "File:Hefty square styrofoam food container closed.JPG",
+   "page": "https://commons.wikimedia.org/wiki/File:Hefty_square_styrofoam_food_container_closed.JPG",
+   "license": "CC BY-SA 3.0",
+   "creator": "BrokenSphere",
+   "source": "commons",
+   "query": "styrofoam food container"
+  },
+  {
+   "file": "foam_food_container__3.jpg",
+   "item": "foam_food_container",
+   "title": "File:Have a Nice Day! styrofoam food container.JPG",
+   "page": "https://commons.wikimedia.org/wiki/File:Have_a_Nice_Day!_styrofoam_food_container.JPG",
+   "license": "CC BY-SA 3.0",
+   "creator": "BrokenSphere",
+   "source": "commons",
+   "query": "styrofoam food container"
+  },
+  {
+   "file": "foam_food_container__4.jpg",
+   "item": "foam_food_container",
+   "title": "File:HK Tram Chair White Plastic Lunch Rice Food Box Container 1.JPG",
+   "page": "https://commons.wikimedia.org/wiki/File:HK_Tram_Chair_White_Plastic_Lunch_Rice_Food_Box_Container_1.JPG",
+   "license": "CC BY-SA 3.0",
+   "creator": "Htroursid",
+   "source": "commons",
+   "query": "lunch box rice plastic container"
+  },
+  {
+   "file": "plastic_takeout__1.jpg",
+   "item": "plastic_takeout",
+   "title": "File:Green take out boxes UF.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Green_take_out_boxes_UF.jpg",
+   "license": "CC BY-SA 3.0",
+   "creator": "Teddykaitlinllucien",
+   "source": "commons",
+   "query": "chinese takeout food container"
+  },
+  {
+   "file": "plastic_tub__1.jpg",
+   "item": "plastic_tub",
+   "title": "File:Antiperle container empty 007.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Antiperle_container_empty_007.jpg",
+   "license": "Public domain",
+   "creator": "Miaow Miaow",
+   "source": "commons",
+   "query": "empty plastic container"
+  },
+  {
+   "file": "paper_cup__1.jpg",
+   "item": "paper_cup",
+   "title": "Coffee's good! ...join me?! http://www.BeckyCortino.me #coffee #Starbucks",
+   "page": "https://www.flickr.com/photos/48638551@N03/8976979681",
+   "license": "CC BY 2.0",
+   "creator": "BeckyCortino",
+   "source": "openverse/flickr",
+   "query": "empty takeout container"
+  },
+  {
+   "file": "paper_cup__2.jpg",
+   "item": "paper_cup",
+   "title": "File:Disposable , paper coffee cups, Christmas in Australia, 2021.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Disposable_,_paper_coffee_cups,_Christmas_in_Australia,_2021.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Kgbo",
+   "source": "commons",
+   "query": "disposable coffee cup"
+  },
+  {
+   "file": "paper_cup__3.jpg",
+   "item": "paper_cup",
+   "title": "File:Disposable cap of Lavazza coffee served at Jetstar aircraft, 2023.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Disposable_cap_of_Lavazza_coffee_served_at_Jetstar_aircraft,_2023.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Kgbo",
+   "source": "commons",
+   "query": "disposable coffee cup"
+  },
+  {
+   "file": "paper_cup__4.jpg",
+   "item": "paper_cup",
+   "title": "person holding pink and white disposable coffee cup - Credit to https://myfriendscoffee.com/",
+   "page": "https://www.flickr.com/photos/147592390@N06/33727857828",
+   "license": "CC BY 2.0",
+   "creator": "John Beans",
+   "source": "openverse/flickr",
+   "query": "disposable coffee cup"
+  },
+  {
+   "file": "plastic_cup__1.jpg",
+   "item": "plastic_cup",
+   "title": "File:Dal.komm coffee cup - 20191120 150243674.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Dal.komm_coffee_cup_-_20191120_150243674.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Dal.komm2019",
+   "source": "commons",
+   "query": "disposable coffee cup"
+  },
+  {
+   "file": "plastic_cup__2.jpg",
+   "item": "plastic_cup",
+   "title": "File:A discarded plastic bottle and a surfer.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:A_discarded_plastic_bottle_and_a_surfer.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Twentyfirstidentity",
+   "source": "commons",
+   "query": "plastic bottle trash"
+  },
+  {
+   "file": "food_scraps__1.jpg",
+   "item": "food_scraps",
+   "title": "File:Food waste with moldy bread.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Food_waste_with_moldy_bread.jpg",
+   "license": "CC BY 2.0",
+   "creator": "Nick Saltmarsh",
+   "source": "commons",
+   "query": "food waste"
+  },
+  {
+   "file": "food_scraps__2.jpg",
+   "item": "food_scraps",
+   "title": "File:Parking lot banana peel.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Parking_lot_banana_peel.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Ser Amantio di Nicolao",
+   "source": "commons",
+   "query": "banana peel"
+  },
+  {
+   "file": "food_scraps__3.jpg",
+   "item": "food_scraps",
+   "title": "File:Banana peel 2.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Banana_peel_2.jpg",
+   "license": "CC BY-SA 3.0",
+   "creator": "Anitamahotra",
+   "source": "commons",
+   "query": "banana peel"
+  },
+  {
+   "file": "food_scraps__4.jpg",
+   "item": "food_scraps",
+   "title": "File:Rotten apple under the tree.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Rotten_apple_under_the_tree.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Sally V",
+   "source": "commons",
+   "query": "apple core"
+  },
+  {
+   "file": "food_scraps__5.jpg",
+   "item": "food_scraps",
+   "title": "red apple core",
+   "page": "https://www.flickr.com/photos/36291048@N06/3389124067",
+   "license": "CC BY 2.0",
+   "creator": "roger.karlsson",
+   "source": "openverse/flickr",
+   "query": "apple core"
+  },
+  {
+   "file": "food_scraps__6.jpg",
+   "item": "food_scraps",
+   "title": "Empty egg shells",
+   "page": "https://www.flickr.com/photos/127294011@N07/14889022769",
+   "license": "CC BY 2.0",
+   "creator": "PersonalCreations.com",
+   "source": "openverse/flickr",
+   "query": "egg shells"
+  },
+  {
+   "file": "aluminum_can__1.jpg",
+   "item": "aluminum_can",
+   "title": "File:Crushed Coca Cola can can.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Crushed_Coca_Cola_can_can.jpg",
+   "license": "CC BY 2.5",
+   "creator": "Panhard",
+   "source": "commons",
+   "query": "crushed can"
+  },
+  {
+   "file": "aluminum_can__2.jpg",
+   "item": "aluminum_can",
+   "title": "File:Crushed Coke Can (3921080513).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Crushed_Coke_Can_(3921080513).jpg",
+   "license": "CC BY-SA 2.0",
+   "creator": "Ian Muttoo from Mississauga, Canada",
+   "source": "commons",
+   "query": "crushed can"
+  },
+  {
+   "file": "aluminum_can__3.jpg",
+   "item": "aluminum_can",
+   "title": "File:Crushed coka cola can.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Crushed_coka_cola_can.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "क्षत्रिय117",
+   "source": "commons",
+   "query": "crushed can"
+  },
+  {
+   "file": "paper_mixed__1.jpg",
+   "item": "paper_mixed",
+   "title": "overcoming writer's block - crumpled paper on wooden floor - crushed paper",
+   "page": "https://www.flickr.com/photos/42931449@N07/5263540555",
+   "license": "CC BY 2.0",
+   "creator": "photosteve101",
+   "source": "openverse/flickr",
+   "query": "crumpled paper"
+  },
+  {
+   "file": "paper_mixed__2.jpg",
+   "item": "paper_mixed",
+   "title": "A Crumpled Paper Ball",
+   "page": "https://www.flickr.com/photos/18922948@N08/2946943615",
+   "license": "CC BY 2.0",
+   "creator": "Turinboy",
+   "source": "openverse/flickr",
+   "query": "crumpled paper"
+  },
+  {
+   "file": "plastic_bag__1.jpg",
+   "item": "plastic_bag",
+   "title": "File:Discarded Meijer plastic bag.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Discarded_Meijer_plastic_bag.jpg",
+   "license": "CC0",
+   "creator": "Visviva",
+   "source": "commons",
+   "query": "plastic bag litter"
+  },
+  {
+   "file": "plastic_bag__2.jpg",
+   "item": "plastic_bag",
+   "title": "Part of a Solution",
+   "page": "https://www.flickr.com/photos/22865921@N07/2611335489",
+   "license": "CC BY 2.0",
+   "creator": "Nikki L.",
+   "source": "openverse/flickr",
+   "query": "plastic bag litter"
+  },
+  {
+   "file": "plastic_bag__3.jpg",
+   "item": "plastic_bag",
+   "title": "carrier_bags",
+   "page": "https://www.flickr.com/photos/87481332@N00/167934944",
+   "license": "CC BY 2.0",
+   "creator": "How can I recycle this",
+   "source": "openverse/flickr",
+   "query": "plastic bag litter"
+  },
+  {
+   "file": "snack_wrapper__1.jpg",
+   "item": "snack_wrapper",
+   "title": "2010/365/117 Wither the Chip Bag",
+   "page": "https://www.flickr.com/photos/37996646802@N01/4560130886",
+   "license": "CC0",
+   "creator": "cogdogblog",
+   "source": "openverse/flickr",
+   "query": "chips bag"
+  },
+  {
+   "file": "plastic_bottle__1.jpg",
+   "item": "plastic_bottle",
+   "title": "water_bottle",
+   "page": "https://www.flickr.com/photos/87481332@N00/167934943",
+   "license": "CC BY 2.0",
+   "creator": "How can I recycle this",
+   "source": "openverse/flickr",
+   "query": "plastic bottle trash"
+  },
+  {
+   "file": "paper_towel_napkin__1.jpg",
+   "item": "paper_towel_napkin",
+   "title": "File:Happy Easter paper napkin from The Netherlands.png",
+   "page": "https://commons.wikimedia.org/wiki/File:Happy_Easter_paper_napkin_from_The_Netherlands.png",
+   "license": "CC BY-SA 4.0",
+   "creator": "Mr-ahk",
+   "source": "commons",
+   "query": "used napkin"
+  }
+ ]
+}

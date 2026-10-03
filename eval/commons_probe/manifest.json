@@ -1,0 +1,499 @@
+{
+ "plastic_bottle": {
+  "title": "File:Plastic bottle.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Plastic_bottle.jpg",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Plastic_bottle.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "license": "CC BY 3.0",
+  "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Nicole_Gordine&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Nicole Gordine (page does not exist)\">Nicole Gordine</a>",
+  "term": "plastic bottle",
+  "file": "plastic_bottle.jpg"
+ },
+ "plastic_jug": {
+  "title": "File:Bottle of milk.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Bottle_of_milk.jpg",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Bottle_of_milk.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Rlsheehan&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Rlsheehan (page does not exist)\">Rlsheehan</a>",
+  "term": "plastic milk jug",
+  "file": "plastic_jug.jpg"
+ },
+ "plastic_tub": {
+  "title": "File:Envase de yogur.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Envase_de_yogur.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/Envase_de_yogur.jpg/1280px-Envase_de_yogur.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 3.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Hispalois\" title=\"User:Hispalois\">Hispalois</a>",
+  "term": "yoghurt pot",
+  "file": "plastic_tub.jpg"
+ },
+ "plastic_clamshell": {
+  "title": "File:Clamshell Pack 002.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Clamshell_Pack_002.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fc/Clamshell_Pack_002.jpg/1280px-Clamshell_Pack_002.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 3.0",
+  "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Rlsheehan&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Rlsheehan (page does not exist)\">Rlsheehan</a>",
+  "term": "plastic clamshell container",
+  "file": "plastic_clamshell.jpg",
+  "expect": "food_in_container",
+  "expect_note": "Photo shows the clamshell full of raspberries; since 2026-10-02 the catalog has food_in_container (food comes out first, then the container is sorted)."
+ },
+ "plastic_cup": {
+  "title": "File:Disposable plastic cup.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Disposable_plastic_cup.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/Disposable_plastic_cup.jpg/1280px-Disposable_plastic_cup.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:George_E._Koronaios\" title=\"User:George E. Koronaios\">George E. Koronaios</a>",
+  "term": "disposable plastic cup",
+  "file": "plastic_cup.jpg"
+ },
+ "plastic_bag": {
+  "title": "File:Hemdchentuete.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Hemdchentuete.jpg",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/8/8f/Hemdchentuete.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "license": "CC BY-SA 3.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Phrontis\" title=\"User:Phrontis\">Phrontis</a>",
+  "term": "plastic shopping bag",
+  "file": "plastic_bag.jpg"
+ },
+ "bubble_wrap": {
+  "title": "File:Bubble Wrap.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Bubble_Wrap.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/Bubble_Wrap.jpg/1280px-Bubble_Wrap.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 3.0",
+  "artist": "User <a href=\"https://en.wikipedia.org/wiki/User:Consequencefree\" class=\"extiw\" title=\"en:User:Consequencefree\">Consequencefree</a> on <a class=\"external text\" data-mw-original-href=\"http://en.wikiped",
+  "term": "bubble wrap",
+  "file": "bubble_wrap.jpg"
+ },
+ "snack_wrapper": {
+  "title": "File:Opened bag of Ruffles All Dressed potato chips (cropped).jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Opened_bag_of_Ruffles_All_Dressed_potato_chips_(cropped).jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/Opened_bag_of_Ruffles_All_Dressed_potato_chips_%28cropped%29.jpg/1280px-Opened_bag_of_Ruffles_All_Dressed_potato_chips_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Ser_Amantio_di_Nicolao\" title=\"User:Ser Amantio di Nicolao\">Ser Amantio di Nicolao</a>",
+  "term": "potato chips bag",
+  "file": "snack_wrapper.jpg"
+ },
+ "plastic_utensils": {
+  "title": "File:BiodegradablePlasticUtensils1.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:BiodegradablePlasticUtensils1.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/BiodegradablePlasticUtensils1.jpg/1280px-BiodegradablePlasticUtensils1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "Public domain",
+  "artist": "Scott Bauer",
+  "term": "plastic cutlery",
+  "file": "plastic_utensils.jpg"
+ },
+ "straw": {
+  "title": "File:Eight drinking straws (4273846588).jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Eight_drinking_straws_(4273846588).jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c7/Eight_drinking_straws_%284273846588%29.jpg/1280px-Eight_drinking_straws_%284273846588%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY 2.0",
+  "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/10361931@N06\">Horia Varlan</a> from Bucharest, Romania",
+  "term": "plastic drinking straws",
+  "file": "straw.jpg"
+ },
+ "foam_food_container": {
+  "title": "File:Hefty square styrofoam food container open.JPG",
+  "page": "https://commons.wikimedia.org/wiki/File:Hefty_square_styrofoam_food_container_open.JPG",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/Hefty_square_styrofoam_food_container_open.JPG/1280px-Hefty_square_styrofoam_food_container_open.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 3.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:BrokenSphere\" title=\"User:BrokenSphere\">BrokenSphere</a>",
+  "term": "styrofoam food container",
+  "file": "foam_food_container.jpg"
+ },
+ "foam_packaging": {
+  "title": "File:Packing peanuts plastic packaging material.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Packing_peanuts_plastic_packaging_material.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d1/Packing_peanuts_plastic_packaging_material.jpg/1280px-Packing_peanuts_plastic_packaging_material.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC0",
+  "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Fourteenzerozero&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Fourteenzerozero (page does not exist)\">Fourteenzerozero</a>",
+  "term": "polystyrene packing peanuts",
+  "file": "foam_packaging.jpg"
+ },
+ "coffee_pod": {
+  "title": "File:Капсула.png",
+  "page": "https://commons.wikimedia.org/wiki/File:%D0%9A%D0%B0%D0%BF%D1%81%D1%83%D0%BB%D0%B0.png",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/c/c1/%D0%9A%D0%B0%D0%BF%D1%81%D1%83%D0%BB%D0%B0.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "license": "CC BY-SA 3.0",
+  "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Cremesso&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Cremesso (page does not exist)\">Cremesso</a>",
+  "term": "coffee capsule",
+  "file": "coffee_pod.jpg"
+ },
+ "aluminum_can": {
+  "title": "File:Can of Diet Sierra Mist lemon-lime soda, 2011.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Can_of_Diet_Sierra_Mist_lemon-lime_soda,_2011.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9f/Can_of_Diet_Sierra_Mist_lemon-lime_soda%2C_2011.jpg/1280px-Can_of_Diet_Sierra_Mist_lemon-lime_soda%2C_2011.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:DimiTalen\" title=\"User:DimiTalen\">DimiTalen</a>",
+  "term": "aluminum beverage can",
+  "file": "aluminum_can.jpg"
+ },
+ "food_can": {
+  "title": "File:Halal canned meat product.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Halal_canned_meat_product.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ac/Halal_canned_meat_product.jpg/1280px-Halal_canned_meat_product.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Middle_river_exports\" class=\"mw-redirect\" title=\"User:Middle river exports\">Middle river exports</a>",
+  "term": "canned food tin can",
+  "file": "food_can.jpg"
+ },
+ "aluminum_foil": {
+  "title": "File:Aluminium cooking foil.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Aluminium_cooking_foil.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cc/Aluminium_cooking_foil.jpg/1280px-Aluminium_cooking_foil.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 3.0",
+  "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:50N916&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:50N916 (page does not exist)\">Lewis Ronald</a>",
+  "term": "crumpled aluminium foil",
+  "file": "aluminum_foil.jpg"
+ },
+ "aerosol_can": {
+  "title": "File:WD40 Specialist Contact Cleaner aerosol can.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:WD40_Specialist_Contact_Cleaner_aerosol_can.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/WD40_Specialist_Contact_Cleaner_aerosol_can.jpg/1280px-WD40_Specialist_Contact_Cleaner_aerosol_can.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Ubcule\" title=\"User:Ubcule\">Ubcule</a>",
+  "term": "aerosol can",
+  "file": "aerosol_can.jpg"
+ },
+ "glass_bottle": {
+  "title": "File:Beer bottles 2018 G1.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Beer_bottles_2018_G1.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/11/Beer_bottles_2018_G1.jpg/1280px-Beer_bottles_2018_G1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "Public domain",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:George_Chernilevsky\" title=\"User:George Chernilevsky\">George Chernilevsky</a>",
+  "term": "glass beer bottle",
+  "file": "glass_bottle.jpg"
+ },
+ "glass_jar": {
+  "title": "File:Empty Clear Jar (51330638811).jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Empty_Clear_Jar_(51330638811).jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c4/Empty_Clear_Jar_%2851330638811%29.jpg/1280px-Empty_Clear_Jar_%2851330638811%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC0",
+  "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/184594136@N08\">Alabama Extension</a>",
+  "term": "empty glass jar",
+  "file": "glass_jar.jpg"
+ },
+ "broken_glass": {
+  "title": "File:Glass shards.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Glass_shards.jpg",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/5/59/Glass_shards.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Sudzie\" title=\"User:Sudzie\">Sudzie</a>",
+  "term": "broken glass shards",
+  "file": "broken_glass.jpg"
+ },
+ "cardboard_box": {
+  "title": "File:Box.agr.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Box.agr.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/Box.agr.jpg/1280px-Box.agr.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 3.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:ArnoldReinhold\" title=\"User:ArnoldReinhold\">ArnoldReinhold</a>",
+  "term": "cardboard box",
+  "file": "cardboard_box.jpg"
+ },
+ "pizza_box_greasy": {
+  "title": "File:11 30 2022 Park Slope Pizza Boxes BPL WikiWeds Nov WMNYC.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:11_30_2022_Park_Slope_Pizza_Boxes_BPL_WikiWeds_Nov_WMNYC.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/11_30_2022_Park_Slope_Pizza_Boxes_BPL_WikiWeds_Nov_WMNYC.jpg/1280px-11_30_2022_Park_Slope_Pizza_Boxes_BPL_WikiWeds_Nov_WMNYC.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Wil540_art\" title=\"User:Wil540 art\">Wil540</a>",
+  "term": "pizza box",
+  "file": "pizza_box_greasy.jpg"
+ },
+ "paper_cup": {
+  "title": "File:Paper coffee cup, Novosibirsk 02.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Paper_coffee_cup,_Novosibirsk_02.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Paper_coffee_cup%2C_Novosibirsk_02.jpg/1280px-Paper_coffee_cup%2C_Novosibirsk_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 4.0",
+  "artist": "К.Артём.1",
+  "term": "paper coffee cup",
+  "file": "paper_cup.jpg"
+ },
+ "paper_bag": {
+  "title": "File:Coffee grinder - store.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Coffee_grinder_-_store.jpg",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/3/39/Coffee_grinder_-_store.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Pkgx&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Pkgx (page does not exist)\">Pkgx</a>",
+  "term": "paper grocery bag",
+  "file": "paper_bag.jpg"
+ },
+ "egg_carton_paper": {
+  "title": "File:Egg cartons with chicken eggs 03.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Egg_cartons_with_chicken_eggs_03.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/83/Egg_cartons_with_chicken_eggs_03.jpg/1280px-Egg_cartons_with_chicken_eggs_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Tournasol7\" title=\"User:Tournasol7\">Krzysztof Golik</a>",
+  "term": "egg carton",
+  "file": "egg_carton_paper.jpg"
+ },
+ "egg_carton_foam": {
+  "title": "File:Schaumstoffverpackung Frischeier DDR.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Schaumstoffverpackung_Frischeier_DDR.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/50/Schaumstoffverpackung_Frischeier_DDR.jpg/1280px-Schaumstoffverpackung_Frischeier_DDR.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:VSchagow\" title=\"User:VSchagow\">VSchagow</a>",
+  "term": "foam egg carton",
+  "file": "egg_carton_foam.jpg"
+ },
+ "carton": {
+  "title": "File:1969 - Freemans Milk Carton Ad - Dorney Park - Allentown PA.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:1969_-_Freemans_Milk_Carton_Ad_-_Dorney_Park_-_Allentown_PA.jpg",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/c/c2/1969_-_Freemans_Milk_Carton_Ad_-_Dorney_Park_-_Allentown_PA.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "license": "Public domain",
+  "artist": "unknown",
+  "term": "milk carton",
+  "file": "carton.jpg"
+ },
+ "aseptic_carton": {
+  "title": "File:Dornbirn-Klaus Thaler-collection drink paper cartons-Tetra Pak-01ASD.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Dornbirn-Klaus_Thaler-collection_drink_paper_cartons-Tetra_Pak-01ASD.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/Dornbirn-Klaus_Thaler-collection_drink_paper_cartons-Tetra_Pak-01ASD.jpg/1280px-Dornbirn-Klaus_Thaler-collection_drink_paper_cartons-Tetra_Pak-01ASD.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Asurnipal\" title=\"User:Asurnipal\">Asurnipal</a>",
+  "term": "tetra pak drink carton",
+  "file": "aseptic_carton.jpg"
+ },
+ "battery": {
+  "title": "File:AA VARTA battery-side PNr°0782.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:AA_VARTA_battery-side_PNr%C2%B00782.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c8/AA_VARTA_battery-side_PNr%C2%B00782.jpg/1280px-AA_VARTA_battery-side_PNr%C2%B00782.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:D-Kuru\" title=\"User:D-Kuru\">D-Kuru</a>",
+  "term": "AA batteries",
+  "file": "battery.jpg"
+ },
+ "bulb_fluorescent": {
+  "title": "File:Compact-Fluorescent-Bulb.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Compact-Fluorescent-Bulb.jpg",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Compact-Fluorescent-Bulb.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "license": "CC BY 3.0",
+  "artist": "<a class=\"external free\" data-mw-original-href=\"http://en.wikipedia.org/wiki/User:PiccoloNamek\" href=\"https://en.wikipedia.org/wiki/User:PiccoloNamek\">http://en.wikipedia.org/wiki/User:PiccoloNamek</a",
+  "term": "compact fluorescent light bulb",
+  "file": "bulb_fluorescent.jpg"
+ },
+ "bulb_incandescent": {
+  "title": "File:Gluehlampe 01 KMJ.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Gluehlampe_01_KMJ.jpg",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Gluehlampe_01_KMJ.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "license": "CC BY-SA 3.0",
+  "artist": "<a href=\"https://de.wikipedia.org/wiki/Benutzer:KMJ\" class=\"extiw\" title=\"de:Benutzer:KMJ\">KMJ</a>",
+  "term": "incandescent light bulb",
+  "file": "bulb_incandescent.jpg"
+ },
+ "phone_electronics": {
+  "title": "File:Mobile phone PHS Japan 1997-2003.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Mobile_phone_PHS_Japan_1997-2003.jpg",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Mobile_phone_PHS_Japan_1997-2003.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "license": "Public domain",
+  "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Marus&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Marus (page does not exist)\">Marus</a>",
+  "term": "mobile phone",
+  "file": "phone_electronics.jpg"
+ },
+ "food_scraps": {
+  "title": "File:Banane-A-05 cropped.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Banane-A-05_cropped.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/64/Banane-A-05_cropped.jpg/1280px-Banane-A-05_cropped.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "Public domain",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Priwo\" title=\"User:Priwo\">Priwo</a>",
+  "term": "banana peel",
+  "file": "food_scraps.jpg"
+ },
+ "bones": {
+  "title": "File:Fried chicken bones (409220449).jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Fried_chicken_bones_(409220449).jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/93/Fried_chicken_bones_%28409220449%29.jpg/1280px-Fried_chicken_bones_%28409220449%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY 2.0",
+  "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/44124401641@N01\">istolethetv</a> from Hong Kong, China",
+  "term": "chicken bones",
+  "file": "bones.jpg"
+ },
+ "flowers": {
+  "title": "File:Poppies bouquet 2017 G1.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Poppies_bouquet_2017_G1.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/74/Poppies_bouquet_2017_G1.jpg/1280px-Poppies_bouquet_2017_G1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "Public domain",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:George_Chernilevsky\" title=\"User:George Chernilevsky\">George Chernilevsky</a>",
+  "term": "bouquet of flowers",
+  "file": "flowers.jpg"
+ },
+ "yard_trimmings": {
+  "title": "File:Pile of leaves 001.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Pile_of_leaves_001.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/00/Pile_of_leaves_001.jpg/1280px-Pile_of_leaves_001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Jeuwre\" title=\"User:Jeuwre\">Jeuwre</a>",
+  "term": "pile of fallen leaves",
+  "file": "yard_trimmings.jpg"
+ },
+ "face_mask": {
+  "title": "File:A surgical mask (2017).jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:A_surgical_mask_(2017).jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/A_surgical_mask_%282017%29.jpg/1280px-A_surgical_mask_%282017%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC0",
+  "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:AlexChirkin&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:AlexChirkin (page does not exist)\">AlexChirkin</a>",
+  "term": "surgical mask",
+  "file": "face_mask.jpg"
+ },
+ "disposable_gloves": {
+  "title": "File:Disposable nitrile glove.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Disposable_nitrile_glove.jpg",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Disposable_nitrile_glove.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "license": "Public domain",
+  "artist": "",
+  "term": "disposable gloves",
+  "file": "disposable_gloves.jpg"
+ },
+ "cigarette": {
+  "title": "File:L&M Finely Cut cigarettes 02.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:L%26M_Finely_Cut_cigarettes_02.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/16/L%26M_Finely_Cut_cigarettes_02.jpg/1280px-L%26M_Finely_Cut_cigarettes_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:LoMit\" title=\"User:LoMit\"><b>LoMit</b></a>",
+  "term": "cigarette butt",
+  "file": "cigarette.jpg"
+ },
+ "toothbrush": {
+  "title": "File:Toothbrush x3 20050716 002.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Toothbrush_x3_20050716_002.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/Toothbrush_x3_20050716_002.jpg/1280px-Toothbrush_x3_20050716_002.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "Public domain",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Bergsten\" title=\"User:Bergsten\">Jonas Bergsten</a>",
+  "term": "toothbrush",
+  "file": "toothbrush.jpg"
+ },
+ "toothpaste_tube": {
+  "title": "File:Vitis Dentaid toothpaste tube, Hillegersberg, Rotterdam (2021) 01.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Vitis_Dentaid_toothpaste_tube,_Hillegersberg,_Rotterdam_(2021)_01.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8c/Vitis_Dentaid_toothpaste_tube%2C_Hillegersberg%2C_Rotterdam_%282021%29_01.jpg/1280px-Vitis_Dentaid_toothpaste_tube%2C_Hillegersberg%2C_Rotterdam_%282021%29_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Donald_Trung\" title=\"User:Donald Trung\">Donald Trung Quoc Don (Chữ Hán: 徵國單)</a> - <a class=\"external text\" href=\"https://commons.m.wikimedia.org/wiki/Common",
+  "term": "toothpaste tube",
+  "file": "toothpaste_tube.jpg"
+ },
+ "receipt": {
+  "title": "File:Kuang Nan Fashion Shop Keelung Store receipt 20161005 face.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Kuang_Nan_Fashion_Shop_Keelung_Store_receipt_20161005_face.jpg",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Kuang_Nan_Fashion_Shop_Keelung_Store_receipt_20161005_face.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Solomon203\" title=\"User:Solomon203\">Solomon203</a>",
+  "term": "shop receipt",
+  "file": "receipt.jpg"
+ },
+ "shredded_paper": {
+  "title": "File:Shredded Paper (49818912403).jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Shredded_Paper_(49818912403).jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/Shredded_Paper_%2849818912403%29.jpg/1280px-Shredded_Paper_%2849818912403%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY 2.0",
+  "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/83136374@N05\">Ajay Suresh</a> from New York, NY, USA",
+  "term": "shredded paper",
+  "file": "shredded_paper.jpg"
+ },
+ "paper_mixed": {
+  "title": "File:Land on the Moon 7 21 1969-repair.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Land_on_the_Moon_7_21_1969-repair.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9a/Land_on_the_Moon_7_21_1969-repair.jpg/1280px-Land_on_the_Moon_7_21_1969-repair.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "Public domain",
+  "artist": "Jack Weir (1928-2005)",
+  "term": "newspaper",
+  "file": "paper_mixed.jpg"
+ },
+ "propane_cylinder": {
+  "title": "File:Propane cylinder type 2012 in Tuntorp 2.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Propane_cylinder_type_2012_in_Tuntorp_2.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Propane_cylinder_type_2012_in_Tuntorp_2.jpg/1280px-Propane_cylinder_type_2012_in_Tuntorp_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:W.carter\" title=\"User:W.carter\">W.carter</a>",
+  "term": "propane cylinder camping",
+  "file": "propane_cylinder.jpg"
+ },
+ "paint": {
+  "title": "File:Paint bucket and brush.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Paint_bucket_and_brush.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/83/Paint_bucket_and_brush.jpg/1280px-Paint_bucket_and_brush.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Ionenlaser\" title=\"User:Ionenlaser\">Ionenlaser</a>",
+  "term": "paint can",
+  "file": "paint.jpg"
+ },
+ "medicine": {
+  "title": "File:Dr Williams' 'Pink Pills', London, England, 1850-1920 Wellcome A627306.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Dr_Williams%27_%27Pink_Pills%27,_London,_England,_1850-1920_Wellcome_A627306.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d9/Dr_Williams%27_%27Pink_Pills%27%2C_London%2C_England%2C_1850-1920_Wellcome_A627306.jpg/1280px-Dr_Williams%27_%27Pink_Pills%27%2C_London%2C_England%2C_1850-1920_Wellcome_A627306.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY 4.0",
+  "artist": "",
+  "term": "pills",
+  "file": "medicine.jpg"
+ },
+ "sharps": {
+  "title": "File:Baxa syringe.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Baxa_syringe.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Baxa_syringe.jpg/1280px-Baxa_syringe.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY 4.0",
+  "artist": "<b><a href=\"//commons.wikimedia.org/wiki/User:%E5%A4%9A%E5%A4%9A123\" class=\"mw-redirect\" title=\"User:多多123\">多多123</a></b>",
+  "term": "syringe",
+  "file": "sharps.jpg"
+ },
+ "wooden_chopsticks": {
+  "title": "File:Bafang Yunji packaged disposable chopstick 20161014.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Bafang_Yunji_packaged_disposable_chopstick_20161014.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f4/Bafang_Yunji_packaged_disposable_chopstick_20161014.jpg/1280px-Bafang_Yunji_packaged_disposable_chopstick_20161014.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Solomon203\" title=\"User:Solomon203\">Solomon203</a>",
+  "term": "disposable chopsticks",
+  "file": "wooden_chopsticks.jpg"
+ },
+ "tissue": {
+  "title": "File:Tissue (46057881222).jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Tissue_(46057881222).jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f2/Tissue_%2846057881222%29.jpg/1280px-Tissue_%2846057881222%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY 2.0",
+  "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/54591706@N02\">NIAID</a>",
+  "term": "facial tissue",
+  "file": "tissue.jpg"
+ },
+ "paper_towel_napkin": {
+  "title": "File:Happy Easter paper napkin from The Netherlands.png",
+  "page": "https://commons.wikimedia.org/wiki/File:Happy_Easter_paper_napkin_from_The_Netherlands.png",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d8/Happy_Easter_paper_napkin_from_The_Netherlands.png/1280px-Happy_Easter_paper_napkin_from_The_Netherlands.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Mr-ahk&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Mr-ahk (page does not exist)\">Mr-ahk</a>",
+  "term": "used paper napkin",
+  "file": "paper_towel_napkin.jpg"
+ },
+ "cords_cables": {
+  "title": "File:USB cable with twisttie.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:USB_cable_with_twisttie.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/USB_cable_with_twisttie.jpg/1280px-USB_cable_with_twisttie.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Shubjt\" title=\"User:Shubjt\">Shubjt</a>",
+  "term": "usb cable",
+  "file": "cords_cables.jpg"
+ },
+ "cleaning_product": {
+  "title": "File:Bleach-bottle.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Bleach-bottle.jpg",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Bleach-bottle.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "license": "CC BY-SA 2.5",
+  "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:MarkGallagher&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:MarkGallagher (page does not exist)\">MarkGallagher</a> 14:56, 31 October 20",
+  "term": "bleach bottle",
+  "file": "cleaning_product.jpg"
+ },
+ "diaper": {
+  "title": "File:Diaper Contents after user.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Diaper_Contents_after_user.jpg",
+  "thumb": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Diaper_Contents_after_user.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "license": "CC BY-SA 3.0",
+  "artist": "Bart Van Gheluwe",
+  "term": "diaper",
+  "file": "diaper.jpg"
+ },
+ "book": {
+  "title": "File:Different formats of paperback books.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Different_formats_of_paperback_books.jpg",
+  "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8f/Different_formats_of_paperback_books.jpg/1280px-Different_formats_of_paperback_books.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:BuhaM\" title=\"User:BuhaM\">Milica Buha</a>",
+  "term": "paperback books",
+  "file": "book.jpg"
+ }
+}

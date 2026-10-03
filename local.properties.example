@@ -1,0 +1,10 @@
+# Copy to local.properties (gitignored) and fill in.
+
+# Qwen (Alibaba Cloud Model Studio / DashScope), OpenAI-compatible endpoint.
+# Base URL depends on the region your API key belongs to:
+#   Beijing : https://dashscope.aliyuncs.com/compatible-mode/v1
+#   Virginia: https://dashscope-us.aliyuncs.com/compatible-mode/v1
+#   Singapore/HK/Tokyo workspaces: copy the URL shown in your Model Studio console.
+qwen.apiKey=
+qwen.baseUrl=https://dashscope.aliyuncs.com/compatible-mode/v1
+qwen.model=qwen3-vl-flash

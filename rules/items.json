@@ -1,0 +1,396 @@
+{
+ "version": "2026-10-02",
+ "note": "Canonical items the vision model chooses from. One id per thing a person holds up; the city files say which bin each goes in. 'hint' tells the model what the item looks like.",
+ "items": [
+  {
+   "id": "cardboard_box",
+   "name": "Cardboard box",
+   "hint": "clean corrugated cardboard shipping or moving box"
+  },
+  {
+   "id": "pizza_box_greasy",
+   "name": "Greasy pizza box",
+   "hint": "EMPTY pizza box with grease stains and no pizza or slice left; any pizza still visible is food_in_container"
+  },
+  {
+   "id": "paper_mixed",
+   "name": "Mail / office paper / newspaper",
+   "hint": "clean paper: letters, junk mail, envelopes, printer paper, newspaper, magazines"
+  },
+  {
+   "id": "paperboard_box",
+   "name": "Cereal or cracker box",
+   "hint": "cereal, cracker, tissue, or shoe box; not a milk or juice carton"
+  },
+  {
+   "id": "paper_bag",
+   "name": "Paper bag",
+   "hint": "clean brown paper shopping bag"
+  },
+  {
+   "id": "shredded_paper",
+   "name": "Shredded paper",
+   "hint": "strips of shredded paper"
+  },
+  {
+   "id": "paper_towel_napkin",
+   "name": "Used paper towel / napkin",
+   "hint": "used paper towel or paper napkin"
+  },
+  {
+   "id": "tissue",
+   "name": "Used facial tissue",
+   "hint": "used facial tissue (Kleenex)"
+  },
+  {
+   "id": "paper_cup",
+   "name": "Paper coffee cup",
+   "hint": "disposable paper hot-drink cup"
+  },
+  {
+   "id": "paper_plate_used",
+   "name": "Used paper plate",
+   "hint": "EMPTY paper plate with only a sauce smear or crumbs, no meal left"
+  },
+  {
+   "id": "paper_takeout",
+   "name": "Paper take-out box",
+   "hint": "an EMPTY paper or cardboard take-out food container, often food-stained"
+  },
+  {
+   "id": "carton",
+   "name": "Milk or juice carton",
+   "hint": "gable-top milk or juice carton, even folded flat; milk, juice, half gallon, or a spout"
+  },
+  {
+   "id": "aseptic_carton",
+   "name": "Juice box / broth box",
+   "hint": "shelf-stable aseptic carton such as a juice box, soy milk or broth box (Tetra Pak)"
+  },
+  {
+   "id": "receipt",
+   "name": "Paper receipt",
+   "hint": "shiny thermal-paper store receipt"
+  },
+  {
+   "id": "coffee_grounds_filter",
+   "name": "Coffee grounds / paper filter",
+   "hint": "used coffee grounds or paper coffee filter"
+  },
+  {
+   "id": "tea_bag",
+   "name": "Tea bag",
+   "hint": "a used tea bag by itself, not one still steeping in a cup"
+  },
+  {
+   "id": "book",
+   "name": "Book",
+   "hint": "paperback or hardcover book"
+  },
+  {
+   "id": "plastic_bottle",
+   "name": "Plastic bottle",
+   "hint": "plastic drink, water or shampoo bottle"
+  },
+  {
+   "id": "plastic_jug",
+   "name": "Plastic jug",
+   "hint": "plastic milk or water jug with handle"
+  },
+  {
+   "id": "plastic_tub",
+   "name": "Plastic tub / yogurt cup",
+   "hint": "yogurt cup, margarine tub, or round plastic food box, including the lid lying next to its base"
+  },
+  {
+   "id": "plastic_clamshell",
+   "name": "Plastic clamshell",
+   "hint": "an EMPTY clear hinged plastic clamshell for berries, salad or baked goods"
+  },
+  {
+   "id": "plastic_cup",
+   "name": "Plastic cup",
+   "hint": "clear or colored plastic cold-drink cup"
+  },
+  {
+   "id": "plastic_takeout",
+   "name": "Plastic take-out container",
+   "hint": "an EMPTY rigid plastic take-out or food storage container"
+  },
+  {
+   "id": "plastic_bag",
+   "name": "Plastic bag",
+   "hint": "plastic shopping, bread, produce or zip bag"
+  },
+  {
+   "id": "bubble_wrap",
+   "name": "Bubble wrap",
+   "hint": "plastic bubble wrap or air pillows"
+  },
+  {
+   "id": "plastic_utensils",
+   "name": "Plastic fork / spoon / knife",
+   "hint": "disposable plastic cutlery"
+  },
+  {
+   "id": "straw",
+   "name": "Plastic straw",
+   "hint": "plastic drinking straw"
+  },
+  {
+   "id": "snack_wrapper",
+   "name": "Chip bag / candy wrapper",
+   "hint": "chip bag, candy or granola-bar wrapper, shiny inside"
+  },
+  {
+   "id": "compostable_plastic",
+   "name": "\"Compostable\" plastic cup or cutlery",
+   "hint": "plastic-looking cup, lid or cutlery labeled compostable or PLA"
+  },
+  {
+   "id": "foam_food_container",
+   "name": "Foam cup / take-out box",
+   "hint": "an EMPTY beaded polystyrene foam cup, hinged clamshell, or meat tray; not a thin plastic deli cup"
+  },
+  {
+   "id": "foam_packaging",
+   "name": "Foam packing / peanuts",
+   "hint": "polystyrene foam packing blocks or packing peanuts"
+  },
+  {
+   "id": "plastic_cap",
+   "name": "Loose plastic cap / lid",
+   "hint": "a bottle cap or coffee lid by itself, with no container base in the photo"
+  },
+  {
+   "id": "coffee_pod",
+   "name": "Coffee pod",
+   "hint": "single-serve coffee pod or capsule (K-Cup, Nespresso)"
+  },
+  {
+   "id": "drink_pouch",
+   "name": "Drink / food pouch",
+   "hint": "foil drink pouch, squeeze pouch or yogurt tube"
+  },
+  {
+   "id": "toothpaste_tube",
+   "name": "Toothpaste tube",
+   "hint": "squeezed toothpaste or ointment tube"
+  },
+  {
+   "id": "toothbrush",
+   "name": "Toothbrush",
+   "hint": "manual plastic toothbrush"
+  },
+  {
+   "id": "plastic_toy",
+   "name": "Hard plastic toy",
+   "hint": "rigid plastic toy without batteries or electronics"
+  },
+  {
+   "id": "aluminum_can",
+   "name": "Aluminum can",
+   "hint": "aluminum soda or beer can"
+  },
+  {
+   "id": "food_can",
+   "name": "Food can",
+   "hint": "steel or tin food can"
+  },
+  {
+   "id": "aluminum_foil",
+   "name": "Aluminum foil",
+   "hint": "sheet of aluminum foil"
+  },
+  {
+   "id": "aluminum_tray",
+   "name": "Aluminum tray / pie tin",
+   "hint": "disposable aluminum baking tray or pie tin"
+  },
+  {
+   "id": "aerosol_can",
+   "name": "Aerosol can",
+   "hint": "spray can (hairspray, cooking spray, air freshener)"
+  },
+  {
+   "id": "glass_bottle",
+   "name": "Glass bottle",
+   "hint": "glass beverage bottle"
+  },
+  {
+   "id": "glass_jar",
+   "name": "Glass jar",
+   "hint": "glass food jar"
+  },
+  {
+   "id": "broken_glass",
+   "name": "Broken glass",
+   "hint": "shards of broken glass"
+  },
+  {
+   "id": "drinking_glass",
+   "name": "Drinking glass",
+   "hint": "ordinary drinking glass or tumbler"
+  },
+  {
+   "id": "ceramic",
+   "name": "Ceramic mug / plate",
+   "hint": "ceramic or porcelain mug, plate, bowl or vase"
+  },
+  {
+   "id": "food_scraps",
+   "name": "Food scraps",
+   "hint": "peels, cores, eggshells, or moldy scraps with no take-out container; a hand holding a peel counts"
+  },
+  {
+   "id": "food_in_container",
+   "name": "Food still in a container",
+   "hint": "food still visible in a box, cup, bowl, or on a plate, including berries in a clear box or sauce filling a cup; not a stain and not an empty foam box"
+  },
+  {
+   "id": "bones",
+   "name": "Bones",
+   "hint": "meat, chicken, or fish bones, including when they sit in a bowl or on a plate"
+  },
+  {
+   "id": "yard_trimmings",
+   "name": "Leaves / grass / branches",
+   "hint": "yard trimmings: leaves, grass clippings, small branches"
+  },
+  {
+   "id": "flowers",
+   "name": "Cut flowers",
+   "hint": "bouquet or cut flowers and plant trimmings"
+  },
+  {
+   "id": "cooking_oil",
+   "name": "Used cooking oil",
+   "hint": "bottle or jar whose label says cooking oil, vegetable oil, or grease"
+  },
+  {
+   "id": "wooden_chopsticks",
+   "name": "Wooden chopsticks",
+   "hint": "disposable wooden or bamboo chopsticks or cutlery"
+  },
+  {
+   "id": "battery",
+   "name": "Household battery",
+   "hint": "AA, AAA, C, D, 9V, button or rechargeable battery"
+  },
+  {
+   "id": "phone_electronics",
+   "name": "Phone / small electronics",
+   "hint": "cell phone, tablet, charger or other small electronic device"
+  },
+  {
+   "id": "cords_cables",
+   "name": "Cords / cables",
+   "hint": "electrical cord, charging cable or wire"
+  },
+  {
+   "id": "bulb_fluorescent",
+   "name": "Fluorescent / CFL bulb",
+   "hint": "compact fluorescent spiral bulb or fluorescent tube"
+  },
+  {
+   "id": "bulb_led",
+   "name": "LED bulb",
+   "hint": "LED light bulb"
+  },
+  {
+   "id": "bulb_incandescent",
+   "name": "Incandescent bulb",
+   "hint": "traditional incandescent or halogen bulb with visible filament"
+  },
+  {
+   "id": "paint",
+   "name": "Paint",
+   "hint": "can of paint or spray paint"
+  },
+  {
+   "id": "cleaning_product",
+   "name": "Cleaning product bottle",
+   "hint": "bottle or jug of household cleaner, bleach or laundry detergent"
+  },
+  {
+   "id": "medicine",
+   "name": "Medicine",
+   "hint": "pills, medicine bottle with medicine, expired drugs"
+  },
+  {
+   "id": "sharps",
+   "name": "Needles / syringes",
+   "hint": "hypodermic needle, syringe, lancet or insulin pen needle"
+  },
+  {
+   "id": "propane_cylinder",
+   "name": "Propane cylinder",
+   "hint": "small camping propane or butane cylinder"
+  },
+  {
+   "id": "diaper",
+   "name": "Diaper",
+   "hint": "used disposable diaper"
+  },
+  {
+   "id": "pet_waste",
+   "name": "Pet waste",
+   "hint": "dog poop bag or animal waste"
+  },
+  {
+   "id": "kitty_litter",
+   "name": "Cat litter",
+   "hint": "used cat litter"
+  },
+  {
+   "id": "face_mask",
+   "name": "Face mask",
+   "hint": "disposable or cloth face mask"
+  },
+  {
+   "id": "disposable_gloves",
+   "name": "Disposable gloves",
+   "hint": "latex, nitrile or vinyl disposable gloves"
+  },
+  {
+   "id": "textiles",
+   "name": "Clothes / fabric",
+   "hint": "clothing, towels, linens or fabric scraps"
+  },
+  {
+   "id": "shoes",
+   "name": "Shoes",
+   "hint": "shoes or sneakers without lights"
+  },
+  {
+   "id": "cigarette",
+   "name": "Cigarette butt",
+   "hint": "cigarette butt"
+  },
+  {
+   "id": "wipes",
+   "name": "Wet wipes",
+   "hint": "baby wipes or disinfecting wipes"
+  },
+  {
+   "id": "garden_hose",
+   "name": "Garden hose",
+   "hint": "rubber or vinyl garden hose"
+  },
+  {
+   "id": "egg_carton_paper",
+   "name": "Paper egg carton",
+   "hint": "molded gray or brown paper-pulp egg carton"
+  },
+  {
+   "id": "egg_carton_foam",
+   "name": "Foam egg carton",
+   "hint": "polystyrene foam egg carton"
+  },
+  {
+   "id": "frozen_food_box",
+   "name": "Frozen food box",
+   "hint": "paperboard box from frozen food"
+  }
+ ]
+}

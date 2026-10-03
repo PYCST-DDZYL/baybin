@@ -1,0 +1,556 @@
+{
+ "city": "cupertino",
+ "name": "Cupertino",
+ "residence": "single-family",
+ "authority": "City of Cupertino and Recology South Bay, its contracted hauler",
+ "updated": "2026-10-01",
+ "official_domains": [
+  "recology.com",
+  "cupertino.gov"
+ ],
+ "bins": {
+  "recycling": {
+   "line1": "Recycling"
+  },
+  "compost": {
+   "line1": "Compost"
+  },
+  "landfill": {
+   "line1": "Landfill"
+  },
+  "special": {
+   "line1": "Special handling"
+  }
+ },
+ "sources": {
+  "guide": {
+   "title": "Waste Service Guide Cupertino 2025-2026 (Recology South Bay)",
+   "url": "https://www.recology.com/wp-content/uploads/2025/11/Residental_Service_Guide_2025-FINAL.pdf",
+   "sections": {
+    "recycling": "Recycle Cart",
+    "landfill": "Landfill Cart",
+    "compost": "Compost Cart",
+    "special": "Cart Setout"
+   }
+  },
+  "sorting": {
+   "title": "Recology South Bay sorting guide (Nov 2025)",
+   "url": "https://www.recology.com/wp-content/uploads/2025/11/RSB-SortingGuide-ENSPC-85x11-103025.pdf",
+   "found_via": "Linked from https://www.recology.com/recology-south-bay/cupertino/sorting-guides/",
+   "sections": {
+    "recycling": "RECYCLE",
+    "compost": "COMPOST",
+    "landfill": "LANDFILL"
+   }
+  },
+  "carts": {
+   "title": "Your Three Carts - Recology South Bay: Cupertino",
+   "url": "https://www.recology.com/recology-south-bay/cupertino/your-three-carts/",
+   "sections": {
+    "compost": "COMPOST",
+    "recycling": "RECYCLE",
+    "landfill": "LANDFILL"
+   }
+  },
+  "hazardous": {
+   "title": "Hazardous Waste - Recology South Bay: Cupertino",
+   "url": "https://www.recology.com/recology-south-bay/cupertino/hazardous-waste/",
+   "only_bins": [
+    "special"
+   ]
+  },
+  "ewaste": {
+   "title": "Electronic & Universal Waste - Recology South Bay: Cupertino",
+   "url": "https://www.recology.com/recology-south-bay/cupertino/electronic-universal-waste/",
+   "only_bins": [
+    "special"
+   ]
+  },
+  "city_recycling": {
+   "title": "City of Cupertino: Recycling (web.archive.org snapshot 2025-10-27; cupertino.gov blocks scripts)",
+   "url": "https://web.archive.org/web/20251027231823id_/https://www.cupertino.gov/Your-City/Divisions/Environment-Sustainability/Garbage-and-Recycling/Residential-Waste/Recycling",
+   "live_url": "https://www.cupertino.gov/Your-City/Divisions/Environment-Sustainability/Garbage-and-Recycling/Residential-Waste/Recycling",
+   "sections": {
+    "recycling": [
+     "Plastics",
+     "Glass and Metal",
+     "Mixed Paper",
+     "Frequently Asked Questions#2"
+    ],
+    "compost": "Please place in compost cart:",
+    "landfill": "Please place in garbage cart:"
+   },
+   "boundaries": [
+    "Unacceptable Items",
+    "Recycling Tips",
+    "Understanding Plastics"
+   ]
+  },
+  "city_compost": {
+   "title": "City of Cupertino: Curbside Composting (web.archive.org snapshot 2024-12-26)",
+   "url": "https://web.archive.org/web/20241226183125id_/https://www.cupertino.gov/FoodScraps",
+   "live_url": "https://www.cupertino.gov/foodscraps",
+   "only_bins": [
+    "compost"
+   ]
+  },
+  "city_hhw": {
+   "title": "City of Cupertino: Household Hazardous Waste (web.archive.org snapshot 2024-12-24)",
+   "url": "https://web.archive.org/web/20241224023548id_/https://www.cupertino.gov/hhw",
+   "live_url": "https://www.cupertino.gov/hhw",
+   "only_bins": [
+    "special"
+   ]
+  }
+ },
+ "rules": {
+  "cardboard_box": {
+   "bin": "recycling",
+   "reason": "Flatten clean cardboard; bundle oversized pieces beside the cart.",
+   "source": "guide",
+   "quote": "Cardboard • Flattened cardboard • Extra or oversized cardboard"
+  },
+  "pizza_box_greasy": {
+   "bin": "compost",
+   "reason": "Greasy pizza boxes go in the green compost cart.",
+   "source": "guide",
+   "quote": "Fiber-based (bamboo, wood) utensils • Greasy pizza boxes"
+  },
+  "paper_mixed": {
+   "bin": "recycling",
+   "reason": "Clean paper and mail go in the blue recycling cart.",
+   "source": "carts",
+   "quote": "Paper, cardboard, glass, aluminum/tin cans, rigid plastics, and bagged film plastics such as bags & bubble wrap go into the blue recyclable cart."
+  },
+  "paperboard_box": {
+   "bin": "recycling",
+   "reason": "Recycle the box; remove the plastic liner first.",
+   "source": "guide",
+   "quote": "Cereal and cracker boxes (plastic liners removed)"
+  },
+  "paper_bag": {
+   "bin": "recycling",
+   "reason": "Clean paper bags go in recycling.",
+   "source": "guide",
+   "quote": "Envelopes, junk mail, paper bags"
+  },
+  "shredded_paper": {
+   "bin": "recycling",
+   "reason": "Bag shredded paper first, then put it in recycling.",
+   "source": "guide",
+   "quote": "Shredded paper (in a clear plastic bag, tied closed)",
+   "note": "Official sources differ on the bag: Recology's 2025-26 guide says a clear plastic bag; the City's recycling FAQ says a paper bag. Both say bag it and recycle it, so the reason doesn't pick one."
+  },
+  "paper_towel_napkin": {
+   "bin": "compost",
+   "reason": "Used paper towels and napkins go in compost.",
+   "source": "guide",
+   "quote": "Paper bags, napkins, towels, cups, and plates"
+  },
+  "tissue": {
+   "bin": "compost",
+   "reason": "Used tissues go in the compost cart.",
+   "source": "city_recycling",
+   "quote": "Please place in compost cart: Food contaminated paper packaging Paper towels Napkins Tissue"
+  },
+  "paper_cup": {
+   "bin": "compost",
+   "reason": "Food-soiled paper cups go in the compost cart.",
+   "source": "guide",
+   "quote": "Paper bags, napkins, towels, cups, and plates"
+  },
+  "paper_plate_used": {
+   "bin": "compost",
+   "reason": "Food-soiled paper plates go in the compost cart.",
+   "source": "guide",
+   "quote": "Paper bags, napkins, towels, cups, and plates"
+  },
+  "paper_takeout": {
+   "bin": "compost",
+   "reason": "Compost paper take-out boxes without plastic lining.",
+   "source": "guide",
+   "quote": "Paper take-out containers (no plastic lining)"
+  },
+  "carton": {
+   "bin": "unknown",
+   "note": "Official sources disagree. Recology's Nov 2025 sorting guide lists cartons under RECYCLE, but the City's compost page lists 'Milk Cartons' and its recycling FAQ says milk/other cartons go in the compost cart (both still live, Oct 2026)."
+  },
+  "aseptic_carton": {
+   "bin": "unknown",
+   "note": "Official sources disagree. Recology's 2025-26 guide lists 'Aseptic containers' under the Recycle Cart, but the City's recycling FAQ says milk/other cartons go in the compost cart."
+  },
+  "receipt": {
+   "bin": "unknown",
+   "note": "Not listed in Recology's Cupertino guides or pages."
+  },
+  "coffee_grounds_filter": {
+   "bin": "compost",
+   "reason": "Coffee grounds and paper filters go in compost.",
+   "source": "guide",
+   "quote": "Coffee filter and paper tea bags"
+  },
+  "tea_bag": {
+   "bin": "compost",
+   "reason": "Paper tea bags go in the compost cart.",
+   "source": "guide",
+   "quote": "Coffee filter and paper tea bags"
+  },
+  "book": {
+   "bin": "recycling",
+   "reason": "Paperback and hardcover books go in recycling.",
+   "source": "guide",
+   "quote": "Books (paperback and hardcover)"
+  },
+  "plastic_bottle": {
+   "bin": "recycling",
+   "reason": "Empty plastic bottles go in the blue cart.",
+   "source": "sorting",
+   "quote": "PLASTIC BOTTLES, TUBS, AND JUGS"
+  },
+  "plastic_jug": {
+   "bin": "recycling",
+   "reason": "Empty plastic jugs go in the blue cart.",
+   "source": "sorting",
+   "quote": "PLASTIC BOTTLES, TUBS, AND JUGS"
+  },
+  "plastic_tub": {
+   "bin": "recycling",
+   "reason": "Empty, scraped plastic tubs go in recycling.",
+   "source": "sorting",
+   "quote": "PLASTIC BOTTLES, TUBS, AND JUGS"
+  },
+  "plastic_clamshell": {
+   "bin": "recycling",
+   "reason": "Plastic containers go in recycling; empty and clean.",
+   "source": "guide",
+   "quote": "All plastics containers"
+  },
+  "plastic_cup": {
+   "bin": "recycling",
+   "reason": "Empty cold-drink plastic cups, then put them in the blue recycling cart.",
+   "source": "city_recycling",
+   "quote": "Yes, cold liquid plastic cups can be placed into the recycling.",
+   "also": [
+    {
+     "source": "city_recycling",
+     "quote": "All recyclables should be empty, clean, and dry before they are placed in the blue bin."
+    }
+   ]
+  },
+  "plastic_takeout": {
+   "bin": "recycling",
+   "reason": "Plastic containers go in recycling; scrape out food.",
+   "source": "guide",
+   "quote": "All plastics containers"
+  },
+  "plastic_bag": {
+   "bin": "recycling",
+   "reason": "Bundle clean, dry bags into one tied bag, then recycle.",
+   "source": "city_recycling",
+   "quote": "Recology is still accepting plastic bags in the recycling, but they must be clean, dry, and bundled into one plastic bag and tied."
+  },
+  "bubble_wrap": {
+   "bin": "recycling",
+   "reason": "Bag bubble wrap with other clean film, then blue cart.",
+   "source": "guide",
+   "quote": "Bubble wrap and other clean, dry plastic bags and film plastic (bagged)"
+  },
+  "plastic_utensils": {
+   "bin": "landfill",
+   "reason": "Plastic utensils go in the landfill cart.",
+   "source": "guide",
+   "quote": "Straws and plastic utensils"
+  },
+  "straw": {
+   "bin": "landfill",
+   "reason": "Straws go in the landfill cart.",
+   "source": "guide",
+   "quote": "Straws and plastic utensils"
+  },
+  "snack_wrapper": {
+   "bin": "landfill",
+   "reason": "Chip bags and wrappers go in the landfill cart.",
+   "source": "guide",
+   "quote": "Chip bags, candy, granola bar wrappers, dirty plastics, and dirty foil"
+  },
+  "compostable_plastic": {
+   "bin": "landfill",
+   "reason": "\"Compostable\" plastics go in landfill, not compost.",
+   "source": "guide",
+   "quote": "and other packing material • “Compostable” plastics"
+  },
+  "foam_food_container": {
+   "bin": "landfill",
+   "reason": "Foam and polystyrene go in the landfill cart.",
+   "source": "sorting",
+   "quote": "PACKAGING FOAM AND POLYSTYRENE"
+  },
+  "foam_packaging": {
+   "bin": "landfill",
+   "reason": "Foam packing and peanuts go in the landfill cart.",
+   "source": "guide",
+   "quote": "packing peanuts, meat trays, and other packing material"
+  },
+  "plastic_cap": {
+   "bin": "unknown",
+   "note": "Not addressed for loose caps. The City's FAQ says caps should be left on bottles and jars when recycling them."
+  },
+  "coffee_pod": {
+   "bin": "unknown",
+   "note": "Not listed in Recology's Cupertino guides or pages."
+  },
+  "drink_pouch": {
+   "bin": "unknown",
+   "note": "Not listed in Recology's Cupertino guides or pages."
+  },
+  "toothpaste_tube": {
+   "bin": "unknown",
+   "note": "Not listed in Recology's Cupertino guides or pages."
+  },
+  "toothbrush": {
+   "bin": "unknown",
+   "note": "Not listed in Recology's Cupertino guides or pages."
+  },
+  "plastic_toy": {
+   "bin": "unknown",
+   "note": "Guides list plastic containers only; toys not addressed."
+  },
+  "aluminum_can": {
+   "bin": "recycling",
+   "reason": "Empty aluminum cans go in the blue cart.",
+   "source": "guide",
+   "quote": "Aluminum, steel, and bi-metal cans"
+  },
+  "food_can": {
+   "bin": "recycling",
+   "reason": "Empty, scraped metal cans go in recycling.",
+   "source": "guide",
+   "quote": "Aluminum, steel, and bi-metal cans"
+  },
+  "aluminum_foil": {
+   "bin": "recycling",
+   "reason": "Recycle foil only if it has no food on it.",
+   "source": "guide",
+   "quote": "Aluminum foil (no food)"
+  },
+  "aluminum_tray": {
+   "bin": "unknown",
+   "note": "Guide lists foil and cans; trays and pie tins not addressed."
+  },
+  "aerosol_can": {
+   "bin": "recycling",
+   "reason": "Recycle only when completely empty.",
+   "source": "guide",
+   "quote": "Glass and Metal • Empty aerosol cans"
+  },
+  "glass_bottle": {
+   "bin": "recycling",
+   "reason": "Empty glass bottles go in the blue cart.",
+   "source": "guide",
+   "quote": "Glass bottles and jars"
+  },
+  "glass_jar": {
+   "bin": "recycling",
+   "reason": "Empty, scraped glass jars go in recycling.",
+   "source": "guide",
+   "quote": "Glass bottles and jars"
+  },
+  "broken_glass": {
+   "bin": "landfill",
+   "reason": "Broken glass goes in the landfill cart.",
+   "source": "carts",
+   "quote": "Pet waste, snack wrappers, straws, ceramics, ashes, and broken glass to name a few."
+  },
+  "drinking_glass": {
+   "bin": "unknown",
+   "note": "Guide lists glass bottles and jars only."
+  },
+  "ceramic": {
+   "bin": "landfill",
+   "reason": "Ceramics go in the landfill cart.",
+   "source": "carts",
+   "quote": "Pet waste, snack wrappers, straws, ceramics, ashes, and broken glass to name a few."
+  },
+  "food_scraps": {
+   "bin": "compost",
+   "reason": "Food scraps go in the green compost cart.",
+   "source": "carts",
+   "quote": "Food scraps, food-soiled paper, and yard trimmings (such as grass, branches, and plants) go in the green compost cart."
+  },
+  "bones": {
+   "bin": "compost",
+   "reason": "Meat scraps, including bones, go in the compost cart.",
+   "source": "city_compost",
+   "quote": "Fruit, including pits Meat, including bones"
+  },
+  "yard_trimmings": {
+   "bin": "compost",
+   "reason": "Leaves, grass and branches go in the compost cart.",
+   "source": "guide",
+   "quote": "Leaves and tree trimmings"
+  },
+  "flowers": {
+   "bin": "compost",
+   "reason": "Flowers and floral trimmings go in compost.",
+   "source": "guide",
+   "quote": "Flowers and floral trimmings"
+  },
+  "cooking_oil": {
+   "bin": "special",
+   "reason": "Set out sealed cooking-oil jugs with your carts on collection day.",
+   "source": "guide",
+   "quote": "Sealed used motor oil and cooking oil jugs"
+  },
+  "wooden_chopsticks": {
+   "bin": "compost",
+   "reason": "Wood and bamboo utensils go in the compost cart.",
+   "source": "guide",
+   "quote": "Fiber-based (bamboo, wood) utensils"
+  },
+  "battery": {
+   "bin": "special",
+   "reason": "Tape ends, seal in clear bag, set on recycling cart.",
+   "source": "guide",
+   "quote": "Place household batteries in a sealed clear bag on top of the recyclables cart, tape battery ends before bagging."
+  },
+  "phone_electronics": {
+   "bin": "special",
+   "reason": "Illegal in carts; free Recology on-call pickup: 408-725-4020.",
+   "source": "city_hhw",
+   "quote": "It is against the law to place e-waste in your garbage or recycling containers."
+  },
+  "cords_cables": {
+   "bin": "unknown",
+   "note": "Cords are not named on Recology's Cupertino e-waste list."
+  },
+  "bulb_fluorescent": {
+   "bin": "special",
+   "reason": "Sealed bag on top of recycling cart, or drop off via hhw.org.",
+   "source": "city_hhw",
+   "quote": "For compact bulbs (CFLs) and linear, circular, spiral and U-bent tubes: Place them in a sealed plastic bag on top of your blue recycling cart"
+  },
+  "bulb_led": {
+   "bin": "special",
+   "reason": "Hazardous waste: book free drop-off at hhw.org.",
+   "source": "guide",
+   "quote": "HHW includes paint, cleaners, pesticides, light bulbs, propane, batteries, etc."
+  },
+  "bulb_incandescent": {
+   "bin": "unknown",
+   "note": "Guide lists 'light bulbs' under HHW without saying which types; not stated for incandescent."
+  },
+  "paint": {
+   "bin": "special",
+   "reason": "Free PaintCare take-back, or book drop-off at hhw.org.",
+   "source": "hazardous",
+   "quote": "PaintCare offers take-back programs at no charge."
+  },
+  "cleaning_product": {
+   "bin": "special",
+   "reason": "Cleaners are hazardous waste: book free drop-off at hhw.org.",
+   "source": "guide",
+   "quote": "HHW includes paint, cleaners, pesticides, light bulbs, propane, batteries, etc."
+  },
+  "medicine": {
+   "bin": "special",
+   "reason": "Never trash; drop off or mail back via med-project.org.",
+   "source": "guide",
+   "quote": "Find drop-off locations and mail-back supplies for medication and sharps at med-project.org"
+  },
+  "sharps": {
+   "bin": "special",
+   "reason": "Illegal in carts; seal in biohazard container, use take-back.",
+   "source": "hazardous",
+   "quote": "California law prohibits the disposal of “sharps waste” in trash or recycling containers."
+  },
+  "propane_cylinder": {
+   "bin": "special",
+   "reason": "Hazardous waste: book free drop-off at hhw.org.",
+   "source": "guide",
+   "quote": "HHW includes paint, cleaners, pesticides, light bulbs, propane, batteries, etc."
+  },
+  "diaper": {
+   "bin": "landfill",
+   "reason": "Diapers go in the landfill cart.",
+   "source": "guide",
+   "quote": "Diapers and feminine products"
+  },
+  "pet_waste": {
+   "bin": "landfill",
+   "reason": "Pet waste goes in the landfill cart.",
+   "source": "guide",
+   "quote": "Cat litter and pet waste"
+  },
+  "kitty_litter": {
+   "bin": "landfill",
+   "reason": "Cat litter goes in the landfill cart.",
+   "source": "guide",
+   "quote": "Cat litter and pet waste"
+  },
+  "face_mask": {
+   "bin": "landfill",
+   "reason": "Disposable masks go in the landfill cart.",
+   "source": "guide",
+   "quote": "Disposable masks and gloves"
+  },
+  "disposable_gloves": {
+   "bin": "landfill",
+   "reason": "Disposable gloves go in the landfill cart.",
+   "source": "guide",
+   "quote": "Disposable masks and gloves"
+  },
+  "textiles": {
+   "bin": "landfill",
+   "reason": "Textiles, leather and hangers go in the landfill cart.",
+   "source": "guide",
+   "quote": "Textiles, leather, and hangers"
+  },
+  "shoes": {
+   "bin": "unknown",
+   "note": "Shoes are not named in Recology's Cupertino guides."
+  },
+  "cigarette": {
+   "bin": "unknown",
+   "note": "Not listed in Recology's Cupertino guides or pages."
+  },
+  "wipes": {
+   "bin": "unknown",
+   "note": "Not listed in Recology's Cupertino guides or pages."
+  },
+  "garden_hose": {
+   "bin": "landfill",
+   "reason": "Garden hoses go in the landfill cart.",
+   "source": "guide",
+   "quote": "“Compostable” plastics • Garden hoses"
+  },
+  "egg_carton_paper": {
+   "bin": "unknown",
+   "note": "Not listed in the 2025-26 Cupertino guide."
+  },
+  "egg_carton_foam": {
+   "bin": "landfill",
+   "reason": "Foam and polystyrene go in the landfill cart.",
+   "source": "sorting",
+   "quote": "PACKAGING FOAM AND POLYSTYRENE"
+  },
+  "frozen_food_box": {
+   "bin": "landfill",
+   "reason": "Wax-lined frozen food boxes go in the landfill cart.",
+   "source": "city_recycling",
+   "quote": "NO frozen food boxes with wax lining- these go in the trash",
+   "exception": "The quote is a parenthetical exclusion inside the Mixed Paper (recycling) list; it says these boxes go in the trash."
+  },
+  "food_in_container": {
+   "bin": "compost",
+   "reason": "Scrape the food into the compost cart first, then scan the empty container.",
+   "source": "carts",
+   "quote": "Food scraps, food-soiled paper, and yard trimmings (such as grass, branches, and plants) go in the green compost cart.",
+   "also": [
+    {
+     "source": "city_recycling",
+     "quote": "Got leftover food in a recyclable container? Step 1 - scrape the food out of the container and into the compost. Step 2 - recycle the container."
+    }
+   ]
+  }
+ }
+}

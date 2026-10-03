@@ -1,0 +1,335 @@
+{
+ "note": "Openly licensed photos for recognition variety (eaten food, uneaten food, scraps, bones, plants, and household things). Labelled by looking at each photo. Not part of the eval/realworld acceptance set. item = catalog id the model should answer.",
+ "photos": [
+  {
+   "file": "food_in_container__1.jpg",
+   "item": "food_in_container",
+   "title": "File:Milano's Café pork loin and veg Russell Street Stroud Gloucestershire England 04.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Milano%27s_Caf%C3%A9_pork_loin_and_veg_Russell_Street_Stroud_Gloucestershire_England_04.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Acabashi",
+   "source": "commons",
+   "query": "half eaten meal plate"
+  },
+  {
+   "file": "food_in_container__2.jpg",
+   "item": "food_in_container",
+   "title": "File:Set breakfast leftover Rose Cafe West Green Road Tottenham London England 01.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Set_breakfast_leftover_Rose_Cafe_West_Green_Road_Tottenham_London_England_01.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Acabashi",
+   "source": "commons",
+   "query": "leftover food on plate"
+  },
+  {
+   "file": "food_in_container__3.jpg",
+   "item": "food_in_container",
+   "title": "File:Pizza Slice Box in a Pizza Box.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Pizza_Slice_Box_in_a_Pizza_Box.jpg",
+   "license": "CC BY 2.0",
+   "creator": "ProtoSpace on Flickr.",
+   "source": "commons",
+   "query": "pizza box with slices"
+  },
+  {
+   "file": "food_in_container__4.jpg",
+   "item": "food_in_container",
+   "title": "File:The Food at Davids Kitchen 160.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:The_Food_at_Davids_Kitchen_160.jpg",
+   "license": "CC BY-SA 2.0",
+   "creator": "David Reber from Kansas City, USA",
+   "source": "commons",
+   "query": "leftover food on plate"
+  },
+  {
+   "file": "food_in_container__5.jpg",
+   "item": "food_in_container",
+   "title": "File:Whole cheese pizza sliced into eight pieces inside a cardboard delivery box.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Whole_cheese_pizza_sliced_into_eight_pieces_inside_a_cardboard_delivery_box.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Oleg Yunakov",
+   "source": "commons",
+   "query": "pizza box with slices"
+  },
+  {
+   "file": "food_in_container__6.jpg",
+   "item": "food_in_container",
+   "title": "File:Bowl of lentil soup with green and red lentils.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Bowl_of_lentil_soup_with_green_and_red_lentils.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Whoisjohngalt",
+   "source": "commons",
+   "query": "bowl of soup"
+  },
+  {
+   "file": "food_in_container__7.jpg",
+   "item": "food_in_container",
+   "title": "File:Nongshim Yukejang Bowl Noodle Soup 20201111 003.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Nongshim_Yukejang_Bowl_Noodle_Soup_20201111_003.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Mobius6",
+   "source": "commons",
+   "query": "bowl of soup"
+  },
+  {
+   "file": "food_in_container__8.jpg",
+   "item": "food_in_container",
+   "title": "File:HKCEC WC HKTDC Food Expo 2009 Frozen Food Shrimp Seafood.JPG",
+   "page": "https://commons.wikimedia.org/wiki/File:HKCEC_WC_HKTDC_Food_Expo_2009_Frozen_Food_Shrimp_Seafood.JPG",
+   "license": "CC BY-SA 3.0",
+   "creator": "Faroclom",
+   "source": "commons",
+   "query": "frozen food box"
+  },
+  {
+   "file": "food_in_container__9.jpg",
+   "item": "food_in_container",
+   "title": "File:Chopsticks with Noodle dish Shaxian Snacks Restaurant3.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Chopsticks_with_Noodle_dish_Shaxian_Snacks_Restaurant3.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "",
+   "source": "commons",
+   "query": "disposable wooden chopsticks"
+  },
+  {
+   "file": "bones__1.jpg",
+   "item": "bones",
+   "title": "File:3914Cuisine foods fish bones Bulacan 15.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:3914Cuisine_foods_fish_bones_Bulacan_15.jpg",
+   "license": "CC0",
+   "creator": "Judgefloro",
+   "source": "commons",
+   "query": "fish bones"
+  },
+  {
+   "file": "bones__2.jpg",
+   "item": "bones",
+   "title": "File:Chicken legs.JPG",
+   "page": "https://commons.wikimedia.org/wiki/File:Chicken_legs.JPG",
+   "license": "CC BY-SA 3.0",
+   "creator": "Surya Prakash.S.A.",
+   "source": "commons",
+   "query": "Category:Chicken bones"
+  },
+  {
+   "file": "food_scraps__1.jpg",
+   "item": "food_scraps",
+   "title": "File:Sweet potatoes peelings.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Sweet_potatoes_peelings.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "ESTHER NAKITENDE",
+   "source": "commons",
+   "query": "potato peelings"
+  },
+  {
+   "file": "food_scraps__2.jpg",
+   "item": "food_scraps",
+   "title": "File:Broken eggshell.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Broken_eggshell.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Chisola2006",
+   "source": "commons",
+   "query": "broken eggshells"
+  },
+  {
+   "file": "food_scraps__3.jpg",
+   "item": "food_scraps",
+   "title": "File:Banana peel on the ground.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Banana_peel_on_the_ground.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Vladiator360",
+   "source": "commons",
+   "query": "banana peel ground"
+  },
+  {
+   "file": "food_scraps__4.jpg",
+   "item": "food_scraps",
+   "title": "File:2015-Erstansatz.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:2015-Erstansatz.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Klauspoechhacker",
+   "source": "commons",
+   "query": "Category:Orange peels"
+  },
+  {
+   "file": "food_scraps__5.jpg",
+   "item": "food_scraps",
+   "title": "File:(202501) Orange.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:(202501)_Orange.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Roy Zuo",
+   "source": "commons",
+   "query": "Category:Orange peels"
+  },
+  {
+   "file": "food_scraps__6.jpg",
+   "item": "food_scraps",
+   "title": "File:Lettuce in a stack.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Lettuce_in_a_stack.jpg",
+   "license": "CC0",
+   "creator": "Jeffery Martin",
+   "source": "commons",
+   "query": "head of lettuce"
+  },
+  {
+   "file": "flowers__1.jpg",
+   "item": "flowers",
+   "title": "File:Hand-made flower bouquet.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Hand-made_flower_bouquet.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "D'GreenPen",
+   "source": "commons",
+   "query": "intitle:\"bouquet\" flower"
+  },
+  {
+   "file": "flowers__2.jpg",
+   "item": "flowers",
+   "title": "File:Wilted flowers on Friedhof Obermenzing 01.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Wilted_flowers_on_Friedhof_Obermenzing_01.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Kritzolina",
+   "source": "commons",
+   "query": "wilted flowers bouquet"
+  },
+  {
+   "file": "yard_trimmings__1.jpg",
+   "item": "yard_trimmings",
+   "title": "File:Laubdeponie, Gartenanlage Steinhof, Wien.JPG",
+   "page": "https://commons.wikimedia.org/wiki/File:Laubdeponie,_Gartenanlage_Steinhof,_Wien.JPG",
+   "license": "CC BY-SA 3.0",
+   "creator": "Wald1siedel",
+   "source": "commons",
+   "query": "pile of autumn leaves"
+  },
+  {
+   "file": "ceramic__1.jpg",
+   "item": "ceramic",
+   "title": "File:Soup Bowl MET DP258773.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Soup_Bowl_MET_DP258773.jpg",
+   "license": "CC0",
+   "creator": "Union Porcelain Works",
+   "source": "commons",
+   "query": "bowl of soup"
+  },
+  {
+   "file": "ceramic__2.jpg",
+   "item": "ceramic",
+   "title": "File:Merchandising Coffee mug from band Dead Can Dance with 'DCD' logo.jpeg",
+   "page": "https://commons.wikimedia.org/wiki/File:Merchandising_Coffee_mug_from_band_Dead_Can_Dance_with_%27DCD%27_logo.jpeg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Pittigrilli",
+   "source": "commons",
+   "query": "ceramic coffee mug"
+  },
+  {
+   "file": "drinking_glass__1.jpg",
+   "item": "drinking_glass",
+   "title": "File:Cup of tea Pitta Corner Wood Green High Road Haringey London England 01.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Cup_of_tea_Pitta_Corner_Wood_Green_High_Road_Haringey_London_England_01.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Acabashi",
+   "source": "commons",
+   "query": "Category:Tea bags"
+  },
+  {
+   "file": "paper_cup__1.jpg",
+   "item": "paper_cup",
+   "title": "File:Paper cup and plate Sclater Street Yard market, Brick Lane Market London E1.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Paper_cup_and_plate_Sclater_Street_Yard_market,_Brick_Lane_Market_London_E1.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Acabashi",
+   "source": "commons",
+   "query": "Category:Paper plates"
+  },
+  {
+   "file": "plastic_cap__1.jpg",
+   "item": "plastic_cap",
+   "title": "File:Mattoni 150 let.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Mattoni_150_let.jpg",
+   "license": "CC0",
+   "creator": "Mejvy1",
+   "source": "commons",
+   "query": "Category:Plastic bottle caps"
+  },
+  {
+   "file": "coffee_grounds_filter__1.jpg",
+   "item": "coffee_grounds_filter",
+   "title": "File:Coffee Filter 2006 09 09.JPG",
+   "page": "https://commons.wikimedia.org/wiki/File:Coffee_Filter_2006_09_09.JPG",
+   "license": "Public domain",
+   "creator": "—Estormiz 06:57, 10 September 2006 (UTC)",
+   "source": "commons",
+   "query": "coffee filter with grounds"
+  },
+  {
+   "file": "cooking_oil__1.jpg",
+   "item": "cooking_oil",
+   "title": "File:2022-05-30 21 06 43 A bottle of Wesson vegetable oil in the Mountainville section of Ewing Township, Mercer County, New Jersey.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:2022-05-30_21_06_43_A_bottle_of_Wesson_vegetable_oil_in_the_Mountainville_section_of_Ewing_Township,_Mercer_County,_New_Jersey.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Famartin",
+   "source": "commons",
+   "query": "bottle of vegetable oil"
+  },
+  {
+   "file": "garden_hose__1.jpg",
+   "item": "garden_hose",
+   "title": "File:Garden hose.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Garden_hose.jpg",
+   "license": "CC BY-SA 3.0",
+   "creator": "Nandhp",
+   "source": "commons",
+   "query": "garden hose"
+  },
+  {
+   "file": "bulb_led__1.jpg",
+   "item": "bulb_led",
+   "title": "File:LED-E27-Light-Bulb-1134.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:LED-E27-Light-Bulb-1134.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Loadmaster (David R. Tribble)\n\n\n\n\n\n\nThis image was made by Loadmaster (David R. Tribble).\nEmail the author:  David R. Tr",
+   "source": "commons",
+   "query": "LED light bulb"
+  },
+  {
+   "file": "shoes__1.jpg",
+   "item": "shoes",
+   "title": "File:A pair of kids sneakers.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:A_pair_of_kids_sneakers.jpg",
+   "license": "CC0",
+   "creator": "Xzpq",
+   "source": "commons",
+   "query": "pair of sneakers"
+  },
+  {
+   "file": "textiles__1.jpg",
+   "item": "textiles",
+   "title": "File:Clean clothes.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Clean_clothes.jpg",
+   "license": "CC BY-SA 4.0",
+   "creator": "Ejdowning00",
+   "source": "commons",
+   "query": "pile of laundry clothes"
+  },
+  {
+   "file": "wipes__1.jpg",
+   "item": "wipes",
+   "title": "File:Baby wipes.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Baby_wipes.jpg",
+   "license": "CC BY 4.0",
+   "creator": "Headlock0225",
+   "source": "commons",
+   "query": "package of baby wipes"
+  },
+  {
+   "file": "wooden_chopsticks__1.jpg",
+   "item": "wooden_chopsticks",
+   "title": "File:FamilyMart packaged disposable chopstick 20130207.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:FamilyMart_packaged_disposable_chopstick_20130207.jpg",
+   "license": "CC BY-SA 3.0",
+   "creator": "Solomon203",
+   "source": "commons",
+   "query": "disposable wooden chopsticks"
+  }
+ ]
+}

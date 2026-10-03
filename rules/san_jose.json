@@ -1,0 +1,810 @@
+{
+ "city": "san_jose",
+ "name": "San José",
+ "residence": "single-family",
+ "authority": "City of San José Environmental Services Department (SanJoseRecycles.org)",
+ "updated": "2026-10-01",
+ "official_domains": [
+  "sanjoserecycles.org",
+  "sanjoseca.gov"
+ ],
+ "notes": "San José single-family homes have no food-scraps cart: garbage goes to a materials recovery facility that pulls out organics for composting. Yard trimmings have their own cart or street pile.",
+ "page_disposal": {
+  "content_after": "\n\\s*More\\s*\n",
+  "lines": 6,
+  "headings": {
+   "Put in Recycling Cart/Bin": "recycling",
+   "Put in Garbage Cart/Bin": "landfill",
+   "Yard Trimmings Cart/Pile": "yard",
+   "Hazardous Waste": "special",
+   "E-Waste": "special",
+   "Plastic Bag Drop-Off": "special"
+  }
+ },
+ "bins": {
+  "recycling": {
+   "line1": "Recycling"
+  },
+  "landfill": {
+   "line1": "Garbage"
+  },
+  "yard": {
+   "line1": "Yard trimmings"
+  },
+  "special": {
+   "line1": "Special handling"
+  }
+ },
+ "sources": {
+  "cardboard": {
+   "title": "SanJoseRecycles.org: cardboard",
+   "url": "https://sanjoserecycles.org/guide/cardboard/"
+  },
+  "pizza-boxes": {
+   "title": "SanJoseRecycles.org: pizza boxes",
+   "url": "https://sanjoserecycles.org/guide/pizza-boxes/"
+  },
+  "office-paper": {
+   "title": "SanJoseRecycles.org: office paper",
+   "url": "https://sanjoserecycles.org/guide/office-paper/"
+  },
+  "paperboard": {
+   "title": "SanJoseRecycles.org: paperboard",
+   "url": "https://sanjoserecycles.org/guide/paperboard/"
+  },
+  "paper-bags": {
+   "title": "SanJoseRecycles.org: paper bags",
+   "url": "https://sanjoserecycles.org/guide/paper-bags/"
+  },
+  "shredded-paper": {
+   "title": "SanJoseRecycles.org: shredded paper",
+   "url": "https://sanjoserecycles.org/guide/shredded-paper/"
+  },
+  "soiled-paper": {
+   "title": "SanJoseRecycles.org: soiled paper",
+   "url": "https://sanjoserecycles.org/guide/soiled-paper/"
+  },
+  "paper-cups": {
+   "title": "SanJoseRecycles.org: paper cups",
+   "url": "https://sanjoserecycles.org/guide/paper-cups/"
+  },
+  "takeout-containers-cardboard": {
+   "title": "SanJoseRecycles.org: takeout containers cardboard",
+   "url": "https://sanjoserecycles.org/guide/takeout-containers-cardboard/"
+  },
+  "milk-juice-cartons": {
+   "title": "SanJoseRecycles.org: milk juice cartons",
+   "url": "https://sanjoserecycles.org/guide/milk-juice-cartons/"
+  },
+  "juice-boxes": {
+   "title": "SanJoseRecycles.org: juice boxes",
+   "url": "https://sanjoserecycles.org/guide/juice-boxes/"
+  },
+  "paper-receipts": {
+   "title": "SanJoseRecycles.org: paper receipts",
+   "url": "https://sanjoserecycles.org/guide/paper-receipts/"
+  },
+  "coffee-filters": {
+   "title": "SanJoseRecycles.org: coffee filters",
+   "url": "https://sanjoserecycles.org/guide/coffee-filters/"
+  },
+  "books": {
+   "title": "SanJoseRecycles.org: books",
+   "url": "https://sanjoserecycles.org/guide/books/"
+  },
+  "plastic-bottles": {
+   "title": "SanJoseRecycles.org: plastic bottles",
+   "url": "https://sanjoserecycles.org/guide/plastic-bottles/"
+  },
+  "milk-jug": {
+   "title": "SanJoseRecycles.org: milk jug",
+   "url": "https://sanjoserecycles.org/guide/milk-jug/"
+  },
+  "yogurt-cups": {
+   "title": "SanJoseRecycles.org: yogurt cups",
+   "url": "https://sanjoserecycles.org/guide/yogurt-cups/"
+  },
+  "hard-plastic-clamshell-packaging": {
+   "title": "SanJoseRecycles.org: hard plastic clamshell packaging",
+   "url": "https://sanjoserecycles.org/guide/hard-plastic-clamshell-packaging/"
+  },
+  "plastic-cups": {
+   "title": "SanJoseRecycles.org: plastic cups",
+   "url": "https://sanjoserecycles.org/guide/plastic-cups/"
+  },
+  "takeout-containers-plastic": {
+   "title": "SanJoseRecycles.org: takeout containers plastic",
+   "url": "https://sanjoserecycles.org/guide/takeout-containers-plastic/"
+  },
+  "plastic-bags": {
+   "title": "SanJoseRecycles.org: plastic bags",
+   "url": "https://sanjoserecycles.org/guide/plastic-bags/"
+  },
+  "bubble-wrap": {
+   "title": "SanJoseRecycles.org: bubble wrap",
+   "url": "https://sanjoserecycles.org/guide/bubble-wrap/"
+  },
+  "plastic-utensils": {
+   "title": "SanJoseRecycles.org: plastic utensils",
+   "url": "https://sanjoserecycles.org/guide/plastic-utensils/"
+  },
+  "straws": {
+   "title": "SanJoseRecycles.org: straws",
+   "url": "https://sanjoserecycles.org/guide/straws/"
+  },
+  "potato-chip-snack-bags": {
+   "title": "SanJoseRecycles.org: potato chip snack bags",
+   "url": "https://sanjoserecycles.org/guide/potato-chip-snack-bags/"
+  },
+  "compostable-cups-plates-utensils": {
+   "title": "SanJoseRecycles.org: compostable cups plates utensils",
+   "url": "https://sanjoserecycles.org/guide/compostable-cups-plates-utensils/"
+  },
+  "takeout-containers-foam": {
+   "title": "SanJoseRecycles.org: takeout containers foam",
+   "url": "https://sanjoserecycles.org/guide/takeout-containers-foam/"
+  },
+  "packing-peanuts": {
+   "title": "SanJoseRecycles.org: packing peanuts",
+   "url": "https://sanjoserecycles.org/guide/packing-peanuts/"
+  },
+  "plastic-caps": {
+   "title": "SanJoseRecycles.org: plastic caps",
+   "url": "https://sanjoserecycles.org/guide/plastic-caps/"
+  },
+  "coffee-capsules": {
+   "title": "SanJoseRecycles.org: coffee capsules",
+   "url": "https://sanjoserecycles.org/guide/coffee-capsules/"
+  },
+  "drink-pouches": {
+   "title": "SanJoseRecycles.org: drink pouches",
+   "url": "https://sanjoserecycles.org/guide/drink-pouches/"
+  },
+  "toothpaste-tubes": {
+   "title": "SanJoseRecycles.org: toothpaste tubes",
+   "url": "https://sanjoserecycles.org/guide/toothpaste-tubes/"
+  },
+  "toothbrushes": {
+   "title": "SanJoseRecycles.org: toothbrushes",
+   "url": "https://sanjoserecycles.org/guide/toothbrushes/"
+  },
+  "plastic-toys": {
+   "title": "SanJoseRecycles.org: plastic toys",
+   "url": "https://sanjoserecycles.org/guide/plastic-toys/"
+  },
+  "soda-cans": {
+   "title": "SanJoseRecycles.org: soda cans",
+   "url": "https://sanjoserecycles.org/guide/soda-cans/"
+  },
+  "food-cans": {
+   "title": "SanJoseRecycles.org: food cans",
+   "url": "https://sanjoserecycles.org/guide/food-cans/"
+  },
+  "aluminum-foil": {
+   "title": "SanJoseRecycles.org: aluminum foil",
+   "url": "https://sanjoserecycles.org/guide/aluminum-foil/"
+  },
+  "aluminum-trays-pans": {
+   "title": "SanJoseRecycles.org: aluminum trays pans",
+   "url": "https://sanjoserecycles.org/guide/aluminum-trays-pans/"
+  },
+  "aerosol-cans": {
+   "title": "SanJoseRecycles.org: aerosol cans",
+   "url": "https://sanjoserecycles.org/guide/aerosol-cans/"
+  },
+  "glass-bottles": {
+   "title": "SanJoseRecycles.org: glass bottles",
+   "url": "https://sanjoserecycles.org/guide/glass-bottles/"
+  },
+  "jars": {
+   "title": "SanJoseRecycles.org: jars",
+   "url": "https://sanjoserecycles.org/guide/jars/"
+  },
+  "broken-glass": {
+   "title": "SanJoseRecycles.org: broken glass",
+   "url": "https://sanjoserecycles.org/guide/broken-glass/"
+  },
+  "dishes": {
+   "title": "SanJoseRecycles.org: dishes",
+   "url": "https://sanjoserecycles.org/guide/dishes/"
+  },
+  "food-scraps": {
+   "title": "SanJoseRecycles.org: food scraps",
+   "url": "https://sanjoserecycles.org/guide/food-scraps/"
+  },
+  "bones": {
+   "title": "SanJoseRecycles.org: bones",
+   "url": "https://sanjoserecycles.org/guide/bones/"
+  },
+  "yard-waste": {
+   "title": "SanJoseRecycles.org: yard waste",
+   "url": "https://sanjoserecycles.org/guide/yard-waste/"
+  },
+  "fresh-flowers": {
+   "title": "SanJoseRecycles.org: fresh flowers",
+   "url": "https://sanjoserecycles.org/guide/fresh-flowers/"
+  },
+  "cooking-oil-grease": {
+   "title": "SanJoseRecycles.org: cooking oil grease",
+   "url": "https://sanjoserecycles.org/guide/cooking-oil-grease/"
+  },
+  "chopsticks": {
+   "title": "SanJoseRecycles.org: chopsticks",
+   "url": "https://sanjoserecycles.org/guide/chopsticks/"
+  },
+  "batteries-single-use": {
+   "title": "SanJoseRecycles.org: batteries single use",
+   "url": "https://sanjoserecycles.org/guide/batteries-single-use/"
+  },
+  "cell-phones": {
+   "title": "SanJoseRecycles.org: cell phones",
+   "url": "https://sanjoserecycles.org/guide/cell-phones/"
+  },
+  "electrical-cords-cables": {
+   "title": "SanJoseRecycles.org: electrical cords cables",
+   "url": "https://sanjoserecycles.org/guide/electrical-cords-cables/"
+  },
+  "light-bulbs-fluorescent-cfl": {
+   "title": "SanJoseRecycles.org: light bulbs fluorescent cfl",
+   "url": "https://sanjoserecycles.org/guide/light-bulbs-fluorescent-cfl/"
+  },
+  "light-bulbs-led": {
+   "title": "SanJoseRecycles.org: light bulbs led",
+   "url": "https://sanjoserecycles.org/guide/light-bulbs-led/"
+  },
+  "light-bulbs-incandescent": {
+   "title": "SanJoseRecycles.org: light bulbs incandescent",
+   "url": "https://sanjoserecycles.org/guide/light-bulbs-incandescent/"
+  },
+  "paint": {
+   "title": "SanJoseRecycles.org: paint",
+   "url": "https://sanjoserecycles.org/guide/paint/"
+  },
+  "medicine-prescription-drugs": {
+   "title": "SanJoseRecycles.org: medicine prescription drugs",
+   "url": "https://sanjoserecycles.org/guide/medicine-prescription-drugs/"
+  },
+  "needles-and-sharps": {
+   "title": "SanJoseRecycles.org: needles and sharps",
+   "url": "https://sanjoserecycles.org/guide/needles-and-sharps/"
+  },
+  "camping-gas-cylinders": {
+   "title": "SanJoseRecycles.org: camping gas cylinders",
+   "url": "https://sanjoserecycles.org/guide/camping-gas-cylinders/"
+  },
+  "diapers": {
+   "title": "SanJoseRecycles.org: diapers",
+   "url": "https://sanjoserecycles.org/guide/diapers/"
+  },
+  "animal-waste": {
+   "title": "SanJoseRecycles.org: animal waste",
+   "url": "https://sanjoserecycles.org/guide/animal-waste/"
+  },
+  "kitty-litter": {
+   "title": "SanJoseRecycles.org: kitty litter",
+   "url": "https://sanjoserecycles.org/guide/kitty-litter/"
+  },
+  "face-masks": {
+   "title": "SanJoseRecycles.org: face masks",
+   "url": "https://sanjoserecycles.org/guide/face-masks/"
+  },
+  "latex-gloves": {
+   "title": "SanJoseRecycles.org: latex gloves",
+   "url": "https://sanjoserecycles.org/guide/latex-gloves/"
+  },
+  "clothing-textiles": {
+   "title": "SanJoseRecycles.org: clothing textiles",
+   "url": "https://sanjoserecycles.org/guide/clothing-textiles/"
+  },
+  "shoes": {
+   "title": "SanJoseRecycles.org: shoes",
+   "url": "https://sanjoserecycles.org/guide/shoes/"
+  },
+  "cigarettes-packs": {
+   "title": "SanJoseRecycles.org: cigarettes packs",
+   "url": "https://sanjoserecycles.org/guide/cigarettes-packs/"
+  },
+  "wipes": {
+   "title": "SanJoseRecycles.org: wipes",
+   "url": "https://sanjoserecycles.org/guide/wipes/"
+  },
+  "garden-hoses": {
+   "title": "SanJoseRecycles.org: garden hoses",
+   "url": "https://sanjoserecycles.org/guide/garden-hoses/"
+  },
+  "egg-cartons-paper": {
+   "title": "SanJoseRecycles.org: egg cartons paper",
+   "url": "https://sanjoserecycles.org/guide/egg-cartons-paper/"
+  },
+  "egg-cartons-foam": {
+   "title": "SanJoseRecycles.org: egg cartons foam",
+   "url": "https://sanjoserecycles.org/guide/egg-cartons-foam/"
+  },
+  "frozen-food-boxes": {
+   "title": "SanJoseRecycles.org: frozen food boxes",
+   "url": "https://sanjoserecycles.org/guide/frozen-food-boxes/"
+  },
+  "tissues-toilet-paper": {
+   "title": "SanJoseRecycles.org: tissues toilet paper",
+   "url": "https://sanjoserecycles.org/guide/tissues-toilet-paper/"
+  },
+  "cleaning-products": {
+   "title": "SanJoseRecycles.org: cleaning products",
+   "url": "https://sanjoserecycles.org/guide/cleaning-products/"
+  }
+ },
+ "rules": {
+  "cardboard_box": {
+   "bin": "recycling",
+   "reason": "Cut boxes small enough to fit loosely in the cart.",
+   "source": "cardboard",
+   "quote": "Cut large boxes small enough to fit loosely inside the recycling cart."
+  },
+  "pizza_box_greasy": {
+   "bin": "landfill",
+   "reason": "Greasy boxes go in garbage; recycle clean lids.",
+   "source": "pizza-boxes",
+   "quote": "Put boxes stained with grease or oil in the garbage."
+  },
+  "paper_mixed": {
+   "bin": "recycling",
+   "reason": "Recycle clean paper; no foil, grease or food residue.",
+   "source": "office-paper",
+   "quote": "Recycle clean paper. Tape is OK."
+  },
+  "paperboard_box": {
+   "bin": "recycling",
+   "reason": "Recycle clean boxes; liners and soiled parts don't go in.",
+   "source": "paperboard",
+   "quote": "Paperboard Put in Recycling Cart/Bin"
+  },
+  "paper_bag": {
+   "bin": "recycling",
+   "reason": "Recycle clean paper bags; glued-on handles are OK.",
+   "source": "paper-bags",
+   "quote": "Paper bags can be recycled even if they have handles attached with adhesive."
+  },
+  "shredded_paper": {
+   "bin": "recycling",
+   "reason": "Put shreds in a clear bag, tie it, then recycle.",
+   "source": "shredded-paper",
+   "quote": "To prevent shredded paper from getting tangled in recycling equipment, place it in a clear bag."
+  },
+  "paper_towel_napkin": {
+   "bin": "landfill",
+   "reason": "Garbage cart; San José sorts out soiled paper for composting.",
+   "source": "soiled-paper",
+   "quote": "Soiled paper that you put in your garbage cart will be separated out at the “Materials Recovery Facility” and sent to a composting facility in Gilroy."
+  },
+  "tissue": {
+   "bin": "landfill",
+   "reason": "Used tissues go in the garbage; never flush them.",
+   "source": "tissues-toilet-paper",
+   "quote": "Tissues and Toilet Paper Put in Garbage Cart/Bin"
+  },
+  "paper_cup": {
+   "bin": "landfill",
+   "reason": "Plastic-lined cups go in garbage; recycle the cardboard sleeve.",
+   "source": "paper-cups",
+   "quote": "Paper Cups Put in Garbage Cart/Bin"
+  },
+  "paper_plate_used": {
+   "bin": "landfill",
+   "reason": "Garbage cart; San José sorts out soiled paper for composting.",
+   "source": "soiled-paper",
+   "quote": "Soiled paper that you put in your garbage cart will be separated out at the “Materials Recovery Facility” and sent to a composting facility in Gilroy."
+  },
+  "paper_takeout": {
+   "bin": "landfill",
+   "reason": "Food-soiled take-out boxes go in the garbage.",
+   "source": "takeout-containers-cardboard",
+   "quote": "Food and Liquid Soiled Containers Belong in the Garbage."
+  },
+  "carton": {
+   "bin": "recycling",
+   "reason": "Empty cartons, then recycle; caps go in the garbage.",
+   "source": "milk-juice-cartons",
+   "quote": "Empty the cartons of any liquid or residue and, if possible, remove any plastic or metal caps or spouts before recycling."
+  },
+  "aseptic_carton": {
+   "bin": "recycling",
+   "reason": "Juice boxes go in recycling; straws go in garbage.",
+   "source": "juice-boxes",
+   "quote": "Please place them in your recycling container."
+  },
+  "receipt": {
+   "bin": "landfill",
+   "reason": "Receipts contain BPA and can't be recycled; garbage.",
+   "source": "paper-receipts",
+   "quote": "Paper Receipts Put in Garbage Cart/Bin"
+  },
+  "coffee_grounds_filter": {
+   "bin": "landfill",
+   "reason": "Coffee grounds and paper filters go in the garbage cart.",
+   "source": "coffee-filters",
+   "quote": "Coffee Filters Put in Garbage Cart/Bin"
+  },
+  "tea_bag": {
+   "bin": "landfill",
+   "reason": "Tea bags can contain plastic; put them in the garbage.",
+   "source": "coffee-filters",
+   "quote": "Tea bags can contain plastic and are therefore trash."
+  },
+  "book": {
+   "bin": "recycling",
+   "reason": "Recycle books; donate ones in good condition.",
+   "source": "books",
+   "quote": "Books Put in Recycling Cart/Bin"
+  },
+  "plastic_bottle": {
+   "bin": "recycling",
+   "reason": "Empty plastic bottles, then recycle; no rinsing needed.",
+   "source": "plastic-bottles",
+   "quote": "Empty out plastic bottles before recycling."
+  },
+  "plastic_jug": {
+   "bin": "recycling",
+   "reason": "Empty jugs, no rinse needed; caps can stay on.",
+   "source": "milk-jug",
+   "quote": "Empty jugs before placing in the recycling cart (no need to rinse)."
+  },
+  "plastic_tub": {
+   "bin": "recycling",
+   "reason": "Empty and scrape tubs, then recycle.",
+   "source": "yogurt-cups",
+   "quote": "Before recycling, empty and scrape out any food residue left in the cups."
+  },
+  "plastic_clamshell": {
+   "bin": "recycling",
+   "reason": "Recycle if marked #1-#5 or #7; unmarked, #6 or compostable: garbage.",
+   "source": "hard-plastic-clamshell-packaging",
+   "quote": "In San José, you can recycle hard plastic packaging labeled #1 – #5 in the ‘chasing arrow’ symbol."
+  },
+  "plastic_cup": {
+   "bin": "recycling",
+   "reason": "Recycle empty cups marked #1-#5 or #7; #6 or compostable: garbage.",
+   "source": "plastic-cups",
+   "quote": "Recycle plastic cups only if they are empty and labeled plastic #1 through 5 or non-compostable plastic #7."
+  },
+  "plastic_takeout": {
+   "bin": "recycling",
+   "reason": "Empty and scrape, then recycle; not if compostable plastic.",
+   "source": "takeout-containers-plastic",
+   "quote": "Before recycling, empty and scrape the food residue out of the container."
+  },
+  "plastic_bag": {
+   "bin": "landfill",
+   "reason": "Not curbside recyclable; garbage, or clean bags to store drop-off.",
+   "source": "plastic-bags",
+   "quote": "While plastic bags cannot be recycled in your curbside recycling container, you can use this site to find local places that will take them."
+  },
+  "bubble_wrap": {
+   "bin": "special",
+   "reason": "Take clean wrap to a plastic bag drop-off; otherwise garbage.",
+   "source": "bubble-wrap",
+   "quote": "If you are unable to take bubble wrap to a plastic bag drop-off location or your local mail center, place them in the garbage."
+  },
+  "plastic_utensils": {
+   "bin": "landfill",
+   "reason": "Too small to recycle; plastic utensils go in garbage.",
+   "source": "plastic-utensils",
+   "quote": "They will fall through cracks in sorting machinery. Toss them in the garbage."
+  },
+  "straw": {
+   "bin": "landfill",
+   "reason": "Straws go in the garbage.",
+   "source": "straws",
+   "quote": "Straws Put in Garbage Cart/Bin"
+  },
+  "snack_wrapper": {
+   "bin": "landfill",
+   "reason": "Mixed-material bags can't be recycled; garbage.",
+   "source": "potato-chip-snack-bags",
+   "quote": "these mixed-material bags cannot be recycled. Toss them in the garbage."
+  },
+  "compostable_plastic": {
+   "bin": "landfill",
+   "reason": "\"Compostable\" plastics must go in the garbage.",
+   "source": "compostable-cups-plates-utensils",
+   "quote": "Plastic items labeled “compostable” or “biodegradable” must go in the garbage."
+  },
+  "foam_food_container": {
+   "bin": "landfill",
+   "reason": "Foam containers aren't recyclable here, even clean.",
+   "source": "takeout-containers-foam",
+   "quote": "Takeout Containers (Foam) Put in Garbage Cart/Bin"
+  },
+  "foam_packaging": {
+   "bin": "landfill",
+   "reason": "Bag packing peanuts, tie shut, put in garbage.",
+   "source": "packing-peanuts",
+   "quote": "Place packing peanuts in a clear plastic bag and tie shut, then toss in your garbage cart."
+  },
+  "plastic_cap": {
+   "bin": "landfill",
+   "reason": "Loose caps: garbage. Caps screwed onto bottles can be recycled.",
+   "source": "plastic-caps",
+   "quote": "Loose plastic caps should go in the garbage."
+  },
+  "coffee_pod": {
+   "bin": "landfill",
+   "reason": "Pods are too small to recycle curbside; garbage.",
+   "source": "coffee-capsules",
+   "quote": "Coffee Pods & Capsules Put in Garbage Cart/Bin"
+  },
+  "drink_pouch": {
+   "bin": "landfill",
+   "reason": "Drink pouches go in the garbage.",
+   "source": "drink-pouches",
+   "quote": "Drink Pouches Put in Garbage Cart/Bin"
+  },
+  "toothpaste_tube": {
+   "bin": "landfill",
+   "reason": "Toothpaste tubes go in the garbage.",
+   "source": "toothpaste-tubes",
+   "quote": "Toothpaste Tubes Put in Garbage Cart/Bin"
+  },
+  "toothbrush": {
+   "bin": "landfill",
+   "reason": "Manual toothbrushes: garbage. Electric ones are e-waste.",
+   "source": "toothbrushes",
+   "quote": "Toothbrushes Put in Garbage Cart/Bin"
+  },
+  "plastic_toy": {
+   "bin": "recycling",
+   "reason": "Recycle hard plastic toys; ones with electronics are e-waste.",
+   "source": "plastic-toys",
+   "quote": "Plastic Toys Put in Recycling Cart/Bin"
+  },
+  "aluminum_can": {
+   "bin": "recycling",
+   "reason": "Empty any residue, then recycle.",
+   "source": "soda-cans",
+   "quote": "Aluminum Cans Put in Recycling Cart/Bin"
+  },
+  "food_can": {
+   "bin": "recycling",
+   "reason": "Empty and scrape cans; labels can stay on.",
+   "source": "food-cans",
+   "quote": "Empty and scrape cans before recycling."
+  },
+  "aluminum_foil": {
+   "bin": "recycling",
+   "reason": "Clean foil only; roll into a ball at least 2 inches wide.",
+   "source": "aluminum-foil",
+   "quote": "Scrape residue off all aluminum foil before recycling."
+  },
+  "aluminum_tray": {
+   "bin": "recycling",
+   "reason": "Empty and scrape trays; traces of food are OK.",
+   "source": "aluminum-trays-pans",
+   "quote": "Empty and scrape all containers before recycling."
+  },
+  "aerosol_can": {
+   "bin": "special",
+   "reason": "Hazardous waste unless completely empty; empty cans go in recycling.",
+   "source": "aerosol-cans",
+   "quote": "Only empty aerosol cans are allowed in the recycling cart."
+  },
+  "glass_bottle": {
+   "bin": "recycling",
+   "reason": "Empty, remove caps, then recycle; blue glass is not accepted.",
+   "source": "glass-bottles",
+   "quote": "Empty glass bottles of any liquid or residue and remove any plastic or metal caps before recycling."
+  },
+  "glass_jar": {
+   "bin": "recycling",
+   "reason": "Scrape jars empty and take off lids, then recycle.",
+   "source": "jars",
+   "quote": "Scrape out any leftover food or drink before recycling empty glass jars."
+  },
+  "broken_glass": {
+   "bin": "recycling",
+   "reason": "Bottle and jar shards only; other broken glass: wrap, garbage.",
+   "source": "broken-glass",
+   "quote": "Recycle ONLY broken bottles and jars."
+  },
+  "drinking_glass": {
+   "bin": "unknown",
+   "note": "SanJoseRecycles contradicts itself: the glassware page says a regular drinking glass can go in the blue recycling cart, but the broken-glass page says 'other drink glasses ... cannot be recycled' and the dishes page says glass dishes cannot go in recycling."
+  },
+  "ceramic": {
+   "bin": "landfill",
+   "reason": "Ceramic dishes go in the garbage.",
+   "source": "dishes",
+   "quote": "Put a small amount (less than 60 pounds) in the garbage."
+  },
+  "food_scraps": {
+   "bin": "landfill",
+   "reason": "Garbage cart; San José recovers food from garbage for composting.",
+   "source": "food-scraps",
+   "quote": "All the garbage collected in San José is sent to a mixed waste materials recovery facility (MRF) to recover organic materials for composting."
+  },
+  "bones": {
+   "bin": "landfill",
+   "reason": "Bones go in the garbage cart.",
+   "source": "bones",
+   "quote": "Bones Put in Garbage Cart/Bin"
+  },
+  "yard_trimmings": {
+   "bin": "yard",
+   "reason": "Yard trimmings cart or pile; keep produce and dog poop bags out.",
+   "source": "yard-waste",
+   "quote": "Accepted yard trimmings include branches, prunings and clippings (e.g. flowers, grass, leaves, palm fronds), and sod (remove as much soil as possible)."
+  },
+  "flowers": {
+   "bin": "yard",
+   "reason": "Flowers go with yard trimmings; remove packaging first.",
+   "source": "fresh-flowers",
+   "quote": "Fresh Flowers Yard Trimmings Cart/Pile"
+  },
+  "cooking_oil": {
+   "bin": "landfill",
+   "reason": "Up to 1 quart: cool, seal in can or jar, garbage. More: hazardous.",
+   "source": "cooking-oil-grease",
+   "quote": "Let cool, then put small quantities in cans or jars. Seal containers and put in the garbage."
+  },
+  "wooden_chopsticks": {
+   "bin": "landfill",
+   "reason": "Garbage cart; wooden chopsticks are sorted out and composted.",
+   "source": "chopsticks",
+   "quote": "Wooden chopsticks are separated out from garbage and composted."
+  },
+  "battery": {
+   "bin": "special",
+   "reason": "Banned from carts; take to County household hazardous waste.",
+   "source": "batteries-single-use",
+   "quote": "All batteries, including sizes AAA, AA, C, and D, need to be disposed of as Household Hazardous Waste."
+  },
+  "phone_electronics": {
+   "bin": "special",
+   "reason": "E-waste: County Household Hazardous Waste Program; never in carts.",
+   "source": "cell-phones",
+   "quote": "Cell phones are e-waste that can be disposed of through the County Household Hazardous Waste Program."
+  },
+  "cords_cables": {
+   "bin": "special",
+   "reason": "E-waste: County Household Hazardous Waste Program.",
+   "source": "electrical-cords-cables",
+   "quote": "Electrical cords and cables are e-waste that can be disposed of through the County Household Hazardous Waste Program."
+  },
+  "bulb_fluorescent": {
+   "bin": "special",
+   "reason": "Hazardous waste: County HHW program or a mail-back kit.",
+   "source": "light-bulbs-fluorescent-cfl",
+   "quote": "Both fluorescent light bulbs and tubes can be disposed of through the County Household Hazardous Waste Program."
+  },
+  "bulb_led": {
+   "bin": "special",
+   "reason": "LEDs contain lead and arsenic; dispose as hazardous waste.",
+   "source": "light-bulbs-led",
+   "quote": "Store them in a sealed container, and dispose of them as hazardous waste."
+  },
+  "bulb_incandescent": {
+   "bin": "landfill",
+   "reason": "Wrap and put in garbage; don't recycle with glass.",
+   "source": "light-bulbs-incandescent",
+   "quote": "The materials used to make incandescent bulbs are non-toxic, so it’s OK to throw these bulbs in the garbage."
+  },
+  "paint": {
+   "bin": "special",
+   "reason": "Hazardous waste, free County drop-off; dried latex can go in garbage.",
+   "source": "paint",
+   "quote": "All other paint, including spray paint, is hazardous waste and can be disposed of for free through the County Household Hazardous Waste Program."
+  },
+  "cleaning_product": {
+   "bin": "special",
+   "reason": "Leftover cleaners are hazardous waste; empty bottles are often recyclable.",
+   "source": "cleaning-products",
+   "quote": "Cleaning Products Hazardous Waste"
+  },
+  "medicine": {
+   "bin": "special",
+   "reason": "Never trash or flush; use a drop-off bin, hhw.org or mailback.",
+   "source": "medicine-prescription-drugs",
+   "quote": "As for the medicines themselves, do not flush unused or expired medicines down the toilet, the drain, or put them in the garbage or recycling carts."
+  },
+  "sharps": {
+   "bin": "special",
+   "reason": "Seal in a biohazard container; County HHW or drop-off site.",
+   "source": "needles-and-sharps",
+   "quote": "Needles and sharps must be placed in a biohazard container for disposal with other hazardous waste."
+  },
+  "propane_cylinder": {
+   "bin": "special",
+   "reason": "Never in carts, fire risk; County hazardous waste drop-off.",
+   "source": "camping-gas-cylinders",
+   "quote": "Never dispose of these cylinders in garbage or recycling carts as they can cause fires."
+  },
+  "diaper": {
+   "bin": "landfill",
+   "reason": "Bag disposable diapers, then put in the garbage.",
+   "source": "diapers",
+   "quote": "Disposable diapers must be bagged before placing them in the garbage cart."
+  },
+  "pet_waste": {
+   "bin": "landfill",
+   "reason": "Bag animal waste, then garbage; not with yard trimmings.",
+   "source": "animal-waste",
+   "quote": "Bag all animal waste before tossing it in your garbage cart."
+  },
+  "kitty_litter": {
+   "bin": "landfill",
+   "reason": "Bag cat litter, then put in the garbage.",
+   "source": "kitty-litter",
+   "quote": "Bag kitty litter before tossing in the garbage."
+  },
+  "face_mask": {
+   "bin": "landfill",
+   "reason": "Masks go in the garbage; snip the straps.",
+   "source": "face-masks",
+   "quote": "Face Masks Alternative ways to recycle Put in Garbage Cart/Bin"
+  },
+  "disposable_gloves": {
+   "bin": "landfill",
+   "reason": "Disposable gloves go in the garbage.",
+   "source": "latex-gloves",
+   "quote": "Latex Gloves Put in Garbage Cart/Bin"
+  },
+  "textiles": {
+   "bin": "landfill",
+   "reason": "Donate wearable items; otherwise garbage.",
+   "source": "clothing-textiles",
+   "quote": "Clothing and Textiles Put in Garbage Cart/Bin"
+  },
+  "shoes": {
+   "bin": "landfill",
+   "reason": "Donate usable shoes; otherwise garbage. Light-up shoes are hazardous.",
+   "source": "shoes",
+   "quote": "Put in Garbage Cart/Bin If your shoes are in good condition, consider donating them."
+  },
+  "cigarette": {
+   "bin": "landfill",
+   "reason": "Cigarette butts go in the garbage.",
+   "source": "cigarettes-packs",
+   "quote": "Cigarettes and butts are neither recyclable nor compostable."
+  },
+  "wipes": {
+   "bin": "landfill",
+   "reason": "Wipes go in the garbage; never flush them.",
+   "source": "wipes",
+   "quote": "Wipes Put in Garbage Cart/Bin"
+  },
+  "garden_hose": {
+   "bin": "landfill",
+   "reason": "Hoses jam recycling equipment; always garbage.",
+   "source": "garden-hoses",
+   "quote": "Never put hoses in the recycling — always put them in the garbage."
+  },
+  "egg_carton_paper": {
+   "bin": "recycling",
+   "reason": "Only clean, dry paper egg cartons go in recycling.",
+   "source": "egg-cartons-paper",
+   "quote": "Only clean, dry egg cartons can be put in recycling."
+  },
+  "egg_carton_foam": {
+   "bin": "landfill",
+   "reason": "Foam (#6) egg cartons go in the garbage.",
+   "source": "egg-cartons-foam",
+   "quote": "Egg Cartons (Foam) Put in Garbage Cart/Bin"
+  },
+  "frozen_food_box": {
+   "bin": "recycling",
+   "reason": "Recycle if no food residue; otherwise garbage.",
+   "source": "frozen-food-boxes",
+   "quote": "If there is no food residue on the box, place it in the recycling."
+  },
+  "food_in_container": {
+   "bin": "landfill",
+   "reason": "Scrape the food into the garbage cart first, then scan the empty container.",
+   "source": "food-scraps",
+   "quote": "All the garbage collected in San José is sent to a mixed waste materials recovery facility (MRF) to recover organic materials for composting.",
+   "also": [
+    {
+     "source": "takeout-containers-plastic",
+     "quote": "Before recycling, empty and scrape the food residue out of the container."
+    }
+   ]
+  }
+ }
+}

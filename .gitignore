@@ -1,0 +1,12 @@
+# Secrets: API keys and Rokid credentials live here. Never commit.
+local.properties
+
+.gradle/
+build/
+*/build/
+.idea/
+*.iml
+.kotlin/
+*.apk
+tools/out/
+__pycache__/

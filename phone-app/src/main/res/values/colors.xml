@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="paper">#F3F1EB</color>
+    <color name="card">#FFFFFF</color>
+    <color name="ink">#1C211C</color>
+    <color name="muted">#5E675F</color>
+    <color name="line">#DDD9D0</color>
+    <color name="accent">#1E4D38</color>
+    <color name="on_accent">#FFFFFF</color>
+    <color name="bin_recycling">#E3EEF8</color>
+    <color name="bin_compost">#E3F2E6</color>
+    <color name="bin_landfill">#EEEBE6</color>
+    <color name="bin_yard">#E8F0D4</color>
+    <color name="bin_special">#F8EFD6</color>
+    <color name="bin_unsure">#F6F3EC</color>
+    <color name="bin_offline">#F8E7E4</color>
+    <color name="bin_blue">#1565A8</color>
+    <color name="bin_green">#1B5E20</color>
+    <color name="bin_gray">#5C5854</color>
+    <color name="bin_black">#1A1A1A</color>
+    <color name="bin_special_solid">#8A4B12</color>
+    <color name="on_bin">#FFFFFF</color>
+    <color name="on_bin_soft">#E6FFFFFF</color>
+    <color name="dot_on">#2E7D4F</color>
+    <color name="dot_wait">#C48A2A</color>
+    <color name="dot_off">#9AA097</color>
+</resources>
