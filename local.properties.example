@@ -1,4 +1,6 @@
-# Copy to local.properties (gitignored) and fill in.
+# 复制本文件为 local.properties，在下面 qwen.apiKey= 后面填你自己的千问密钥。
+# 仓库里没有密钥。local.properties 被 Git 忽略，不会上传。
+# Copy this file to local.properties and put your own key after qwen.apiKey=
 
 # Qwen (Alibaba Cloud Model Studio / DashScope), OpenAI-compatible endpoint.
 # Base URL depends on the region your API key belongs to:

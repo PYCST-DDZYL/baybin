@@ -6,7 +6,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-// Secrets come from local.properties (gitignored), never from source.
+// Each person fills their own key into local.properties (gitignored). Nothing here is a key.
 val localProps = Properties().apply {
     val f = rootProject.file("local.properties")
     if (f.exists()) f.inputStream().use { load(it) }
