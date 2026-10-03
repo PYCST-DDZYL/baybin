@@ -1,9 +1,9 @@
 #!/bin/bash
-# 在 WSL 里编译。工具链和 题库扫描 / 镜译 共用（JDK 17 + Gradle 8.9 + Android SDK 34）。
+# Build inside WSL (JDK 17 + Gradle 8.9 + Android SDK 34).
 #
 #   wsl.exe -e bash -c 'bash /mnt/d/AndroidProjects/垃圾分类/构建.sh assembleDebug'
 #
-# Windows 上用 python tools\deploy.py build 更省事，那个会连编译带安装一起做。
+# On Windows, python tools\deploy.py build compiles and can install.
 
 export JAVA_HOME="$HOME/toolchain/jdk"
 export ANDROID_HOME="$HOME/android-sdk"
@@ -16,5 +16,5 @@ cd "$(dirname "$(readlink -f "$0")")" || exit 1
 "$HOME/toolchain/gradle-8.9/bin/gradle" --no-daemon --console=plain "${@:-assembleDebug}" 2>&1 \
     | grep -v -E "^Download|^\s*$"
 
-# gradle 的退出码在管道里会丢，这里把它捞回来
+# The pipe would hide gradle's exit code. Keep it.
 exit "${PIPESTATUS[0]}"

@@ -1,7 +1,6 @@
-# 只给电脑上的测试脚本用。复制成 local.properties，填你自己的千问密钥。
-# 手机 App 不读这个文件，也不会把密钥打进安装包。此文件不进 Git。
-# For the PC test scripts only. Copy to local.properties and put your own key after qwen.apiKey=.
-# The phone app does not read this file, and the key is not compiled into the APK.
+# PC test scripts only. Copy to local.properties and put your own key after qwen.apiKey=.
+# The phone app does not read this file. The key is not compiled into the APK.
+# This file is gitignored. Do not commit it.
 
 # Qwen (Alibaba Cloud Model Studio / DashScope), OpenAI-compatible endpoint.
 # Base URL depends on the region your API key belongs to:
