@@ -14,10 +14,18 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
+import android.util.Base64
 import com.baybin.protocol.Proto
 import java.io.File
+import java.security.KeyStore
 import java.util.Locale
 import java.util.concurrent.Executors
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
+import javax.crypto.spec.GCMParameterSpec
 
 /**
  * Process-wide wiring: rules, one glasses link, one pipeline, one worker thread.
@@ -64,6 +72,108 @@ class App : Application(), GlassesLink.Listener {
         get() = prefs.getString("lang", null)?.takeIf { it == "zh" || it == "en" } ?: "zh"
         set(value) { prefs.edit().putString("lang", value).apply() }
 
+    /** True when this phone has a key saved. The key itself is never logged or shown. */
+    fun hasQwenKey(): Boolean = qwenKey().isNotBlank()
+
+    /** Encrypts the key into app-private storage. The caller wipes the text field. */
+    fun saveQwenKey(key: String) {
+        val trimmed = key.trim()
+        if (trimmed.isEmpty()) return
+        prefs.edit().putString(KEY_PREF, seal(trimmed)).commit()
+        pipeline = newPipeline()
+        EventLog.add("Qwen: key saved on this phone")
+    }
+
+    private fun qwenKey(): String {
+        val stored = prefs.getString(KEY_PREF, null).orEmpty()
+        if (stored.isEmpty()) return ""
+        return try {
+            unseal(stored)
+        } catch (_: Exception) {
+            ""
+        }
+    }
+
+    /**
+     * One-shot file dropped beside the app by the owner.
+     * Read, encrypt, overwrite, delete. Never log the text.
+     */
+    private fun absorbKeyFile() {
+        val file = File(filesDir, KEY_FILE)
+        if (!file.isFile) return
+        val text = try {
+            file.readText().trim()
+        } catch (_: Exception) {
+            ""
+        }
+        // A short or binary leftover must not replace a key that is already sealed.
+        if (text.length < 20 || text.any { it <= ' ' || it == '\u007f' }) {
+            wipe(file)
+            return
+        }
+        val sealed = try {
+            seal(text)
+        } catch (_: Exception) {
+            return
+        }
+        if (prefs.edit().putString(KEY_PREF, sealed).commit()) wipe(file)
+    }
+
+    /** AES/GCM via Android Keystore. The ciphertext is what prefs store, not the key. */
+    private fun seal(plain: String): String {
+        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+        cipher.init(Cipher.ENCRYPT_MODE, keystoreKey())
+        val iv = cipher.iv
+        val ct = cipher.doFinal(plain.toByteArray(Charsets.UTF_8))
+        val out = ByteArray(iv.size + ct.size)
+        System.arraycopy(iv, 0, out, 0, iv.size)
+        System.arraycopy(ct, 0, out, iv.size, ct.size)
+        return Base64.encodeToString(out, Base64.NO_WRAP)
+    }
+
+    private fun unseal(stored: String): String {
+        val raw = Base64.decode(stored, Base64.NO_WRAP)
+        if (raw.size <= GCM_IV_BYTES) return ""
+        val iv = raw.copyOfRange(0, GCM_IV_BYTES)
+        val ct = raw.copyOfRange(GCM_IV_BYTES, raw.size)
+        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+        cipher.init(Cipher.DECRYPT_MODE, keystoreKey(), GCMParameterSpec(128, iv))
+        return String(cipher.doFinal(ct), Charsets.UTF_8).trim()
+    }
+
+    private fun keystoreKey(): SecretKey {
+        val ks = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+        (ks.getKey(KEY_ALIAS, null) as? SecretKey)?.let { return it }
+        val gen = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
+        gen.init(
+            KeyGenParameterSpec.Builder(
+                KEY_ALIAS,
+                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,
+            )
+                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .setRandomizedEncryptionRequired(true)
+                .build(),
+        )
+        return gen.generateKey()
+    }
+
+    private fun wipe(file: File) {
+        try {
+            file.writeBytes(ByteArray(0))
+        } catch (_: Exception) {
+        }
+        file.delete()
+    }
+
+    private fun newPipeline(): Pipeline {
+        val key = qwenKey()
+        val qwen = key.takeIf { it.isNotBlank() }?.let {
+            QwenClient(BuildConfig.QWEN_BASE_URL, it, BuildConfig.QWEN_MODEL)
+        }
+        return Pipeline(this, rules, qwen)
+    }
+
     private val worker = Executors.newSingleThreadExecutor { Thread(it, "baybin-pipeline") }
     private val main = Handler(Looper.getMainLooper())
 
@@ -79,10 +189,9 @@ class App : Application(), GlassesLink.Listener {
     override fun onCreate() {
         super.onCreate()
         rules = Rules.load(this)
-        val qwen = BuildConfig.QWEN_API_KEY.takeIf { it.isNotBlank() }
-            ?.let { QwenClient(BuildConfig.QWEN_BASE_URL, it, BuildConfig.QWEN_MODEL) }
-        EventLog.add(if (qwen != null) "Qwen: ${qwen.model}, ${rules.items.size} items, city $city" else "Qwen: no API key")
-        pipeline = Pipeline(this, rules, qwen)
+        absorbKeyFile()
+        EventLog.add(if (qwenKey().isNotBlank()) "Qwen: key on this phone, ${rules.items.size} items, city $city" else "Qwen: no API key")
+        pipeline = newPipeline()
         link = GlassesLink(this).also { it.listener = this }
         if (BuildConfig.DEBUG) registerDebugReceiver()
     }
@@ -317,5 +426,9 @@ class App : Application(), GlassesLink.Listener {
         private const val ACTION_CITY = "com.baybin.phone.CITY"
         private const val ACTION_LANG = "com.baybin.phone.LANG"
         private const val ACTION_CLASSIFY = "com.baybin.phone.CLASSIFY"
+        private const val KEY_PREF = "qwenKey"
+        private const val KEY_FILE = "qwen.key"
+        private const val KEY_ALIAS = "baybin-qwen"
+        private const val GCM_IV_BYTES = 12
     }
 }

@@ -13,7 +13,7 @@
 
 ## 怎么用
 
-1. 编译安装：`python tools\deploy.py all`（Gradle 跑在 WSL 里，见 `构建.sh`）。仓库里没有千问密钥。下载后把 `local.properties.example` 复制成 `local.properties`，在 `qwen.apiKey=` 后面填你自己的密钥。这个文件不会被上传。
+1. 编译安装：`python tools\deploy.py all`（Gradle 跑在 WSL 里，见 `构建.sh`）。打开手机上的 BayBin，在密钥框里填你自己的千问密钥。密钥只留在那台手机里，用系统密钥库加密，反编译安装包读不到，也不会上传。电脑上的测试脚本才读 `local.properties`：把 `local.properties.example` 复制过去，自己填，这个文件不进 Git。
 2. 眼镜上打开 **BayBin**。手机上打开 **湾区垃圾分类**，第一次点「搜索眼镜」，列表里点你的眼镜。之后手机会自己连（前台服务，锁屏、放兜里都行）。
 3. 在手机上选城市（Cupertino / San José）。
 4. 看着垃圾，用取景画面对准，戒指右键拍照（镜腿点击也可以）。左键退出。镜片上给出桶，以及认出的东西。

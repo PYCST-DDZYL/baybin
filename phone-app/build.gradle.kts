@@ -10,6 +10,8 @@ plugins {
 val localProps = Properties().apply {
     val f = rootProject.file("local.properties")
     if (f.exists()) f.inputStream().use { load(it) }
+    // Drop the key before any build field can see it. PC scripts read the file themselves.
+    remove("qwen.apiKey")
 }
 fun local(key: String, default: String = "") =
     localProps.getProperty(key, default).trim().replace("\\", "\\\\").replace("\"", "\\\"")
@@ -34,7 +36,8 @@ android {
         versionCode = 3
         versionName = "0.3.0"
 
-        buildConfigField("String", "QWEN_API_KEY", "\"${local("qwen.apiKey")}\"")
+        // The Qwen key is never a build field. It is typed into the phone and kept in
+        // app-private storage, so a decompile of this APK cannot recover it.
         buildConfigField("String", "QWEN_BASE_URL",
             "\"${local("qwen.baseUrl", "https://dashscope.aliyuncs.com/compatible-mode/v1")}\"")
         buildConfigField("String", "QWEN_MODEL", "\"${local("qwen.model", "qwen3-vl-flash")}\"")

@@ -15,6 +15,7 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ListView
@@ -50,6 +51,9 @@ class MainActivity : Activity(), App.Ui {
     private lateinit var deviceAdapter: ArrayAdapter<String>
     private lateinit var cityGroup: RadioGroup
     private lateinit var langGroup: RadioGroup
+    private lateinit var keyInput: EditText
+    private lateinit var keySave: Button
+    private lateinit var keyState: TextView
     private val devices = ArrayList<BluetoothDevice>()
     private var logOpen = false
     private val onCityPick = RadioGroup.OnCheckedChangeListener { _, id ->
@@ -117,6 +121,18 @@ class MainActivity : Activity(), App.Ui {
         langGroup.check(if (app.lang == "en") R.id.lang_en else R.id.lang_zh)
         langGroup.setOnCheckedChangeListener(onLangPick)
 
+        keyInput = findViewById(R.id.key_input)
+        keySave = findViewById(R.id.key_save)
+        keyState = findViewById(R.id.key_state)
+        keySave.setOnClickListener {
+            val typed = keyInput.text?.toString()?.trim().orEmpty()
+            if (typed.isNotEmpty()) {
+                app.saveQwenKey(typed)
+                keyInput.text.clear()
+            }
+            refresh()
+        }
+
         if (ensurePermissions()) startLinkService()
     }
 
@@ -144,6 +160,9 @@ class MainActivity : Activity(), App.Ui {
         scanButton.text = Lang.s(lang, "scan")
         reconnectButton.text = Lang.s(lang, "reconnect")
         galleryButton.text = Lang.s(lang, "gallery")
+        keyInput.hint = Lang.s(lang, "key_hint")
+        keySave.text = Lang.s(lang, "key_save")
+        keyState.text = Lang.s(lang, if (app.hasQwenKey()) "key_set" else "key_missing")
         logToggle.text = Lang.s(lang, if (logOpen) "log_hide" else "log")
         photo.contentDescription = Lang.s(lang, "photo")
         status.text = when (link.state) {

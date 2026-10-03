@@ -62,17 +62,17 @@ class Pipeline(private val context: Context, private val rules: Rules, private v
         val prepMs = SystemClock.elapsedRealtime() - t0
 
         if (qwen == null) {
-            return Answer(Proto.KIND_INFO, "No API key", "Set qwen.apiKey in local.properties", prepMs = prepMs)
+            return Answer(Proto.KIND_INFO, "No API key", "Type your own key in the phone app.", prepMs = prepMs)
         }
         val t1 = SystemClock.elapsedRealtime()
         val reply = try {
             qwen.ask(image, rules.prompt, HEDGE_AT_MS, DEADLINE_MS)
-        } catch (e: IOException) {
-            EventLog.add("Qwen unreachable: ${e.message}")
+        } catch (_: IOException) {
+            EventLog.add("Qwen unreachable")
             return Answer(Proto.KIND_NO_CONNECTION, Proto.TEXT_NO_CONNECTION, "Cloud didn't answer. Tap to retry.",
                 prepMs = prepMs, modelMs = SystemClock.elapsedRealtime() - t1, calls = HEDGE_AT_MS.size + 1)
         } catch (e: QwenClient.ApiError) {
-            EventLog.add("Qwen error ${e.code}: ${e.message}")
+            EventLog.add("Qwen error ${e.code}")
             return Answer(Proto.KIND_ERROR, "Try again", "Model error ${e.code}",
                 prepMs = prepMs, modelMs = SystemClock.elapsedRealtime() - t1)
         }

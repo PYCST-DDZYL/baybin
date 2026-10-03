@@ -22,15 +22,21 @@ object EventLog {
     var listener: (() -> Unit)? = null
 
     fun add(message: String) {
-        Log.i(TAG, message)
+        val safe = redact(message)
+        Log.i(TAG, safe)
         // SimpleDateFormat is not thread-safe; the reader thread, the pipeline worker and
         // the main thread all log. Formatting outside the lock has thrown and killed the process.
         synchronized(lines) {
-            lines.addLast("${clock.format(Date())}  $message")
+            lines.addLast("${clock.format(Date())}  $safe")
             while (lines.size > MAX) lines.removeFirst()
         }
         main.post { listener?.invoke() }
     }
+
+    /** Never let a token or Authorization header reach logcat or the on-screen log. */
+    private fun redact(message: String): String = message
+        .replace(Regex("sk-[A-Za-z0-9._\\-]{8,}"), "[redacted]")
+        .replace(Regex("(?i)bearer\\s+\\S+"), "Bearer [redacted]")
 
     fun text(): String = synchronized(lines) { lines.reversed().joinToString("\n") }
 }

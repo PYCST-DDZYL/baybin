@@ -20,7 +20,7 @@
 用户原始需求里的硬性约束（不能破坏）：
 - 眼镜端只拍照、发送、显示，不放模型，不放大库，峰值内存 ≤150 MB。
 - 规则只能来自市政府或垃圾公司的官方页面，每条带出处。官方没说清的标 `unknown`（显示 Not sure），不准猜。
-- API key 只放 `local.properties`（gitignore），绝不能进代码或 Git。
+- API key 不进代码、不进 Git、不进安装包。手机上自己填，Android Keystore 加密后只放应用私有目录。电脑测试脚本才读 `local.properties`（gitignore）。
 - 8 条验收标准，每条一个脚本：`tools/accept_1…8_*.py`，汇总脚本是 `tools/accept_all.py`。
 
 ## 2. 代码在哪
