@@ -44,6 +44,7 @@ class QwenClient(
         val firstP: Double?,
         val alternatives: List<Pair<String, Double>>,
         val calls: Int = 1,
+        val observation: Recognition.Observation? = null,
     )
 
     // HTTP/1.1 on purpose: over one shared HTTP/2 connection a stalled connection took the
@@ -82,8 +83,10 @@ class QwenClient(
      * arrives within [deadlineMs].
      */
     @Throws(IOException::class, ApiError::class)
-    fun ask(jpeg: ByteArray, prompt: String, hedgeAtMs: LongArray, deadlineMs: Long, maxTokens: Int = 16): Reply {
-        val body = requestBody(jpeg, prompt, maxTokens)
+    fun ask(jpeg: ByteArray, prompt: String, hedgeAtMs: LongArray, deadlineMs: Long, maxTokens: Int = 16,
+            logprobs: Boolean = true,
+            isCurrent: () -> Boolean = { true }): Reply {
+        val body = requestBody(jpeg, prompt, maxTokens, logprobs)
         val answers = LinkedBlockingQueue<Result<Reply>>()
         val calls = ArrayList<Call>(hedgeAtMs.size + 1)
         fun launch() {
@@ -113,6 +116,7 @@ class QwenClient(
         var failed = 0
         try {
             while (true) {
+                if (!isCurrent()) throw IOException("superseded by a newer photo")
                 val left = deadlineMs - elapsed()
                 if (left <= 0) {
                     // Whatever connection(s) these calls sat on may be dead; don't hand them to the next scan.
@@ -121,7 +125,7 @@ class QwenClient(
                 }
                 val nextHedge = hedgeAtMs.getOrNull(launched - 1)
                 val wait = if (nextHedge != null) minOf(left, maxOf(0L, nextHedge - elapsed())) else left
-                val answer = answers.poll(wait, TimeUnit.MILLISECONDS)
+                val answer = answers.poll(minOf(wait, 100L), TimeUnit.MILLISECONDS)
                 if (answer == null) {
                     if (nextHedge != null && elapsed() >= nextHedge) {
                         launch()
@@ -151,7 +155,7 @@ class QwenClient(
         }
     }
 
-    private fun requestBody(jpeg: ByteArray, prompt: String, maxTokens: Int): RequestBody {
+    private fun requestBody(jpeg: ByteArray, prompt: String, maxTokens: Int, logprobs: Boolean): RequestBody {
         val image = "data:image/jpeg;base64," + Base64.encodeToString(jpeg, Base64.NO_WRAP)
         val content = JSONArray()
             .put(JSONObject().put("type", "image_url").put("image_url", JSONObject().put("url", image)))
@@ -161,9 +165,10 @@ class QwenClient(
             .put("messages", JSONArray().put(JSONObject().put("role", "user").put("content", content)))
             .put("max_tokens", maxTokens)
             .put("temperature", 0)
-            // Only the first output token's log-probability comes back, so the reply is the bare id.
-            .put("logprobs", true)
-            .put("top_logprobs", 5)
+            .put("enable_thinking", false)
+            // The first token is the bare item id; the following evidence fields are checked separately.
+            .put("logprobs", logprobs)
+            .put("top_logprobs", if (logprobs) 5 else 0)
             .toString()
             .toRequestBody(JSON)
     }

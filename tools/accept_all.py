@@ -11,7 +11,7 @@ import os
 import subprocess
 import sys
 
-from acceptlib import load
+from acceptlib import code_hash, load, save
 from adbutil import ROOT
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -41,6 +41,8 @@ FILES = {1: "1_latency", 2: "2_accuracy", 3: "3_memory", 4: "4_leak", 5: "5_cras
 def detail(i, d):
     if not d:
         return "not run"
+    if d.get("error"):
+        return d["error"]
     if i == 1:
         t = d["total_ms"]
         return "%d/%d ≤5 s; median %s ms, p90 %s, max %s (camera ~%s, cloud ~%s)" % (
@@ -80,6 +82,8 @@ def report():
     for i in range(1, 9):
         d = load(FILES[i])
         res = "—" if not d else ("PASS" if d["pass"] else "FAIL")
+        if d and d.get("code_hash") != code_hash():
+            res = "STALE"
         lines.append("| %d | %s | %s | %s | %s |" % (i, TITLES[i], res, detail(i, d), d["when"] if d else ""))
     os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
     path = os.path.join(ROOT, "docs", "acceptance.md")
@@ -101,12 +105,21 @@ def report():
 
 def main(argv):
     if "--report" not in argv:
-        for cmd in RUNS:
+        for index, cmd in enumerate(RUNS + [["accept_8_readme.py"]], 1):
             print("\n=== %s" % " ".join(cmd))
-            subprocess.call([sys.executable, os.path.join(HERE, cmd[0])] + cmd[1:])
-        subprocess.call([sys.executable, os.path.join(HERE, "accept_8_readme.py")])
+            started = __import__("time").time()
+            rc = subprocess.call([sys.executable, "-B", os.path.join(HERE, cmd[0])] + cmd[1:])
+            result = load(FILES[index])
+            result_path = os.path.join(ROOT, "tools", "out", "accept", FILES[index] + ".json")
+            fresh = os.path.isfile(result_path) and os.path.getmtime(result_path) >= started - 1
+            # An expected FAIL exits nonzero but still carries useful fresh measurements.
+            # Only discard stale/missing output or a claimed PASS from a failed process.
+            if not fresh or not result or result.get("code_hash") != code_hash() or (rc != 0 and result.get("pass")):
+                save(FILES[index], {"pass": False, "error": "Script failed or produced no fresh result", "exit_code": rc})
     report()
+    return all((load(FILES[i]) or {}).get("pass") and (load(FILES[i]) or {}).get("code_hash") == code_hash()
+               for i in range(1, 9))
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    sys.exit(0 if main(sys.argv[1:]) else 1)

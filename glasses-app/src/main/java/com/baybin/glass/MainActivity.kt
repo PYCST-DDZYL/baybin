@@ -61,6 +61,7 @@ class MainActivity : Activity(), PhoneLink.Listener {
     private lateinit var camera: OneShotCamera
     /** The captured still is on screen, so the next right key goes back to aiming. */
     private var viewing = false
+    private var retryResult = false
     private var stillGen = 0
     private lateinit var link: PhoneLink
     private val main = Handler(Looper.getMainLooper())
@@ -145,15 +146,16 @@ class MainActivity : Activity(), PhoneLink.Listener {
 
     private fun isExitKey(k: Int) = k == KeyEvent.KEYCODE_CAMERA || k == KeyEvent.KEYCODE_FOCUS
 
-    /** Right key while a still is up returns to the live picture. The next one shoots. */
+    /** Right key retakes an uncertain result; other results return to aiming first. */
     private fun onScanKey() {
         if (scan != null || probe != null) {
             Log.i(TAG, "busy, tap ignored")
             return
         }
         if (viewing) {
+            val retry = retryResult
             showLive()
-            return
+            if (!retry) return
         }
         startScan(captureOnly = false, save = false)
     }
@@ -225,8 +227,9 @@ class MainActivity : Activity(), PhoneLink.Listener {
         scan = null
         main.removeCallbacks(scanTimeout)
         show(text1, text2)
-        hint.text = if (viewing) HINT_AIM else HINT_SHOOT
-        if (viewing) main.postDelayed(backToLive, RESULT_HOLD_MS)
+        retryResult = outcome in setOf("result_1", "result_2", "result_3", "timeout", "camera_error")
+        hint.text = if (retryResult) HINT_RETRY else if (viewing) HINT_AIM else HINT_SHOOT
+        if (viewing) main.postDelayed(backToLive, if (retryResult) 6000L else RESULT_HOLD_MS)
         Log.i(TAG, "BB_SCAN id=${s.id} outcome=$outcome open=${s.openMs} shot=${s.shotMs} " +
             "send=${s.sendMs} bytes=${s.bytes} total=${SystemClock.elapsedRealtime() - s.t0}")
     }
@@ -315,9 +318,9 @@ class MainActivity : Activity(), PhoneLink.Listener {
             if (old is BitmapDrawable && old.bitmap !== bmp) old.bitmap?.recycle()
             // Result can beat the decode. Start the hold from whichever finishes last.
             if (scan !== s) {
-                hint.text = HINT_AIM
+                hint.text = if (retryResult) HINT_RETRY else HINT_AIM
                 main.removeCallbacks(backToLive)
-                main.postDelayed(backToLive, RESULT_HOLD_MS)
+                main.postDelayed(backToLive, if (retryResult) 6000L else RESULT_HOLD_MS)
             }
         }
     }
@@ -326,6 +329,7 @@ class MainActivity : Activity(), PhoneLink.Listener {
         stillGen++
         main.removeCallbacks(backToLive)
         viewing = false
+        retryResult = false
         val old = freeze.drawable
         freeze.setImageDrawable(null)
         freeze.visibility = View.GONE
@@ -397,8 +401,9 @@ class MainActivity : Activity(), PhoneLink.Listener {
         private const val RESULT_TIMEOUT_MS = 8000L
         private const val RESULT_HOLD_MS = 1200L
         private const val PROBE_TIMEOUT_MS = 20000L
-        private const val HINT_SHOOT = "右键拍 · 左键退出"
+        private const val HINT_SHOOT = "物品放中间 · 右键拍 · 左键退出"
         private const val HINT_AIM = "右键再瞄准 · 左键退出"
+        private const val HINT_RETRY = "照提示调整 · 右键重拍"
         private const val ACTION_SCAN = "com.baybin.glass.SCAN"
         private const val ACTION_PROBE = "com.baybin.glass.PROBE"
         private const val ACTION_PING = "com.baybin.glass.PING"

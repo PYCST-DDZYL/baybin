@@ -42,6 +42,8 @@ object BinFace {
         line1.startsWith("Special") -> if (zh) "别放桶里" else "Not in carts"
         line1.startsWith("Not sure") -> if (zh) "不确定" else "Not sure"
         line1.startsWith("No connection") -> if (zh) "没连上" else "No connection"
+        line1 == "Try again" -> if (zh) "请重拍" else "Try again"
+        line1 == "No API key" -> if (zh) "未设置密钥" else "No API key"
         else -> line1
     }
 
@@ -76,6 +78,7 @@ object BinFace {
             if (zh) "要另外交出去。" else "Take it somewhere else."
         line1.startsWith("Not sure") -> lens(line1, zh) to null
         line1.startsWith("No connection") -> lens(line1, zh) to null
+        line1 == "Try again" || line1 == "No API key" -> lens(line1, zh) to null
         else -> line1 to null
     }
 

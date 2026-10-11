@@ -5,6 +5,8 @@ Each script checks one acceptance criterion, prints PASS/FAIL with the numbers, 
 tools\\out\\accept\\<n>.json; accept_all.py collects them into docs\\acceptance.md.
 """
 import json
+import hashlib
+from contextlib import contextmanager
 import os
 import re
 import statistics
@@ -22,9 +24,26 @@ GLASS_LOG = ("BayBin:I", "*:S")
 def save(name, data):
     os.makedirs(OUT, exist_ok=True)
     data["when"] = time.strftime("%Y-%m-%d %H:%M:%S")
+    data["code_hash"] = code_hash()
     with open(os.path.join(OUT, name + ".json"), "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=1)
     return data
+
+
+def code_hash():
+    """Tie saved results to the application and rule sources, without reading secrets."""
+    from pathlib import Path
+    root = Path(ROOT)
+    digest = hashlib.sha256()
+    paths = list((root / "rules").glob("*.json")) + list((root / "rules").glob("*.txt"))
+    for module in ("phone-app", "glasses-app", "protocol"):
+        paths += list((root / module / "src" / "main").rglob("*.kt"))
+        paths += list((root / module / "src" / "main").rglob("*.xml"))
+        paths += [root / module / "build.gradle.kts"]
+    for path in sorted(paths):
+        digest.update(str(path.relative_to(root)).encode("utf-8"))
+        digest.update(path.read_bytes())
+    return digest.hexdigest()
 
 
 def load(name):
@@ -66,10 +85,29 @@ def phone_status(p):
     """Asks the phone app for BB_STATUS; returns dict or None."""
     p.logcat_clear()
     p.shell("am broadcast -a com.baybin.phone.STATUS -p %s" % PHONE_PKG)
-    m = p.wait_log(r"BB_STATUS link=(\S+) mac=(\S+) glasses=(\S+) city=(\S+) online=(\S+)", timeout=8, filters=PHONE_LOG)
+    m = p.wait_log(r"BB_STATUS link=(\S+) mac=(\S+) glasses=(\S+) city=(\S+) online=(\S+)"
+                   r"(?: auto=(\S+) lang=(\S+) app=(\S+))?", timeout=8, filters=PHONE_LOG)
     if not m:
         return None
-    return dict(zip(("link", "mac", "glasses", "city", "online"), m.groups()))
+    return dict(zip(("link", "mac", "glasses", "city", "online", "auto", "lang", "app"), m.groups()))
+
+
+@contextmanager
+def preserve_phone(p):
+    """Restore app preferences/link policy even when a test fails; no system-setting changes."""
+    before = phone_status(p)
+    if not before or before.get("auto") is None or before.get("lang") is None:
+        raise RuntimeError("Install the current debug phone build before testing (state restore required).")
+    try:
+        yield before
+    finally:
+        set_city(p, before["city"])
+        p.shell("am broadcast -a com.baybin.phone.LANG -p %s --es id %s" % (PHONE_PKG, before["lang"]), check=True)
+        p.shell("am broadcast -a com.baybin.phone.RESTORE -p %s --ez auto %s --ez connected %s" % (
+            PHONE_PKG, before["auto"], str(before["link"] == "CONNECTED").lower()), check=True)
+        after = phone_status(p)
+        if not after or any(after[k] != before[k] for k in ("city", "lang", "auto")):
+            raise RuntimeError("Phone app state restoration could not be verified")
 
 
 def ensure_link(g, p, timeout=40):
@@ -137,6 +175,8 @@ def crash_lines(dev, pkg):
 
 def push_private(p, local_path, name):
     """Copies a file into the phone app's private files/eval folder (run-as; nothing in shared storage)."""
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+", name) or name in (".", ".."):
+        raise ValueError("Private test filename must be a simple basename")
     with open(local_path, "rb") as f:
         data = f.read()
     cmd = [ADB, "-s", p.serial, "exec-in", "run-as", PHONE_PKG, "sh", "-c",
@@ -147,7 +187,7 @@ def push_private(p, local_path, name):
 
 
 def clear_private(p):
-    p.shell("run-as %s rm -rf files/eval" % PHONE_PKG)
+    p.shell("run-as %s sh -c 'rm -rf files/eval && test ! -e files/eval'" % PHONE_PKG, check=True)
 
 
 def classify_private(p, name, timeout=20):
@@ -160,6 +200,36 @@ def classify_private(p, name, timeout=20):
         return None
     keys = ("city", "kind", "item", "bin", "p", "calls", "prep", "model", "total", "line1", "line2")
     return dict(zip(keys, m.groups()))
+
+
+def review_private(p, city, timeout=5):
+    """Reapply one city's rules to the last verified photo, without another model request."""
+    p.logcat_clear()
+    p.shell("am broadcast -a com.baybin.phone.REVIEW -p %s --es id %s" % (PHONE_PKG, city), check=True)
+    m = p.wait_log(r"BB_REVIEW city=%s kind=(\d+) item=(\S+) bin=(\S+) p=(\S+) calls=(\d+) prep=(-?\d+) "
+                   r"model=(-?\d+) \| (.*) \| (.*)$" % re.escape(city), timeout=timeout, filters=PHONE_LOG)
+    if not m:
+        return None
+    keys = ("kind", "item", "bin", "p", "calls", "prep", "model", "line1", "line2")
+    return dict(zip(keys, m.groups()))
+
+
+def review_all(p, cities, timeout=5):
+    """One debug request reuses the same evidence under each city's own rules; no preference changes."""
+    if not cities:
+        return {}
+    p.logcat_clear()
+    p.shell("am broadcast -a com.baybin.phone.REVIEW -p %s --es id all" % PHONE_PKG, check=True)
+    rx = re.compile(r"BB_REVIEW city=(\S+) kind=(\d+) item=(\S+) bin=(\S+) p=(\S+) calls=(\d+) prep=(-?\d+) "
+                    r"model=(-?\d+) \| (.*) \| (.*)$", re.M)
+    keys = ("kind", "item", "bin", "p", "calls", "prep", "model", "line1", "line2")
+    end = time.time() + timeout
+    while time.time() < end:
+        results = {m.group(1): dict(zip(keys, m.groups()[1:])) for m in rx.finditer(p.logcat(*PHONE_LOG))}
+        if all(c in results for c in cities):
+            return results
+        time.sleep(0.2)
+    return results
 
 
 def glasses_screenshot(g, name):
@@ -177,7 +247,7 @@ def expected_line1(cities, city, item):
 
 def load_rules():
     cities = {}
-    for c in ("cupertino", "san_jose"):
+    for c in ("cupertino", "san_jose", "palo_alto", "los_altos", "berkeley"):
         with open(os.path.join(ROOT, "rules", c + ".json"), encoding="utf-8") as f:
             cities[c] = json.load(f)
     return cities
@@ -194,7 +264,7 @@ def long_run(n=100, reuse_minutes=0):
     prev = load("run_%d" % n)
     if prev and reuse_minutes > 0:
         age = time.time() - time.mktime(time.strptime(prev["when"], "%Y-%m-%d %H:%M:%S"))
-        if age < reuse_minutes * 60:
+        if age < reuse_minutes * 60 and prev.get("code_hash") == code_hash():
             print("(using the %d-scan run from %s)" % (n, prev["when"]))
             return prev
     g, p = both()

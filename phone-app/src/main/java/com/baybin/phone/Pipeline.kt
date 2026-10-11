@@ -4,16 +4,18 @@ import android.content.Context
 import android.os.SystemClock
 import com.baybin.protocol.Proto
 import java.io.IOException
+import java.security.MessageDigest
 
 /**
  * Photo in, two lens lines out. Blocking; runs on a worker thread.
  *
  * The glasses path and the gallery test mode both call [run], so they exercise exactly the
- * same code. The model only names the item (an id from rules/items.json); the bin comes from
+ * same code. The model names the item and its visible evidence; the bin comes from
  * the chosen city's official-source rule, never from the model.
  *
  * "Not sure — check city guide" when:
- *  - the photo clearly shows two different things (a local check, before the model);
+ *  - the photo is unusably dark/bright or verification sees unrelated objects;
+ *  - contents/labels conflict with the item, or required material evidence is missing;
  *  - the model answers "unknown" or something outside the catalog;
  *  - the city's sources don't settle the item (rule "unknown");
  *  - the first-token probability says the model wasn't sure ([P_MIN]), or a runner-up
@@ -25,8 +27,11 @@ import java.io.IOException
  *    useless (always ~0.95), hence the logprobs.
  */
 class Pipeline(private val context: Context, private val rules: Rules, private val qwen: QwenClient?) {
+    private data class Cached(val reply: QwenClient.Reply, val at: Long)
+    // Results only, no photos and no files. A new key/model creates a fresh Pipeline.
+    private val recent = LinkedHashMap<String, Cached>()
 
-    class Answer(
+    data class Answer(
         val kind: Int,
         val line1: String,
         val line2: String,
@@ -43,7 +48,7 @@ class Pipeline(private val context: Context, private val rules: Rules, private v
         val calls: Int = 0,
         /**
          * Model reply this answer came from. Null when the model was never asked
-         * (offline, no key, error). Not used to score any other city.
+         * (offline, no key, error). Reused with its evidence when the city changes.
          */
         val reply: QwenClient.Reply? = null,
         /** City whose rule file chose the bin. Null only if no city was asked. */
@@ -57,7 +62,7 @@ class Pipeline(private val context: Context, private val rules: Rules, private v
         if (Net.online(context)) qwen?.warmUp()
     }
 
-    fun run(jpeg: ByteArray, rotation: Int, cityId: String): Answer {
+    fun run(jpeg: ByteArray, rotation: Int, cityId: String, isCurrent: () -> Boolean = { true }): Answer {
         // Missing id is not another city. Cupertino's file must not answer for it.
         val city = rules.cities[cityId]
             ?: return Answer(Proto.KIND_UNSURE, Proto.TEXT_UNSURE, "No rules for this city", cityId = cityId)
@@ -65,20 +70,29 @@ class Pipeline(private val context: Context, private val rules: Rules, private v
             return Answer(Proto.KIND_NO_CONNECTION, Proto.TEXT_NO_CONNECTION, "Phone is offline", cityId = city.id)
         }
         val t0 = SystemClock.elapsedRealtime()
-        val image = Upright.prepare(jpeg, rotation, MODEL_SIDE, quality = 80)
+        val upright = Upright.prepare(jpeg, rotation, 1024, quality = 80)
+        PhotoQuality.help(upright)?.let { help ->
+            return Answer(Proto.KIND_UNSURE, Proto.TEXT_UNSURE, help.text,
+                prepMs = SystemClock.elapsedRealtime() - t0, cityId = city.id)
+        }
+        val image = Upright.prepare(upright, 0, MODEL_SIDE, quality = 80)
         val prepMs = SystemClock.elapsedRealtime() - t0
 
         if (qwen == null) {
             return Answer(Proto.KIND_INFO, "No API key", "Type your own key in the phone app.",
                 prepMs = prepMs, cityId = city.id)
         }
-        if (TwoThings.seesTwo(image)) {
-            return Answer(Proto.KIND_UNSURE, Proto.TEXT_UNSURE, "Two things in the photo. Hold up one.",
-                prepMs = prepMs, cityId = city.id)
+        val fingerprint = MessageDigest.getInstance("SHA-256").digest(upright).joinToString("") { "%02x".format(it) }
+        recent[fingerprint]?.takeIf { SystemClock.elapsedRealtime() - it.at < 180_000L }?.let { cached ->
+            EventLog.add("identical photo: reusing checked evidence from memory")
+            return decide(city, cached.reply, prepMs, 0).copy(calls = 0)
         }
         val t1 = SystemClock.elapsedRealtime()
+        // One response carries the item and its visible evidence. The first token
+        // belongs to the bare id, so probability remains meaningful. No second wait.
         val reply = try {
-            qwen.ask(image, rules.prompt, HEDGE_AT_MS, DEADLINE_MS)
+            qwen.ask(image, rules.inspectionPrompt, HEDGE_AT_MS, DEADLINE_MS,
+                maxTokens = 160, isCurrent = isCurrent)
         } catch (_: IOException) {
             EventLog.add("Qwen unreachable")
             return Answer(Proto.KIND_NO_CONNECTION, Proto.TEXT_NO_CONNECTION, "Cloud didn't answer. Tap to retry.",
@@ -86,41 +100,61 @@ class Pipeline(private val context: Context, private val rules: Rules, private v
                 cityId = city.id)
         } catch (e: QwenClient.ApiError) {
             EventLog.add("Qwen error ${e.code}")
-            return Answer(Proto.KIND_ERROR, "Try again", "Model error ${e.code}",
+            val help = when (e.code) {
+                401, 403 -> "Check the API key in phone Settings."
+                404 -> "Recognition service unavailable. Check the model configuration."
+                429 -> "Recognition service busy. Wait a moment and retry."
+                else -> "Recognition service failed. Please retry."
+            }
+            return Answer(Proto.KIND_ERROR, "Try again", help,
                 prepMs = prepMs, modelMs = SystemClock.elapsedRealtime() - t1, cityId = city.id)
         }
-        return decide(city, reply, prepMs, SystemClock.elapsedRealtime() - t1)
+        val checked = QwenClient.Reply(parseId(reply.text.lineSequence().firstOrNull().orEmpty(), rules.ids),
+            reply.firstToken, reply.firstP, reply.alternatives, reply.calls,
+            Recognition.parseInspection(reply.text, rules.ids))
+        val answer = decide(city, checked, prepMs, SystemClock.elapsedRealtime() - t1)
+        if (answer.kind == Proto.KIND_OK && isCurrent()) {
+            recent[fingerprint] = Cached(checked, SystemClock.elapsedRealtime())
+            while (recent.size > 16) recent.remove(recent.keys.first())
+        }
+        return answer
     }
 
     /**
      * The same recognized item under [cityId]'s rule only. No model call.
-     * Null when there is no model reply, or this city has no rule file.
+     * Photo/key/connection guidance follows the selected city without a new call.
+     * Null only when this city has no rule file.
      * Does not read any other city's rules.
      */
     fun forCity(previous: Answer, cityId: String): Answer? {
-        val reply = previous.reply ?: return null
         val city = rules.cities[cityId] ?: return null
+        val reply = previous.reply ?: return previous.copy(cityId = city.id)
         if (previous.cityId == cityId) return previous
         return decide(city, reply, previous.prepMs, previous.modelMs)
     }
 
     private fun decide(city: Rules.City, reply: QwenClient.Reply, prepMs: Long, modelMs: Long): Answer {
-        val id = parseId(reply.text, rules.ids)
+        val rawId = parseId(reply.text, rules.ids)
+        val id = Recognition.canonicalId(rawId, reply.observation)
         fun answer(kind: Int, line1: String, line2: String, bin: String?, page: String? = null) =
             Answer(kind, line1, line2, id, bin, reply.firstP, prepMs, modelMs, reply.calls, reply, city.id, page)
 
         val item = rules.item(id)
             ?: return answer(Proto.KIND_UNSURE, Proto.TEXT_UNSURE, "Couldn't tell what it is. Try closer.", null)
-        val rule = city.rules[id]
+        val baseRule = city.rules[id]
+        val rule = baseRule?.forMaterial(reply.observation?.material)
         if (rule == null || rule.bin == "unknown") {
-            return answer(Proto.KIND_UNSURE, Proto.TEXT_UNSURE, "${item.name}: no clear ${city.name} rule", rule?.bin, rule?.sourceUrl)
+            return answer(Proto.KIND_UNSURE, Proto.TEXT_UNSURE, Recognition.Help.CITY.text, rule?.bin, rule?.sourceUrl)
         }
         val p = reply.firstP
         val rival = reply.alternatives.firstOrNull { (token, pAlt) ->
-            pAlt >= P_ALT && changesBin(city, token, id, rule.bin)
+            pAlt >= P_ALT && changesBin(city, token, rawId, rule.bin)
         }
-        if ((p != null && p < P_MIN) || rival != null) {
-            return answer(Proto.KIND_UNSURE, Proto.TEXT_UNSURE, "Might be ${item.name}. Look closer, tap again.", rule.bin, rule.sourceUrl)
+        if (!Recognition.reliableToken(p, reply.firstToken, rawId) || rival != null) {
+            return answer(Proto.KIND_UNSURE, Proto.TEXT_UNSURE, Recognition.Help.CLOSER.text, rule.bin, rule.sourceUrl)
+        }
+        Recognition.help(id, reply.observation, rule.checks)?.let { help ->
+            return answer(Proto.KIND_UNSURE, Proto.TEXT_UNSURE, help.text, rule.bin, rule.sourceUrl)
         }
         val label = city.binLabels[rule.bin] ?: rule.bin
         return answer(Proto.KIND_OK, label, rule.reason, rule.bin, rule.sourceUrl)
@@ -160,10 +194,7 @@ class Pipeline(private val context: Context, private val rules: Rules, private v
         const val P_MIN = 0.5
         const val P_ALT = 0.25
 
-        /** First catalog id in the reply; tolerates quotes, backticks or a trailing period. Same as tools/eval_probe.py. */
-        fun parseId(text: String, ids: Set<String>): String {
-            for (m in Regex("[a-z][a-z0-9_]*").findAll(text.lowercase())) if (m.value in ids) return m.value
-            return "unknown"
-        }
+        /** A single id only. Prose, multiple ids, and mixed unknown/id answers fail closed. */
+        fun parseId(text: String, ids: Set<String>): String = Recognition.parseId(text, ids)
     }
 }

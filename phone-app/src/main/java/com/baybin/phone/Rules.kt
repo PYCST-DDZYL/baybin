@@ -13,13 +13,18 @@ class Rules private constructor(
     val items: List<Item>,
     val cities: Map<String, City>,
     private val promptTemplate: String,
+    private val inspectionTemplate: String,
 ) {
     class Item(val id: String, val name: String, val hint: String)
 
     /** [bin] is a key of [City.binLabels], or "unknown" when the official sources don't settle it. */
-    class Rule(val bin: String, val reason: String, val sourceUrl: String?)
+    class Rule(val bin: String, val reason: String, val sourceUrl: String?, val checks: Set<String> = emptySet(),
+               val materialRules: Map<String, Rule> = emptyMap()) {
+        fun forMaterial(material: String?): Rule = material?.let { materialRules[it] } ?: this
+    }
 
-    class City(val id: String, val name: String, val binLabels: Map<String, String>, val rules: Map<String, Rule>)
+    class City(val id: String, val name: String, val binLabels: Map<String, String>, val rules: Map<String, Rule>,
+               val guideUrl: String)
 
     val ids: Set<String> = items.mapTo(HashSet()) { it.id }
 
@@ -28,6 +33,12 @@ class Rules private constructor(
     /** rules/prompt.txt with the catalog filled in; tools/eval_probe.py builds the same text. */
     val prompt: String = promptTemplate.trim().replace(
         "{catalog}", items.joinToString("\n") { "- ${it.id}: ${it.name} (${it.hint})" })
+
+    /** One structured call: bare id first keeps its probability usable; six evidence lines follow. */
+    val inspectionPrompt: String = inspectionTemplate.trim().replace(
+        "{catalog}", items.joinToString("\n") { "- ${it.id}: ${it.hint}" })
+        .replace("item=<catalog id or unknown>", "<catalog id or unknown>")
+        .replace("Return exactly these seven lines", "The first line must be the bare item id, without item=. Return exactly these seven lines")
 
     companion object {
         val CITY_IDS = listOf("cupertino", "san_jose", "palo_alto", "los_altos", "berkeley")
@@ -55,14 +66,24 @@ class Rules private constructor(
                     return url.takeIf { it.startsWith("http") }
                 }
                 val rules = o.getJSONObject("rules").let { r ->
-                    r.keys().asSequence().associateWith { k ->
-                        val rule = r.getJSONObject(k)
-                        Rule(rule.getString("bin"), rule.optString("reason"), page(rule.optString("source")))
+                    fun parseRule(rule: JSONObject, conditional: Boolean = false): Rule {
+                        val checks = rule.optJSONArray("checks")?.let { a ->
+                            (0 until a.length()).map { a.getString(it) }.toSet()
+                        } ?: emptySet()
+                        require(checks.all { it in Recognition.CHECKS }) { "Unsupported rule check: $id" }
+                        val byMaterial = rule.optJSONObject("by_material")
+                        require(!conditional || byMaterial == null) { "Nested conditional rule: $id" }
+                        val variants = byMaterial?.keys()?.asSequence()?.associateWith { code ->
+                            require(code in setOf("1", "2", "3", "4", "5", "6", "7"))
+                            parseRule(byMaterial.getJSONObject(code), true)
+                        } ?: emptyMap()
+                        return Rule(rule.getString("bin"), rule.optString("reason"), page(rule.optString("source")), checks, variants)
                     }
+                    r.keys().asSequence().associateWith { k -> parseRule(r.getJSONObject(k)) }
                 }
-                City(id, o.getString("name"), bins, rules)
+                City(id, o.getString("name"), bins, rules, o.getString("guide_url"))
             }
-            return Rules(items, cities, read("prompt.txt"))
+            return Rules(items, cities, read("prompt.txt"), read("inspection.txt"))
         }
     }
 }

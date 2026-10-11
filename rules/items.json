@@ -1,5 +1,5 @@
 {
- "version": "2026-10-03",
+ "version": "2026-10-11",
  "note": "Canonical items the vision model chooses from. One id per thing a person holds up; the city files say which bin each goes in. 'hint' tells the model what the item looks like.",
  "items": [
   {
@@ -195,17 +195,17 @@
   {
    "id": "food_can",
    "name": "Food can",
-   "hint": "steel or tin food can"
+   "hint": "EMPTY steel or tin food can; visible food inside is food_in_container"
   },
   {
    "id": "aluminum_foil",
    "name": "Aluminum foil",
-   "hint": "sheet of aluminum foil"
+   "hint": "sheet of aluminum foil with no food left; foil holding food is food_in_container"
   },
   {
    "id": "aluminum_tray",
    "name": "Aluminum tray / pie tin",
-   "hint": "disposable aluminum baking tray or pie tin"
+   "hint": "EMPTY disposable aluminum baking tray or pie tin; food left inside is food_in_container"
   },
   {
    "id": "aerosol_can",
@@ -220,7 +220,7 @@
   {
    "id": "glass_jar",
    "name": "Glass jar",
-   "hint": "glass food jar"
+   "hint": "EMPTY glass food jar; visible food inside is food_in_container"
   },
   {
    "id": "broken_glass",
@@ -235,7 +235,7 @@
   {
    "id": "ceramic",
    "name": "Ceramic mug / plate",
-   "hint": "ceramic or porcelain mug, plate, bowl or vase"
+   "hint": "EMPTY ceramic or porcelain mug, plate, bowl or vase; any meal or soup with solids is food_in_container"
   },
   {
    "id": "food_scraps",

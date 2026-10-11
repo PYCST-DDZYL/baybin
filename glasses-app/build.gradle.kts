@@ -16,8 +16,8 @@ android {
         applicationId = "com.baybin.glass"
         minSdk = 28 // the glasses run Android 12 (API 32)
         targetSdk = 34
-        versionCode = 2
-        versionName = "0.2.0"
+        versionCode = 3
+        versionName = "0.3.0"
         ndk { abiFilters += "arm64-v8a" }
     }
 

@@ -273,7 +273,7 @@ class MainActivity : Activity(), App.Ui {
 
         val a = app.answerFor(app.city)
         if (app.busyFor(app.city)) {
-            resultLabel.text = Lang.s(lang, "throw")
+            resultLabel.text = Lang.s(lang, "result_label")
             line1.text = Lang.s(lang, "working")
             line1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 32f)
             line2.text = ""
@@ -290,7 +290,7 @@ class MainActivity : Activity(), App.Ui {
             paint(R.color.card, onLight = true)
         } else {
             val face = BinFace.of(a.cityId ?: app.city, a.line1, Lang.zh(lang))
-            resultLabel.text = Lang.s(lang, "throw")
+            resultLabel.text = Lang.s(lang, if (a.kind == com.baybin.protocol.Proto.KIND_OK) "throw" else "result_label")
             line1.text = face.title
             line1.setTextSize(TypedValue.COMPLEX_UNIT_SP, if (face.title.length <= 3) 44f else 28f)
             val reason = Lang.reason(a.line2, lang)
@@ -306,7 +306,7 @@ class MainActivity : Activity(), App.Ui {
                 else -> src.takeIf { it.isNotEmpty() }
             }
             meta.text = listOfNotNull(source, name, a.line1).joinToString("  ·  ")
-            showPage(a.sourceUrl)
+            showPage(a.sourceUrl ?: app.rules.cities[app.city]?.guideUrl)
             paint(face.background, face.onLight)
         }
         val bmp = app.photoFor(app.city)
@@ -467,7 +467,7 @@ class MainActivity : Activity(), App.Ui {
     private fun pickPhoto() {
         app.pipeline.warmUp() // the cloud connections are ready by the time a photo is picked
         val intent = if (Build.VERSION.SDK_INT >= 33) {
-            Intent(MediaStore.ACTION_PICK_IMAGES).putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, 1)
+            Intent(MediaStore.ACTION_PICK_IMAGES)
         } else {
             Intent(Intent.ACTION_GET_CONTENT).addCategory(Intent.CATEGORY_OPENABLE)
         }

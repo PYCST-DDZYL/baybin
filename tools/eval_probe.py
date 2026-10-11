@@ -1,6 +1,6 @@
-r"""Quick recognition probe: can Qwen pick the right catalog item for a photo of trash?
+r"""First-pass recognition probe: can Qwen pick the right catalog item for a photo of trash?
 
-    python tools\eval_probe.py [--set eval\realworld] [--model qwen3-vl-flash] [--limit N] [--jobs 3] [--degrade]
+    python tools\eval_probe.py [--set eval\realworld] [--model qwen3-vl-plus] [--limit N] [--jobs 3] [--degrade]
 
 Test photos: eval\commons_probe\ (one openly licensed Wikimedia Commons photo per item;
 source page, author and license for each are in manifest.json). These are clean stock-style
@@ -8,7 +8,9 @@ photos, so results are optimistic; the acceptance test uses photos taken with th
 
 Uses the same catalog (rules/items.json) and rules the app will use. Images are resized
 to <=1024px / JPEG q80 like the glasses send. Prints item accuracy, the bin each city
-would show (right or wrong), latency, and every miss.
+would suggest before structured evidence checks, latency, and every miss. This PC probe does
+not run the phone's exposure/evidence checks and is not an app accuracy measurement.
+Use accept_2_accuracy.py for the complete pipeline on the phone.
 """
 import base64
 import io
@@ -72,13 +74,14 @@ def as_glasses_jpeg(path, degrade=False):
     return buf.getvalue()
 
 
-def ask(base, key, model, jpeg, prompt):
+def ask(base, key, model, jpeg, prompt, max_tokens=16, logprobs=True):
     # The endpoint returns logprobs for the first output token only, so the reply is the bare id.
-    body = {"model": model, "max_tokens": 16, "temperature": 0, "logprobs": True, "top_logprobs": 5,
+    body = {"model": model, "max_tokens": max_tokens, "temperature": 0, "logprobs": logprobs,
+            "top_logprobs": 5 if logprobs else 0,
             "messages": [{"role": "user", "content": [
                 {"type": "image_url", "image_url": {"url": "data:image/jpeg;base64," + base64.b64encode(jpeg).decode()}},
                 {"type": "text", "text": prompt}]}]}
-    if model.startswith("qwen3.") or model.startswith("qwen3-max"):
+    if model.startswith("qwen3"):
         body["enable_thinking"] = False
     req = urllib.request.Request(base.rstrip("/") + "/chat/completions", data=json.dumps(body).encode(),
                                  headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"})
@@ -91,11 +94,16 @@ def ask(base, key, model, jpeg, prompt):
 
 
 def parse(text, ids):
-    """Bare id expected; tolerate quotes, backticks, a trailing period or an 'id:' prefix."""
-    for word in re.findall(r"[a-z][a-z0-9_]*", text.lower()):
-        if word in ids:
-            return word
-    return "unknown"
+    """One complete id only; prose or several ids fail closed, like Recognition.parseId."""
+    bare = text.strip()
+    for mark in ('```',):
+        if bare.startswith(mark) and bare.endswith(mark):
+            bare = bare[len(mark):-len(mark)].strip()
+    bare = bare.removesuffix('.').strip()
+    for mark in ('"', "'", '`'):
+        if bare.startswith(mark) and bare.endswith(mark):
+            bare = bare[1:-1]
+    return bare.lower() if bare.lower() in ids else 'unknown'
 
 
 def first_token(first):
@@ -107,7 +115,7 @@ def first_token(first):
     return first["token"], math.exp(first["logprob"]), alts
 
 
-# Same thresholds as the phone app (Pipeline.P_MIN / P_ALT).
+# First-pass thresholds only. Structured evidence is checked by the phone, not here.
 P_MIN, P_ALT = 0.5, 0.25
 
 
@@ -122,12 +130,12 @@ def load_photos(path):
 
 
 def shown(city, item, p_first=None, alts=()):
-    """Line 1 the phone would show — mirrors Pipeline.decide() in the phone app."""
+    """First-pass rule suggestion only, before the phone's structured evidence gate."""
     rules, bins = city["rules"], city["bins"]
     r = rules.get(item) if item != "unknown" else None
     if r is None or r["bin"] == "unknown":
         return "Not sure"
-    if p_first is not None and p_first < P_MIN:
+    if p_first is None or not P_MIN <= p_first <= 1:
         return "Not sure"
     for tok, p_alt in alts:
         prefix = "".join(ch for ch in tok.lower() if ch.isalnum() or ch == "_")
@@ -149,7 +157,7 @@ def main(argv):
     jobs = int(argv[argv.index("--jobs") + 1]) if "--jobs" in argv else 3
     imgs = os.path.abspath(argv[argv.index("--set") + 1]) if "--set" in argv else IMGS
     p = props()
-    model = model or p.get("qwen.model", "qwen3-vl-flash")
+    model = model or p.get("qwen.model", "qwen3-vl-plus")
     items = json.load(open(os.path.join(PROJECT, "rules", "items.json"), encoding="utf-8"))["items"]
     ids = {it["id"] for it in items}
     city_ids = ("cupertino", "san_jose", "palo_alto", "los_altos", "berkeley")
@@ -171,7 +179,7 @@ def main(argv):
         row = {"file": os.path.basename(path), "expected": expected, "got": got, "p_first": conf, "first": tok,
                "alts": alts[:3], "ms": round(ms), "raw": text.strip()[:120], "tokens_in": usage.get("prompt_tokens")}
         for c, city in cities.items():
-            row[c] = (shown(city, expected), shown(city, got, conf, alts))
+            row[c] = (shown(city, expected, 1.0), shown(city, got, conf, alts))
         return row
 
     with ThreadPoolExecutor(max_workers=jobs) as pool:
@@ -189,6 +197,7 @@ def main(argv):
     item_ok = sum(r["got"] == r["expected"] for r in rows)
     print("\nset %s, model %s, %d photos, prompt tokens ~%s" % (os.path.basename(imgs), model, n, rows[0]["tokens_in"] if rows else "?"))
     print("item exactly right      : %d/%d = %.0f%%" % (item_ok, n, 100.0 * item_ok / n))
+    print("The following are first-pass rule suggestions, NOT verified app results:")
     for c in cities:
         ok = sum(r[c][0] == r[c][1] for r in rows)
         wrong_bin = sum(r[c][0] != r[c][1] and r[c][1] != "Not sure" for r in rows)

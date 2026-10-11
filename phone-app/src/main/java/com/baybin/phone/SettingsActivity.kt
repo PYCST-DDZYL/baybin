@@ -2,6 +2,7 @@ package com.baybin.phone
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -22,6 +23,11 @@ class SettingsActivity : Activity() {
         val input = findViewById<EditText>(R.id.key_input)
         val save = findViewById<Button>(R.id.key_save)
         val state = findViewById<TextView>(R.id.key_state)
+        val advanced = findViewById<TextView>(R.id.model_toggle)
+        val modelBlock = findViewById<View>(R.id.model_block)
+        val modelInput = findViewById<EditText>(R.id.model_input)
+        val modelSave = findViewById<Button>(R.id.model_save)
+        val modelNote = findViewById<TextView>(R.id.model_note)
         val lang = app.lang
         back.text = Lang.s(lang, "settings_back")
         title.text = Lang.s(lang, "settings")
@@ -29,6 +35,17 @@ class SettingsActivity : Activity() {
         input.hint = Lang.s(lang, if (app.hasQwenKey()) "key_replace" else "key_hint")
         save.text = Lang.s(lang, "key_save")
         state.text = Lang.s(lang, if (app.hasQwenKey()) "key_set" else "key_missing")
+        advanced.text = Lang.s(lang, "model_toggle")
+        modelInput.setText(app.qwenModel)
+        modelNote.text = Lang.s(lang, "model_note")
+        modelSave.text = Lang.s(lang, "model_save")
+        advanced.setOnClickListener {
+            modelBlock.visibility = if (modelBlock.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+        }
+        modelSave.setOnClickListener {
+            if (app.saveQwenModel(modelInput.text.toString())) finish()
+            else modelInput.error = Lang.s(lang, "model_invalid")
+        }
         back.setOnClickListener { finish() }
         save.setOnClickListener {
             val typed = input.text?.toString()?.trim().orEmpty()

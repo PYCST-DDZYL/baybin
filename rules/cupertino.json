@@ -1,6 +1,7 @@
 {
  "city": "cupertino",
  "name": "Cupertino",
+ "guide_url": "https://www.recology.com/wp-content/uploads/2025/11/Residental_Service_Guide_2025-FINAL.pdf",
  "residence": "single-family",
  "authority": "City of Cupertino and Recology South Bay, its contracted hauler",
  "updated": "2026-10-01",
@@ -167,6 +168,7 @@
   },
   "paper_takeout": {
    "bin": "compost",
+    "checks": ["uncoated"],
    "reason": "Compost paper take-out boxes without plastic lining.",
    "source": "guide",
    "quote": "Paper take-out containers (no plastic lining)"
@@ -339,6 +341,7 @@
   },
   "aerosol_can": {
    "bin": "recycling",
+    "checks": ["empty"],
    "reason": "Recycle only when completely empty.",
    "source": "guide",
    "quote": "Glass and Metal • Empty aerosol cans"

@@ -79,6 +79,19 @@ class App : Application(), GlassesLink.Listener {
     /** True when this phone has a key saved. The key itself is never logged or shown. */
     fun hasQwenKey(): Boolean = qwenKey().isNotBlank()
 
+    var qwenModel: String
+        get() = prefs.getString("qwen_model", null) ?: BuildConfig.QWEN_MODEL
+        private set(value) { prefs.edit().putString("qwen_model", value).apply() }
+
+    fun saveQwenModel(value: String): Boolean {
+        val name = value.trim()
+        if (!name.matches(Regex("[A-Za-z0-9][A-Za-z0-9_./:-]{0,99}"))) return false
+        qwenModel = name
+        pipeline = newPipeline()
+        pipeline.warmUp()
+        return true
+    }
+
     /** Encrypts the key into app-private storage. The caller wipes the text field. */
     fun saveQwenKey(key: String) {
         val trimmed = key.trim()
@@ -173,7 +186,7 @@ class App : Application(), GlassesLink.Listener {
     private fun newPipeline(): Pipeline {
         val key = qwenKey()
         val qwen = key.takeIf { it.isNotBlank() }?.let {
-            QwenClient(BuildConfig.QWEN_BASE_URL, it, BuildConfig.QWEN_MODEL)
+            QwenClient(BuildConfig.QWEN_BASE_URL, it, qwenModel)
         }
         return Pipeline(this, rules, qwen)
     }
@@ -182,7 +195,7 @@ class App : Application(), GlassesLink.Listener {
     private val main = Handler(Looper.getMainLooper())
 
     /** Bumps when a new scan or gallery job starts. An older job must not clear [busy]. */
-    private var busyToken = 0
+    @Volatile private var busyToken = 0
 
     /** Debug builds: pair with the next glasses a scan finds. Set by FIND. */
     private var autoPair = false
@@ -205,18 +218,19 @@ class App : Application(), GlassesLink.Listener {
         val token = startBusy()
         EventLog.add("scan $reqId: ${jpeg.size} B, rotation $rotation, city $cityNow")
         worker.execute {
+            if (token != busyToken) return@execute
             val a = try {
-                pipeline.run(jpeg, rotation, cityNow)
+                pipeline.run(jpeg, rotation, cityNow) { token == busyToken }
             } catch (e: Exception) {
                 EventLog.add("scan $reqId failed: ${e.message}")
-                main.post {
-                    finishBusy(token)
-                    ui?.refresh()
-                }
-                return@execute
+                Pipeline.Answer(Proto.KIND_ERROR, "Try again", Recognition.Help.INVALID.text, cityId = cityNow)
             }
             val thumb = thumbnail(jpeg, rotation)
             main.post {
+                if (token != busyToken) {
+                    thumb?.recycle()
+                    return@post
+                }
                 // The phone city at this moment wins. A quick switch while this was running
                 // is that city's own rule, not the one the scan started with. The glasses
                 // get this same bin once. A later switch updates only the phone.
@@ -225,7 +239,7 @@ class App : Application(), GlassesLink.Listener {
                 val sent = link.sendResult(
                     reqId, shown.kind,
                     BinFace.lens(shown.line1, Lang.zh(lang)),
-                    Lang.lensDetail(shown.itemId, name, shown.line2, lang),
+                    Lang.lensDetail(shown.itemId, name, shown.line2, lang, shown.kind),
                 )
                 EventLog.add("BB_RESULT id=$reqId ${describe(shown)} phone=${SystemClock.elapsedRealtime() - tRecv} sent=$sent " +
                     "| ${shown.line1} | ${shown.line2}")
@@ -276,14 +290,18 @@ class App : Application(), GlassesLink.Listener {
         val cityNow = city
         val token = startBusy()
         worker.execute {
+            if (token != busyToken) return@execute
             val t0 = SystemClock.elapsedRealtime()
             val jpeg = try {
                 Gallery.toJpeg(source(), GALLERY_SIDE)
             } catch (e: Exception) { // not an image, unsupported format, file gone
                 EventLog.add("BB_GALLERY file=$label unreadable: ${e.message}")
                 main.post {
-                    finishBusy(token)
-                    ui?.refresh()
+                    if (token != busyToken) return@post
+                    val failed = Pipeline.Answer(Proto.KIND_ERROR, "Try again", Recognition.Help.INVALID.text, cityId = cityNow)
+                    val shown = settle(cityNow, failed, null, "gallery", token)
+                    EventLog.add("BB_GALLERY file=$label city=${shown.cityId} ${describe(shown)} total=${SystemClock.elapsedRealtime() - t0} " +
+                        "| ${shown.line1} | ${shown.line2}")
                 }
                 return@execute
             }
@@ -294,17 +312,17 @@ class App : Application(), GlassesLink.Listener {
     /** Worker thread. [cityNow] is the city captured when the job started, so the log matches the answer. */
     private fun classifyNow(jpeg: ByteArray, label: String, t0: Long, cityNow: String, token: Int) {
         val a = try {
-            pipeline.run(jpeg, 0, cityNow)
+            pipeline.run(jpeg, 0, cityNow) { token == busyToken }
         } catch (e: Exception) {
             EventLog.add("BB_GALLERY file=$label failed: ${e.message}")
-            main.post {
-                finishBusy(token)
-                ui?.refresh()
-            }
-            return
+            Pipeline.Answer(Proto.KIND_ERROR, "Try again", Recognition.Help.INVALID.text, cityId = cityNow)
         }
         val thumb = thumbnail(jpeg, 0)
         main.post {
+            if (token != busyToken) {
+                thumb?.recycle()
+                return@post
+            }
             val shown = settle(cityNow, a, thumb, "gallery", token)
             EventLog.add("BB_GALLERY file=$label city=${shown.cityId ?: cityNow} ${describe(shown)} total=${SystemClock.elapsedRealtime() - t0} " +
                 "| ${shown.line1} | ${shown.line2}")
@@ -372,7 +390,7 @@ class App : Application(), GlassesLink.Listener {
         val s = slots.getOrPut(cityId) { CitySlot() }
         s.answer = a
         s.source = source
-        if (thumb != null) s.photo = thumb
+        s.photo = thumb
     }
 
     /**
@@ -428,7 +446,31 @@ class App : Application(), GlassesLink.Listener {
                         link.savedMac?.let { link.connect(it) } ?: EventLog.add("debug: no saved glasses")
                     }
                     ACTION_STATUS -> EventLog.add("BB_STATUS link=${link.state} mac=${link.savedMac} " +
-                        "glasses=${link.glassesVersion} city=$city online=${Net.online(this@App)}")
+                        "glasses=${link.glassesVersion} city=$city online=${Net.online(this@App)} " +
+                        "auto=${link.autoReconnect} lang=$lang app=${BuildConfig.VERSION_NAME}")
+                    ACTION_RESTORE -> {
+                        link.autoReconnect = intent.getBooleanExtra("auto", false)
+                        val connected = intent.getBooleanExtra("connected", false)
+                        if (!link.autoReconnect && !connected) link.disconnect(true)
+                        else if (connected && !link.isConnected) link.savedMac?.let { link.connect(it) }
+                    }
+                    ACTION_REVIEW -> {
+                        val requested = intent.getStringExtra("id")
+                        if (requested == "all") {
+                            answerFor(city)?.let { previous ->
+                                Rules.CITY_IDS.forEach { id ->
+                                    pipeline.forCity(previous, id)?.let { a ->
+                                        EventLog.add("BB_REVIEW city=$id ${describe(a)} | ${a.line1} | ${a.line2}")
+                                    }
+                                }
+                            }
+                        } else if (requested in Rules.CITY_IDS) {
+                            onCityChanged(requested!!)
+                            answerFor(requested)?.let { a ->
+                                EventLog.add("BB_REVIEW city=$requested ${describe(a)} | ${a.line1} | ${a.line2}")
+                            }
+                        }
+                    }
                     ACTION_CITY -> intent.getStringExtra("id")?.let { onCityChanged(it) }
                     ACTION_LANG -> intent.getStringExtra("id")?.let { onLanguageChanged(it) }
                     ACTION_CLASSIFY -> intent.getStringExtra("file")?.let {
@@ -438,7 +480,7 @@ class App : Application(), GlassesLink.Listener {
             }
         }
         val filter = IntentFilter().apply {
-            listOf(ACTION_FIND, ACTION_DISCONNECT, ACTION_RECONNECT, ACTION_STATUS, ACTION_CITY, ACTION_LANG, ACTION_CLASSIFY)
+            listOf(ACTION_FIND, ACTION_DISCONNECT, ACTION_RECONNECT, ACTION_STATUS, ACTION_CITY, ACTION_LANG, ACTION_CLASSIFY, ACTION_RESTORE, ACTION_REVIEW)
                 .forEach { addAction(it) }
         }
         if (Build.VERSION.SDK_INT >= 33) registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED)
@@ -452,6 +494,8 @@ class App : Application(), GlassesLink.Listener {
         private const val ACTION_DISCONNECT = "com.baybin.phone.DISCONNECT"
         private const val ACTION_RECONNECT = "com.baybin.phone.RECONNECT"
         private const val ACTION_STATUS = "com.baybin.phone.STATUS"
+        private const val ACTION_RESTORE = "com.baybin.phone.RESTORE"
+        private const val ACTION_REVIEW = "com.baybin.phone.REVIEW"
         private const val ACTION_CITY = "com.baybin.phone.CITY"
         private const val ACTION_LANG = "com.baybin.phone.LANG"
         private const val ACTION_CLASSIFY = "com.baybin.phone.CLASSIFY"

@@ -20,7 +20,7 @@ fun local(key: String, default: String = "") =
 // tools/verify_rules.py checks against the official pages), copied into the assets.
 val rulesAssets = layout.buildDirectory.dir("generated/rulesAssets").get().asFile
 val copyRules by tasks.registering(Sync::class) {
-    from(rootProject.file("rules")) { include("*.json", "prompt.txt") }
+    from(rootProject.file("rules")) { include("*.json", "prompt.txt", "inspection.txt") }
     into(File(rulesAssets, "rules"))
 }
 tasks.named("preBuild") { dependsOn(copyRules) }
@@ -33,14 +33,14 @@ android {
         applicationId = "com.baybin.phone"
         minSdk = 29 // CXR-M needs 28; LinkService uses the connectedDevice service type (29)
         targetSdk = 34
-        versionCode = 3
-        versionName = "0.3.0"
+        versionCode = 4
+        versionName = "0.4.0"
 
         // The Qwen key is never a build field. It is typed into the phone and kept in
         // app-private storage, so a decompile of this APK cannot recover it.
         buildConfigField("String", "QWEN_BASE_URL",
             "\"${local("qwen.baseUrl", "https://dashscope.aliyuncs.com/compatible-mode/v1")}\"")
-        buildConfigField("String", "QWEN_MODEL", "\"${local("qwen.model", "qwen3-vl-flash")}\"")
+        buildConfigField("String", "QWEN_MODEL", "\"${local("qwen.model", "qwen3-vl-plus")}\"")
     }
 
     buildFeatures { buildConfig = true }
@@ -71,4 +71,5 @@ dependencies {
     implementation("com.rokid.cxr:client-m:1.2.2")
     // Same OkHttp the Rokid SDK already pulls in; used for the Qwen call.
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    testImplementation("junit:junit:4.13.2")
 }

@@ -20,12 +20,19 @@ object Lang {
     }
 
     /**
-     * Second line on the lens: the item's short name, so the wearer sees what was recognized.
-     * No catalog name (the model wasn't sure, or there is no item) keeps the reason.
+     * Second line on the lens keeps preparation and retake instructions. Otherwise it
+     * uses the item's short name, so the wearer sees what was recognized.
      * The bin word is separate. This does not choose a bin.
      */
-    fun lensDetail(itemId: String?, englishName: String?, line2: String, lang: String): String {
-        if (englishName == null) return reason(line2, lang)
+    fun lensDetail(itemId: String?, englishName: String?, line2: String, lang: String, kind: Int = 0): String {
+        // Uncertainty guidance must never be overwritten by the tentative item name.
+        if (kind != 0 || englishName == null) return reason(line2, lang)
+        if (itemId == "food_in_container") return if (zh(lang)) "先倒出食物，空盒再拍" else "Empty food first; scan container again"
+        if (itemId == "plastic_cup") return if (zh(lang)) "塑料杯：先倒空再投放" else "Plastic cup: empty before disposal"
+        if (itemId == "aerosol_can") return reason(line2, lang)
+        // The official preparation instruction is part of the answer, even on the lens.
+        val instruction = Regex("(?i)\\b(empty|scrape|remove|bag|tie|wrap|tape|seal|flatten|rinse|clean|only|unless|without|if|first|never|drop|take|book)\\b")
+        if (instruction.containsMatchIn(line2)) return reason(line2, lang)
         return if (zh(lang)) ITEM_ZH[itemId] ?: englishName else englishName
     }
 
@@ -49,6 +56,10 @@ object Lang {
         "tap_connect" to "点一下连接",
         "glasses_name" to "眼镜",
         "settings" to "设置",
+        "model_toggle" to "高级：识别模型",
+        "model_save" to "保存识别模型",
+        "model_invalid" to "请填写有效的模型名称",
+        "model_note" to "默认使用 qwen3-vl-plus。模型必须支持图片和 Token 概率，并且在你的账号中可用。",
         "settings_back" to "返回",
         "settings_note" to "这台手机连着眼镜。密钥只留在手机上，用来识别，眼镜里不保存。",
         "key_hint" to "填你自己的千问密钥",
@@ -66,6 +77,7 @@ object Lang {
         "first_use" to "第一次：点下面的大按钮。只找到一副时会自己连上。",
         "paired_hint" to "点「连接眼镜」就连上。要换一副，点旁边的按钮。",
         "throw" to "扔进",
+        "result_label" to "识别结果",
         "working" to "识别中…",
         "how" to "怎么用",
         "no_result" to "还没有结果",
@@ -99,6 +111,10 @@ object Lang {
         "tap_connect" to "Tap to connect",
         "glasses_name" to "Glasses",
         "settings" to "Settings",
+        "model_toggle" to "Advanced: recognition model",
+        "model_save" to "Save recognition model",
+        "model_invalid" to "Enter a valid model name",
+        "model_note" to "Default: qwen3-vl-plus. Your account must support this model, images, and token probabilities.",
         "settings_back" to "Back",
         "settings_note" to "This phone connects to the glasses. The key stays on the phone and names the item. The glasses do not keep it.",
         "key_hint" to "Your own Qwen key",
@@ -116,6 +132,7 @@ object Lang {
         "first_use" to "First time: tap the big button. One pair connects by itself.",
         "paired_hint" to "Tap Connect glasses. To switch, tap Another pair.",
         "throw" to "Put it in",
+        "result_label" to "Recognition result",
         "working" to "Looking…",
         "how" to "How to",
         "no_result" to "No result yet",
@@ -134,6 +151,19 @@ object Lang {
 
     /** Exact English reason from the city rules → the same instruction in Chinese. */
     private val REASON = mapOf(
+        "Move closer, hold steady, and photograph one item." to "拿近一点、稳住，只拍一样。",
+        "Too dark. Move into better light and retake." to "太暗了，到亮一点的地方重拍。",
+        "Too bright. Change angle to avoid glare and retake." to "太亮了，换个角度避开反光。",
+        "Couldn't read the photo. Choose another or retake." to "照片读不出来，换一张或重拍。",
+        "Photograph one item; keep its matching lid beside it." to "只拍一样；配套盒盖可以留在旁边。",
+        "Open the container and photograph what is inside." to "打开盒盖，拍清楚里面。",
+        "Photograph the recycling number or COMPOSTABLE marking." to "拍清回收编号或可堆肥标志。",
+        "Turn the printed label toward the camera and retake." to "把标签转过来，拍清楚文字。",
+        "Check the inner lining; photograph the open paper container." to "检查内层，拍清打开的纸盒。",
+        "Open the box; photograph the inside and any food stains or grease." to "打开纸盒，拍清内侧和食物油污。",
+        "Confirm it is completely empty; photograph the opening." to "确认完全用空，再拍开口。",
+        "Couldn't confirm the item. Change angle and retake." to "还没看清，换个角度重拍。",
+        "This city has no clear rule. Check the official guide." to "当地规则没有说清，请看官方页面。",
         "Flatten clean cardboard; bundle oversized pieces beside the cart." to "干净纸箱压扁；太大的捆好，放在桶旁边。",
         "Greasy pizza boxes go in the green compost cart." to "油披萨盒放进绿色堆肥桶。",
         "Clean paper and mail go in the blue recycling cart." to "干净的纸和信件放进蓝色回收桶。",
@@ -286,6 +316,12 @@ object Lang {
         "Couldn't tell what it is. Try closer." to "看不出来。再靠近一点。",
         "Two things in the photo. Hold up one." to "照片里有两样。只拿一样。",
         "Type your own key in the phone app." to "在手机上填你自己的千问密钥。",
+        "Plastic #6 packaging goes in garbage, not curbside recycling." to "6 号塑料包装放垃圾桶，不能路边回收。",
+        "Empty this #6 plastic cup, then put it in garbage." to "6 号塑料杯先倒空，再放垃圾桶。",
+        "Check the API key in phone Settings." to "请在手机设置中检查识别密钥。",
+        "Recognition service unavailable. Check the model configuration." to "识别服务不可用，请检查模型配置。",
+        "Recognition service busy. Wait a moment and retry." to "识别服务繁忙，稍等后重试。",
+        "Recognition service failed. Please retry." to "识别服务出错，请重试。",
         "Phone is offline" to "手机没联网",
         "Cloud didn't answer. Tap to retry." to "云端没有回应。再按一下。",
         "Flatten clean cardboard so it fits in the blue cart." to "干净纸箱压扁，放进蓝桶。",

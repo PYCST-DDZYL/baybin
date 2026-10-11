@@ -1,6 +1,7 @@
 {
  "city": "palo_alto",
  "name": "Palo Alto",
+ "guide_url": "https://www.paloalto.gov/Departments/Public-Works/Zero-Waste/What-Goes-Where/What-Goes-Where-Tools",
  "residence": "single-family",
  "authority": "City of Palo Alto and GreenWaste of Palo Alto, its contracted hauler. Single-family carts are blue recycling, green compost, and black garbage.",
  "updated": "2026-10-02",
@@ -110,12 +111,14 @@
    "quote": "Cups ● Takeout containers ● Plates"
   },
   "carton": {
+   "checks": ["carton_gable"],
    "bin": "compost",
    "reason": "Milk, juice, and ice cream cartons go in the green cart.",
    "source": "toolkit",
    "quote": "Milk, juice, and ice cream cartons"
   },
   "aseptic_carton": {
+   "checks": ["carton_aseptic"],
    "bin": "garbage",
    "reason": "Juice boxes and soup cartons go in the black cart.",
    "source": "toolkit",

@@ -1,6 +1,7 @@
 {
  "city": "los_altos",
  "name": "Los Altos",
+ "guide_url": "https://missiontrail.com/wp-content/uploads/2021/09/residential-service-guide.pdf",
  "residence": "single-family",
  "authority": "City of Los Altos and Mission Trail Waste Systems, its contracted hauler. The residential guide's carts are blue recycling, green organics, and gray garbage.",
  "updated": "2026-10-02",
@@ -270,6 +271,7 @@
   },
   "aerosol_can": {
    "bin": "recycling",
+    "checks": ["empty"],
    "reason": "Empty aerosol cans go in the blue cart.",
    "source": "guide",
    "quote": "aerosol cans - empty"

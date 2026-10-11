@@ -30,6 +30,7 @@ from sources import ROOT, contains, norm, page_text
 RULES = os.path.join(ROOT, "rules")
 MAX_REASON_WORDS = 15
 MIN_QUOTE_CHARS = 20
+CHECKS = {"resin_1_5", "resin_recyclable", "uncoated", "empty", "not_compostable", "carton_gable", "carton_aseptic"}
 
 
 def load(path):
@@ -96,6 +97,11 @@ def check_city(path, items, live):
     rules = city["rules"]
     errors = []
 
+    guide = city.get("guide_url", "")
+    guide_host = urlparse(guide).hostname or ""
+    if not guide.startswith("https://") or not any(guide_host == d or guide_host.endswith("." + d) for d in domains):
+        errors.append("guide_url must link to this city's official guide")
+
     for sid, src in sources.items():
         for key in ("url", "live_url"):
             if key not in src:
@@ -116,10 +122,25 @@ def check_city(path, items, live):
         if item not in items:
             errors.append("%s: rule for an item that is not in items.json" % item)
 
-    counts = {}
+    entries = list(rules.items())
     for item, rule in rules.items():
+        variants = rule.get("by_material", {})
+        if not isinstance(variants, dict):
+            errors.append("%s: by_material must be an object" % item)
+            continue
+        for code, variant in variants.items():
+            if code not in set("1234567") or not isinstance(variant, dict) or "by_material" in variant:
+                errors.append("%s: invalid material variant %s" % (item, code))
+            else:
+                entries.append((item + ":material=" + code, variant))
+    counts = {}
+    for item, rule in entries:
+        checks = rule.get("checks", [])
+        if not isinstance(checks, list) or any(c not in CHECKS for c in checks):
+            errors.append("%s: unsupported evidence checks %r" % (item, checks))
         b = rule.get("bin")
-        counts[b] = counts.get(b, 0) + 1
+        if ":material=" not in item:
+            counts[b] = counts.get(b, 0) + 1
         if b == "unknown":
             if not rule.get("note"):
                 errors.append("%s: unknown without a note saying what was checked" % item)

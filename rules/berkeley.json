@@ -1,6 +1,7 @@
 {
  "city": "berkeley",
  "name": "Berkeley",
+ "guide_url": "https://berkeleyca.gov/city-services/trash-recycling/waste-sorting-guide",
  "residence": "single-family",
  "authority": "City of Berkeley household sorting guide. Each household has a blue recycling bin, a green compost bin, and a grey trash bin. For 1-9 unit buildings the Ecology Center supplies the recycling carts. The city's dark-blue recycling cart is for 10 or more units and is not used here.",
  "updated": "2026-10-02",

@@ -1,6 +1,7 @@
 {
  "city": "san_jose",
  "name": "San José",
+ "guide_url": "https://sanjoserecycles.org/",
  "residence": "single-family",
  "authority": "City of San José Environmental Services Department (SanJoseRecycles.org)",
  "updated": "2026-10-01",
@@ -456,18 +457,37 @@
   },
   "plastic_clamshell": {
    "bin": "recycling",
+   "checks": ["resin_recyclable"],
+   "by_material": {
+    "6": {
+     "bin": "landfill",
+     "reason": "Plastic #6 packaging goes in garbage, not curbside recycling.",
+     "source": "hard-plastic-clamshell-packaging",
+     "quote": "Otherwise, place it in the garbage cart/bin, including #6 plastics."
+    }
+   },
    "reason": "Recycle if marked #1-#5 or #7; unmarked, #6 or compostable: garbage.",
    "source": "hard-plastic-clamshell-packaging",
    "quote": "In San José, you can recycle hard plastic packaging labeled #1 – #5 in the ‘chasing arrow’ symbol."
   },
   "plastic_cup": {
    "bin": "recycling",
+   "checks": ["resin_recyclable"],
+   "by_material": {
+    "6": {
+     "bin": "landfill",
+     "reason": "Empty this #6 plastic cup, then put it in garbage.",
+     "source": "plastic-cups",
+     "quote": "Plastic cups made from plastic #6, polystyrene, are not recyclable in San Jose’s curbside program."
+    }
+   },
    "reason": "Recycle empty cups marked #1-#5 or #7; #6 or compostable: garbage.",
    "source": "plastic-cups",
    "quote": "Recycle plastic cups only if they are empty and labeled plastic #1 through 5 or non-compostable plastic #7."
   },
   "plastic_takeout": {
    "bin": "recycling",
+    "checks": ["not_compostable"],
    "reason": "Empty and scrape, then recycle; not if compostable plastic.",
    "source": "takeout-containers-plastic",
    "quote": "Before recycling, empty and scrape the food residue out of the container."

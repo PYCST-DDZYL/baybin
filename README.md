@@ -1,13 +1,13 @@
 # BayBin
 
-Look at a piece of trash through Rokid glasses and press the ring's right button. The lens shows a viewfinder, then two lines: which bin, and what the thing is.
+Look at a piece of trash through Rokid glasses and press the ring's right button. The lens shows a framing guide, then the bin and any preparation or retake instruction.
 
 ```
 绿桶
-还剩食物
+先倒出食物，空盒再拍
 ```
 
-When the answer is not reliable, the first line is 「不确定」. The app does not guess a bin. The city is chosen on the phone. Single-family Cupertino and San José are supported. The glasses do not store the city.
+When the answer is not reliable, the first line is 「不确定」 and the next line explains what to photograph. The city is chosen on the phone: Cupertino, San José, Palo Alto, Los Altos, or Berkeley, with the household service scopes described below. The glasses do not store the city. Model recognition cannot guarantee every answer is correct.
 
 Rules come only from city and hauler pages. Each rule cites its source, and a script checks the quoted sentence against that page (see [Where the rules come from](#where-the-rules-come-from)).
 
@@ -16,7 +16,7 @@ Rules come only from city and hauler pages. Each rule cites its source, and a sc
 1. Build and install: `python tools\deploy.py all` (Gradle runs in WSL; see `构建.sh`). Open BayBin on the phone and type your own Qwen key. After it is saved, that box hides. Settings, at the top right, is where you replace it. The key stays on that phone, encrypted with the Android Keystore. It is not compiled into the APK and it is not in this repository. PC test scripts read `local.properties`: copy `local.properties.example`, fill in your own key, and do not commit that file.
 2. Open **BayBin** on the glasses. Open **湾区垃圾分类** on the phone. The first time, tap the big button. If only one pair is found, it connects by itself. After that, tap 「连接眼镜」, or the phone reconnects on its own (a foreground service; the screen can be locked). 「换一副」 searches again.
 3. On the phone, pick California, then the city under it.
-4. Aim with the viewfinder and press the ring's right button (a temple click also takes the photo). The left button leaves the app. The lens shows the bin and the item.
+4. Put one item in the framing guide and press the ring's right button (a temple click also takes the photo). The left button leaves the app. Read preparation instructions before disposal. An uncertain result stays for six seconds; adjust as instructed and press right once to retake. Other results return to aiming on the first press.
 5. With no glasses: tap 「相册」 in the phone app, pick a photo, and the same pipeline runs. The answer stays on the phone. The card links the official page for that ruling. The long address is not shown.
 
 ## Architecture
@@ -29,13 +29,14 @@ Glasses (Rokid RG, Android 12, 2 GB RAM)
                 │  SCAN (Bluetooth RFCOMM, about 200 KB/s)
                 ▼
 Phone (Android, foreground service keeps the link up)
-  Upright: rotate from the EXIF orientation, scale to 768 px
-  Qwen qwen3-vl-flash (Model Studio, OpenAI-compatible API)
-    · answers with a catalog id (78 items) or unknown
-    · if nothing is back at 2 s / 4.3 s, send another request; use the first reply
-    · still nothing at 7 s → No connection
-    · first-token probability too low, or the runner-up would change the bin → Not sure
-  rules/<city>.json: id → bin + reason (official source, checked by verify_rules.py)
+  Upright: rotate from EXIF; check clearly unusable exposure
+  Qwen qwen3-vl-plus (Model Studio, OpenAI-compatible API)
+    · one 768 px call: catalog id first, then six visible contents/material/label fields
+    · first-token probability belongs to the item id; incomplete evidence → Not sure
+    · 7 s deadline with hedged retries; superseded calls are cancelled
+    · missing confidence, inconsistent fields, multiple targets → retake guidance
+    · identical confirmed photos: reuse evidence from a bounded memory cache
+  rules/<city>.json: verified id/material → bin + preparation + official source
                 │
                 │  RESULT (two lines)
                 ▼
@@ -45,7 +46,7 @@ Glasses: show the two lines. No network, no model, no history.
 - **Glasses** (`glasses-app`) do three things: take the photo, send it, show the result. No network permission, no model, no large library (CameraX is the only dependency, because this headset's camera HAL only returns a JPEG for that pairing). The photo is at most 1024 px, JPEG q80, and is not kept.
 - **Phone** (`phone-app`): `GlassesLink` owns the Bluetooth connection, `LinkService` is the foreground service, `Pipeline` is the recognition path (glasses and gallery share it), `QwenClient` calls Qwen, `Rules` reads the rule tables.
 - **Protocol** (`protocol`): one frame format, `"BB"` + type + length + body.
-- **Rules** (`rules/`): `items.json` is the catalog. `cupertino.json`, `san_jose.json`, `palo_alto.json`, `los_altos.json`, and `berkeley.json` are the bin, reason, source, and quotation for each item. `prompt.txt` is the model prompt. The build copies them into the phone app's assets. The app and the checker read the same files.
+- **Rules** (`rules/`): `items.json` is the catalog. The five city JSON files contain the bin, reason, source, quotation, evidence `checks`, and optional `by_material` rulings. `inspection.txt` is the structured app prompt; `prompt.txt` is retained for the PC id-only diagnostic. The build copies them into the phone app's assets. The app and the checker read the same files, including quotations for conditional rulings.
 
 ### Connection: why the apps use their own Bluetooth socket
 
@@ -57,14 +58,17 @@ Measured (phone S26 Ultra ↔ RG glasses): 16 KB through 512 KB all fit in one t
 
 - The model does one job: pick an id from the catalog of 78, or answer `unknown`. **The rule table picks the bin, not the model.**
 - Food still in a container is `food_in_container`, not the container's material. A meal, noodles, soup, rice, cake, or scattered leftovers (more than a smear of grease) count. The prompt says to use this id whether the container is foam, plastic, paper, or foil. An empty container uses its own id. Cupertino: scrape the food into the green compost cart first. San José: scrape it into the garbage cart first (single-family homes have no food-scraps cart), then look at the empty container. A cup still full of a drink, including bubble tea, is not this id. Recology says the compost cart does not take liquids, so the id stays `plastic_cup` (recycling) and the second line says to empty it first.
-- A photo that clearly shows two separate things stops before the model. The lens says Not sure, and the phone says to hold up one. One object, or a pile of the same thing, still goes to the model. The check is on the phone. It does not use a detector model.
+- Clearly dark, overexposed, or blank photos stop on the phone before a cloud request. Structured inspection checks for multiple unrelated targets. A matching lid beside its base and a group of the same waste kind count as one target. The previous color-blob `TwoThings` check is no longer in the live pipeline.
+- Inspection returns the item id on its first line, then food contents, plastic marking, paper condition, container emptiness, label type and target count. The `paper` field checks clean/soiled cardboard, inner coatings on paper containers, and evidenced gable/aseptic carton construction. Closed boxes cannot establish clean interiors. Visible food in ceramic, glass, metal or disposable containers maps to `food_in_container` even when the reply names the container. Hidden contents stay unknown. City conditions are enforced before a definite bin; for example San José plastic cups require a readable accepted number, while visibly marked #6 cups use that city's separately cited garbage ruling. Palo Alto distinguishes fresh cartons (compost) from aseptic cartons (garbage), so visible packaging evidence is required; mixed carton types require a one-item photo. Uncertain results without an item-specific citation link the selected city's official guide.
 - The lens shows `Not sure — check city guide` when:
   1. the model says `unknown`, or something that is not in the catalog;
   2. the city's official pages do not say, or they contradict each other (the rule is `unknown`);
-  3. the model is unsure. The API returns the probability of the first output token. Below 0.5 is not sure. A runner-up at 0.25 or more that would land in a different bin is not sure either. The runner-up is only a prefix. The chosen id's own prefix is skipped (the token `food` is also the start of `food_can`, so it is not a second answer). Every other prefix counts only when every item it could start would change the bin. `food` also starts `food_in_container`, which is the same bin as a greasy pizza box, so `food_can` being Recycling is not by itself a bin change. A self-reported "confidence" field was tried and stayed around 0.95, so it is not used.
-- The cloud sometimes stalls for 20 seconds or more (about 1 in 50). If the phone has no answer at 2 seconds it sends the request again. At 4.3 seconds it opens a new connection and sends a third copy. The first reply wins. At 7 seconds the lens shows `No connection` (the glasses time out at 8 seconds, which leaves time to send the result back). With only one retry, about 1 in 250 calls still stalled on both copies. The third copy is for that case.
+  3. first-token probability is missing, invalid, below 0.5, or belongs to punctuation rather than the selected id; or a runner-up at 0.25 or more would change the bin. The runner-up is a prefix and the chosen id's own prefix is skipped;
+  4. evidence is absent, conflicting, incomplete, or fails a city's material/content condition. Guidance asks for the opening, printed label, recycling number, lining, better light, or a single target.
+- Token probabilities and model observations do not guarantee correctness. The app never uses a self-reported confidence score. Rules choose the bin. The earlier two-call implementation repeatedly ran out of time; the current structured response removes that second wait while retaining required evidence checks.
+- Cloud responses can exceed the deadline. If the phone has no answer at 2 seconds it sends the request again. At 4.3 seconds it opens a new connection and sends a third copy. The first reply wins. At 7 seconds the lens shows `No connection` (the glasses time out at 8 seconds, which leaves time to send the result back). These are copies of the same inspection request; there is no second verification stage. Current measured timeouts are reported below.
 - When the glasses button is pressed, the glasses send `PREPARE` first. During the ~1.3 s exposure the phone opens two HTTPS connections (one for the first call, one for a retry) so the transpacific TLS handshake is not on the critical path. HTTP/1.1 is required: on one HTTP/2 connection a stalled request stalls the retry too.
-- The image sent to the model is 768 px on the long side, about 400 fewer image tokens than 1024 px. On the same prompt, median latency on 55 test photos dropped from 3.6 s to 2.5 s, and the bin was still 55/55. With the final `rules/prompt.txt` (id only), all 55 items were right (55/55 items, 55/55 bins in both cities), median 2.5 s, p90 3.8 s.
+- The model image is 768 px. A small unreadable marking requires a closer photo. Superseded photos cancel requests. Confirmed identical JPEGs reuse only the parsed result in memory for at most three minutes (16 entries), with the newly selected city's rules reapplied; retake/failed results are never cached and no images/files enter this cache. Changing the key or model clears it. The default is now `qwen3-vl-plus`: the configured `qwen3-vl-flash` returned HTTP 404 during the October 11 account check. The model can be changed in phone Settings → Advanced without rebuilding; it must support vision and token probabilities in the key's region. The original October 2 Flash benchmarks below do not describe this version.
 
 ## Where the rules come from
 
@@ -82,6 +86,26 @@ Measured (phone S26 Ultra ↔ RG glasses): 16 KB through 512 KB all fit in one t
 ## Test results
 
 Full table: [docs/acceptance.md](docs/acceptance.md). Raw logs are in `tools\out\accept\`. To run again: `python tools\accept_all.py`.
+
+**October 11 validation, phone v0.4.0 / glasses v0.3.0.** Source hash: `dfc8d1ae888ea905ec8f56775611e46dffefb42004d6c7958c59b47efc9bb660`. The real phone pipeline inspected 106 photos once each, then reapplied their evidence under all five city rules. "Correct" compares the first line with the existing item labels and includes correct unknown-city answers; "definite" counts answers actually naming a bin. Retakes and timeouts remain misses. These sets do not annotate visible contents or material and are not a real glasses-photo acceptance set.
+
+| City | Real web photos: correct / 51 | Definite / 51 | Stock photos: correct / 55 | Definite / 55 | Wrong definite bins |
+|---|---|---|---|---|---|
+| Cupertino | 26 (51.0%) | 26 | 42 (76.4%) | 33 | 0 |
+| San José | 25 (49.0%) | 25 | 41 (74.5%) | 41 | 0 |
+| Palo Alto | 27 (52.9%) | 22 | 43 (78.2%) | 34 | 0 |
+| Los Altos | 27 (52.9%) | 25 | 41 (74.5%) | 28 | 0 |
+| Berkeley | 30 (58.8%) | 26 | 42 (76.4%) | 20 | 0 |
+
+**Accuracy acceptance FAIL: the 90% requirement is unmet.** No definite answer had a wrong bin or mismatched item label in this run; that is a result on these photos, not a guarantee. There were 9 cloud timeouts among 51 web photos and 3 among 55 stock photos, plus one service error. Missing interior/label/marking evidence and multiple targets caused retakes. A closed pizza-box pile and mixed carton collection now abstain instead of selecting a potentially wrong bin.
+
+Phone gallery processing, including decode/preparation/cloud, had median 4,940 ms, p90 7,075 ms and maximum 7,130 ms. Fresh web-photo median was 5,376 ms and stock-photo median 4,553 ms. These timings exclude the glasses shutter and Bluetooth. A separate identical-photo check took 2,809 ms initially and 90 ms from the in-memory evidence cache, with zero new cloud calls. That cache timing does not describe a newly photographed object.
+
+Debug/release builds succeeded; 18 recognition unit tests and 5 test-tool safety checks passed. The official quotation checker passed all 5 × 78 rules and the two San José material variants against cached source text; changed material/carton conditions were separately checked on current official pages, and city guide links use official domains. All four APKs excluded the configured API key; both phone APKs contained the current rule assets. Device checks passed for dark/bright/blank photos without cloud calls, corrupt-photo handling, canceled old jobs not replacing newer results, and verified private-file cleanup. A two-scan glasses check exercised a single right-key retake on a dark scene (2,846 / 1,185 ms), with no crashes or process restarts and sampled glasses PSS 110.5 MiB. It does not validate recognition of real trash or the 100-scan memory criteria.
+
+The six-photo phone-only gallery check returned 4/6 expected first lines; the bottle and closed pizza box requested retakes. **Gallery acceptance FAIL:** the phone was locked, so displayed-answer and picker-button checks were not verified. Phone state was restored to San José / English / automatic reconnect, with the glasses connected. `files/eval` was confirmed absent and no shared-storage test files were created. Raw reports: `2_accuracy.json`, `7_gallery.json`, `current_validation.json`, `current_glasses.json` in the ignored local output directory.
+
+The following table is the October 2 historical snapshot, not validation of phone v0.4.0 / glasses v0.3.0. Fresh acceptance results carry a source hash; the report marks other versions STALE. Accuracy now reports all five cities, definite-bin precision, coverage, wrong bins, and cloud timeouts. Missing material annotations in these old photo sets count abstentions as misses. Zero wrong definite bins is additionally required to pass. Locked-phone UI checks cannot pass by being skipped.
 
 <!-- RESULTS -->
 | # | Criterion | Result | Data | When |
@@ -113,7 +137,7 @@ An earlier round used only stock photos. 6 of 110 calls got no cloud answer with
 
 Both hands are usually busy: one holds the thing being thrown out, the other holds a lid or a bag. Taking out a phone means unlocking it, opening an app, aiming, and taking a photo. That needs a free hand, and the trash usually has to be put down first. People skip the lookup and toss it. One item in the wrong cart can get a whole load rejected as contaminated and sent to landfill.
 
-The glasses make the lookup free. The object is already in view. One press on the temple, and three or four seconds later the answer is in the line of sight. Nothing has to be put down, and there is no screen to look down at. If the cost of checking is about zero, people check, and the neighborhood's sorting gets better.
+The object is already in view. One press on the temple sends the photo, and the answer appears in the line of sight. Nothing has to be put down, and there is no screen to look down at. The current cloud timing is reported above; difficult photos can require a retake.
 
 The glasses are limited: little battery, little memory, little compute (this headset has 2 GB). They only see and display. Recognition and rules run on the phone and in the cloud. Peak memory on the glasses stays under 150 MB. Without glasses, the phone app's gallery test uses the same rules and the same pipeline.
 
@@ -125,18 +149,18 @@ The glasses are limited: little battery, little memory, little compute (this hea
 | `python tools\probe.py pair / transfer / scan N / photo / camera N / show` | Hardware measurements: link, transfer size and speed, end-to-end timing, capture, lens layout |
 | `python tools\verify_rules.py [--live]` | Check each rule against the official text |
 | `python tools\rules_table.py` | Regenerate `rules/REVIEW.md` |
-| `python tools\eval_probe.py [--set eval\realworld]` | Accuracy and latency on a PC (same prompt, same decision, 768 px). `--set` picks the set; the default is `eval\commons_probe` |
+| `python tools\eval_probe.py [--set eval\realworld]` | First-pass item diagnostic on a PC, before structured evidence checks; use `accept_2_accuracy.py` for real app accuracy |
 | `python tools\collect_testset.py` | Photograph a test set with the glasses |
 | `python tools\collect_web_testset.py` | Find redistributable photos on Wikimedia Commons and Openverse, then label them into `eval\realworld` |
 | `python tools\accept_1_latency.py` … `accept_8_readme.py` | One script per acceptance criterion |
 | `python tools\accept_all.py` | Run them and write `docs/acceptance.md` |
 
-The apps do not write shared storage. Install with `adb install` (streamed; no APK left on the phone). Test photos go into the app's private directory and are deleted afterward. If something must be stored on the phone, it goes only in `内部存储/Download/BayBin` (`python tools\deploy.py phone-files` / `phone-clean`).
+The apps do not write shared storage. Install with `adb install` (streamed; no APK left on the phone). Test photos go only into app-private `files/eval`, are deleted after each photo, and cleanup is checked. Tests restore the prior city, language, and reconnect preference. A forcibly interrupted process needs explicit cleanup with `clear_private` and state restoration before another run. If something must be retained on the phone, it goes only in `内部存储/Download/BayBin` (`python tools\deploy.py phone-files` / `phone-clean`).
 
 ## Known limits
 
 - Criterion 2 still needs a set photographed with the glasses (see above).
-- `eval/realworld/plastic_tub__1.jpg`: a clear lid beside the blue base it came off. The model names `plastic_tub`. The phone used to stop that shape before the model; both pieces are about as wide as they are tall, so it now goes to the model and uses the tub's bin. A loose cap with no base is still `plastic_cap`.
+- A matching lid beside its base counts as one container. That identity alone does not establish contents or plastic markings: show the open interior and any required printed number. A loose cap with no base is still `plastic_cap`.
 - Pizza still in the box is `food_in_container`: empty the food into the cart that takes it, then look at the empty box. An empty greasy pizza box is `pizza_box_greasy`. Both ids are Compost in Cupertino and Garbage in San José.
 - Cloud latency follows Model Studio load. Beijing evening (Bay Area morning) is the slow part. A key issued in the Beijing region is what this project was timed with. A key in the US (Virginia) region, with `qwen.baseUrl` set to `https://dashscope-us.aliyuncs.com/compatible-mode/v1`, saves a transpacific round trip. Open that key yourself.
 - The shutter is about 1.35 s, of which about 0.85 s is the camera HAL capturing a still. That part is not optimized.
