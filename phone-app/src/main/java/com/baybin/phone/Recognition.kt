@@ -101,6 +101,7 @@ object Recognition {
             id in setOf("carton", "paperboard_box", "plastic_bottle", "plastic_jug") -> Help.LABEL
             else -> Help.VERIFY
         }
+        if (id == "food_scraps" && seen.food != "present") return Help.VERIFY
         if (id == "food_in_container" && seen.food != "present") return Help.OPEN
         if (id in FOOD_CONTAINERS && id != "food_in_container" && seen.food != "none") return Help.OPEN
         if (id in setOf("plastic_bottle", "plastic_jug")) {

@@ -7,7 +7,7 @@ class RecognitionTest {
     private val ids = setOf("plastic_cup", "plastic_tub", "plastic_cap", "foam_food_container", "food_in_container",
         "carton", "paperboard_box", "paper_takeout", "aerosol_can", "aluminum_can", "plastic_bottle",
         "ceramic", "aluminum_tray", "aluminum_foil", "glass_jar", "food_can", "drinking_glass",
-        "cardboard_box", "pizza_box_greasy", "aseptic_carton")
+        "cardboard_box", "pizza_box_greasy", "aseptic_carton", "food_scraps")
     private fun seen(id: String, food: String = "none", material: String = "unknown", empty: String = "unknown",
                      paper: String = "unknown", label: String = "unknown", multiple: String = "no") =
         Recognition.Observation(id, food, material, empty, paper, label, multiple)
@@ -55,6 +55,22 @@ class RecognitionTest {
         assertEquals("food_in_container", Recognition.canonicalId("plastic_tub", result))
         assertNull(Recognition.parseInspection("item=" + text, ids))
         assertNull(Recognition.parseInspection(text.substringBefore("\nmultiple"), ids))
+    }
+
+    @Test fun wholeUncontainedFoodCanUseTheFoodCategoryWithoutPackagingEvidence() {
+        // Same complete schema as a visible sandwich held in a hand or on a bare surface.
+        val text = "food_scraps\nfood=present\nmaterial=unknown\nempty=unknown\npaper=unknown\nlabel=unknown\nmultiple=no"
+        val food = Recognition.parseInspection(text, ids)
+        assertEquals("food_scraps", Recognition.canonicalId("food_scraps", food))
+        assertTrue(Recognition.reliableToken(0.8, "food", "food_scraps"))
+        assertNull(Recognition.help("food_scraps", food, emptySet()))
+        for (contents in listOf("none", "unknown")) {
+            val conflicting = Recognition.parseInspection(text.replace("food=present", "food=$contents"), ids)
+            assertEquals(Recognition.Help.VERIFY, Recognition.help("food_scraps", conflicting, emptySet()))
+        }
+        assertEquals(Recognition.Help.ONE, Recognition.help("food_scraps",
+            Recognition.parseInspection(text.replace("multiple=no", "multiple=yes"), ids), emptySet()))
+        assertEquals("食物／厨余", Lang.lensDetail("food_scraps", "Food / food scraps", "Food goes in the cart.", "zh"))
     }
 
     @Test fun foodInCeramicMetalAndGlassMustNotDisposeOfTheServingContainer() {

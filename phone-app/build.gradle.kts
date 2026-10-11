@@ -33,8 +33,8 @@ android {
         applicationId = "com.baybin.phone"
         minSdk = 29 // CXR-M needs 28; LinkService uses the connectedDevice service type (29)
         targetSdk = 34
-        versionCode = 4
-        versionName = "0.4.0"
+        versionCode = 5
+        versionName = "0.4.1"
 
         // The Qwen key is never a build field. It is typed into the phone and kept in
         // app-private storage, so a decompile of this APK cannot recover it.

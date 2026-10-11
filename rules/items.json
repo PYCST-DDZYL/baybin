@@ -239,13 +239,13 @@
   },
   {
    "id": "food_scraps",
-   "name": "Food scraps",
-   "hint": "peels, cores, eggshells, or moldy scraps with no plate, box, or cup under them; a hand holding a peel counts"
+   "name": "Food / food scraps",
+   "hint": "ANY visible solid food with no plate, box, cup or packaging under it: whole or partly eaten sandwiches, burgers, bread, pizza slices, fruit, rice, peels, cores, eggshells or leftovers; fresh food and food held in a hand count, not only spoiled scraps"
   },
   {
    "id": "food_in_container",
    "name": "Food still in a container",
-   "hint": "food you could pick up, still in a box or cup or on a plate, including leftovers and seafood in a box; not a stain and not an empty box"
+   "hint": "ANY visible solid food in or on a plate, bowl, box, cup or packaging, including whole or partly eaten sandwiches, burgers, bread, pizza, meals, leftovers and seafood; the food is the target, not its container, stain or empty box"
   },
   {
    "id": "bones",

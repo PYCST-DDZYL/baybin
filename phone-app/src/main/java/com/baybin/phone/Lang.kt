@@ -483,7 +483,7 @@ object Lang {
         "broken_glass" to "碎玻璃",
         "drinking_glass" to "玻璃杯",
         "ceramic" to "陶瓷",
-        "food_scraps" to "食物残渣",
+        "food_scraps" to "食物／厨余",
         "food_in_container" to "还剩食物",
         "bones" to "骨头",
         "yard_trimmings" to "落叶树枝",

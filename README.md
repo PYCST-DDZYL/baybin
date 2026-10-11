@@ -87,7 +87,20 @@ Measured (phone S26 Ultra ↔ RG glasses): 16 KB through 512 KB all fit in one t
 
 Full table: [docs/acceptance.md](docs/acceptance.md). Raw logs are in `tools\out\accept\`. To run again: `python tools\accept_all.py`.
 
-**October 11 validation, phone v0.4.0 / glasses v0.3.0.** Source hash: `dfc8d1ae888ea905ec8f56775611e46dffefb42004d6c7958c59b47efc9bb660`. The real phone pipeline inspected 106 photos once each, then reapplied their evidence under all five city rules. "Correct" compares the first line with the existing item labels and includes correct unknown-city answers; "definite" counts answers actually naming a bin. Retakes and timeouts remain misses. These sets do not annotate visible contents or material and are not a real glasses-photo acceptance set.
+**Food follow-up, phone v0.4.1.** A reported sandwich failure exposed a catalog gap: uncontained food was described only as peels, cores, eggshells and moldy scraps. With the v0.4.0 prompt, a clear whole sandwich returned `unknown` even though the same response said `food=present`. The catalog and both prompts now explicitly cover whole/fresh/partly eaten solid foods, including sandwiches, burgers, bread and pizza. A hand-held food uses `food_scraps`; food on/in a plate or packaging uses `food_in_container`. Ingredients and two sandwich halves count as one food target. Food-category replies must still establish visible food, and material/closed-container checks remain.
+
+The same two public photos were tested with the structured prompt on a PC:
+
+| Photo | Before | After | After response time |
+|---|---|---|---|
+| [Whole uncontained sandwich](https://commons.wikimedia.org/wiki/File:Sandwich_(1).jpg), Renee Comet / NCI, public domain | `unknown`, despite `food=present` | `food_scraps`, food present, one target | 3,225 ms |
+| [Sandwich on a plate](https://commons.wikimedia.org/wiki/File:Bread_sandwich.jpg), Nandhiniraji, CC BY-SA 4.0 | `food_in_container` | `food_in_container`, food present, one target | 6,011 ms |
+
+Both corrected responses had valid first-token probabilities and all seven fields; the uncontained sandwich's first-token probability was greater than 0.999. A closed-pizza-box control still reported unknown interior/paper condition and requires a retake. A plastic-cup control remained a cup, rather than food, and reported multiple targets. These are PC response diagnostics, with no phone shutter, Bluetooth, local exposure gate or app deadline/hedges; they are not a new phone accuracy measurement. Local photos/attribution/raw replies are grouped in ignored `tools/out/sandwich_audit/`, with no files written to the phone. Source hash: `f6dd733c3a035af8e70b704de083728bbeadb3364fbbec41cbb378e316c8c78c`.
+
+Phone v0.4.1 debug/release builds and 19 recognition unit tests passed; both APKs contain the updated prompts/catalog and exclude the configured key. The five-city cached quotation checks passed. The phone was disconnected from adb during this follow-up, so v0.4.1 has not been installed or tested on that phone, and the user's exact failed photo/log was unavailable. The v0.4.0 device results below are a baseline, not validation of v0.4.1. The overall 90% acceptance target remains unmet.
+
+**October 11 baseline validation, phone v0.4.0 / glasses v0.3.0.** Source hash: `dfc8d1ae888ea905ec8f56775611e46dffefb42004d6c7958c59b47efc9bb660`. The real phone pipeline inspected 106 photos once each, then reapplied their evidence under all five city rules. "Correct" compares the first line with the existing item labels and includes correct unknown-city answers; "definite" counts answers actually naming a bin. Retakes and timeouts remain misses. These sets do not annotate visible contents or material and are not a real glasses-photo acceptance set.
 
 | City | Real web photos: correct / 51 | Definite / 51 | Stock photos: correct / 55 | Definite / 55 | Wrong definite bins |
 |---|---|---|---|---|---|
