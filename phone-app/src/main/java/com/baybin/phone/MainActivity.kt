@@ -171,11 +171,14 @@ class MainActivity : Activity(), App.Ui {
         keyState = findViewById(R.id.key_state)
         keySave.setOnClickListener {
             val typed = keyInput.text?.toString()?.trim().orEmpty()
-            if (typed.isNotEmpty()) {
-                app.saveQwenKey(typed)
-                keyInput.text.clear()
+            when (app.saveQwenKey(typed)) {
+                KeyStorage.Result.SAVED -> {
+                    keyInput.text.clear()
+                    refresh()
+                }
+                KeyStorage.Result.INVALID -> keyInput.error = Lang.s(app.lang, "key_invalid")
+                KeyStorage.Result.FAILED -> keyInput.error = Lang.s(app.lang, "key_save_failed")
             }
-            refresh()
         }
 
         if (ensurePermissions()) startLinkService()

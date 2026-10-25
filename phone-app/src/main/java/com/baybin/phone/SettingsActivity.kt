@@ -49,10 +49,14 @@ class SettingsActivity : Activity() {
         back.setOnClickListener { finish() }
         save.setOnClickListener {
             val typed = input.text?.toString()?.trim().orEmpty()
-            if (typed.isEmpty()) return@setOnClickListener
-            app.saveQwenKey(typed)
-            input.text.clear()
-            finish()
+            when (app.saveQwenKey(typed)) {
+                KeyStorage.Result.SAVED -> {
+                    input.text.clear()
+                    finish()
+                }
+                KeyStorage.Result.INVALID -> input.error = Lang.s(lang, "key_invalid")
+                KeyStorage.Result.FAILED -> input.error = Lang.s(lang, "key_save_failed")
+            }
         }
     }
 }

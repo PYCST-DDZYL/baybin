@@ -92,20 +92,23 @@ class App : Application(), GlassesLink.Listener {
         return true
     }
 
-    /** Encrypts the key into app-private storage. The caller wipes the text field. */
-    fun saveQwenKey(key: String) {
-        val trimmed = key.trim()
-        if (trimmed.isEmpty()) return
-        prefs.edit().putString(KEY_PREF, seal(trimmed)).commit()
-        pipeline = newPipeline()
-        EventLog.add("Qwen: key saved on this phone")
+    /** The caller clears its input only after encrypted storage confirms success. */
+    internal fun saveQwenKey(key: String): KeyStorage.Result {
+        val result = KeyStorage.save(key, ::seal) { sealed ->
+            prefs.edit().putString(KEY_PREF, sealed).commit()
+        }
+        if (result == KeyStorage.Result.SAVED) {
+            pipeline = newPipeline()
+            EventLog.add("Qwen: key saved on this phone")
+        }
+        return result
     }
 
     private fun qwenKey(): String {
         val stored = prefs.getString(KEY_PREF, null).orEmpty()
         if (stored.isEmpty()) return ""
         return try {
-            unseal(stored)
+            KeyStorage.normalize(unseal(stored)).orEmpty()
         } catch (_: Exception) {
             ""
         }
@@ -124,7 +127,7 @@ class App : Application(), GlassesLink.Listener {
             ""
         }
         // A short or binary leftover must not replace a key that is already sealed.
-        if (text.length < 20 || text.any { it <= ' ' || it == '\u007f' }) {
+        if (text.length < 20 || KeyStorage.normalize(text) == null) {
             wipe(file)
             return
         }
