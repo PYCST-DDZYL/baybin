@@ -78,7 +78,13 @@ class PhoneLink private constructor(context: Context) {
                 val ss = server ?: adapter.listenUsingInsecureRfcommWithServiceRecord(
                     Proto.SERVICE_NAME, Proto.SERVICE_UUID).also { server = it }
                 Log.i(TAG, "listening for the phone app")
-                attach(ss.accept())
+                val accepted = ss.accept()
+                try {
+                    attach(accepted)
+                } catch (e: IOException) {
+                    try { accepted.close() } catch (_: IOException) {}
+                    throw e
+                }
             } catch (e: SecurityException) {
                 Log.w(TAG, "Bluetooth permission missing; link not started")
                 accepting = false
@@ -103,8 +109,13 @@ class PhoneLink private constructor(context: Context) {
             prev
         }
         try { old?.close() } catch (_: IOException) {}
+        main.post {
+            if (isCurrent(s)) {
+                phoneAppVersion = null
+                setLink(true)
+            }
+        }
         Thread({ readLoop(s) }, "baybin-read").apply { isDaemon = true }.start()
-        main.post { setLink(true) }
         post(Proto.HELLO, Proto.strings(BuildConfig.VERSION_NAME))
     }
 
@@ -118,6 +129,7 @@ class PhoneLink private constructor(context: Context) {
                     Proto.HELLO -> {
                         val version = Proto.stringsAt(p, 0, 1)[0]
                         main.post {
+                            if (!isCurrent(s)) return@post
                             phoneAppVersion = version
                             listener?.onPhoneAppSeen(version)
                         }
@@ -126,12 +138,12 @@ class PhoneLink private constructor(context: Context) {
                         val reqId = Proto.intAt(p, 0)
                         val kind = Proto.intAt(p, 4)
                         val (line1, line2) = Proto.stringsAt(p, 8, 2)
-                        main.post { listener?.onResult(reqId, kind, line1, line2) }
+                        main.post { if (isCurrent(s)) listener?.onResult(reqId, kind, line1, line2) }
                     }
                     Proto.PROBE_ACK -> {
                         val reqId = Proto.intAt(p, 0)
                         val received = Proto.intAt(p, 4)
-                        main.post { listener?.onProbeAck(reqId, received) }
+                        main.post { if (isCurrent(s)) listener?.onProbeAck(reqId, received) }
                     }
                     else -> Log.w(TAG, "unknown frame type ${f.type}")
                 }
@@ -155,20 +167,27 @@ class PhoneLink private constructor(context: Context) {
                 false
             }
         }
-        if (wasCurrent) main.post { setLink(false) }
+        if (wasCurrent) main.post {
+            if (synchronized(lock) { socket == null }) setLink(false)
+        }
     }
+
+    private fun isCurrent(s: BluetoothSocket): Boolean = synchronized(lock) { socket === s }
 
     /** Queues one frame; [done] gets (sent, ms spent writing) on the main thread. */
     private fun post(type: Int, vararg parts: ByteArray, done: ((Boolean, Long) -> Unit)? = null) {
+        // Bind queued work to the connection that requested it, even if it is replaced
+        // before the writer gets to this photo. Never send an old photo to a new phone.
+        val target = synchronized(lock) { socket?.let { s -> out?.let { s to it } } }
         writer.execute {
-            val o = synchronized(lock) { out }
             val t = SystemClock.elapsedRealtime()
-            val ok = o != null && try {
+            val ok = target != null && isCurrent(target.first) && try {
+                val o = target.second
                 Proto.write(o, type, *parts)
                 true
             } catch (e: IOException) {
                 Log.w(TAG, "send failed: ${e.message}")
-                synchronized(lock) { socket }?.let { try { it.close() } catch (_: IOException) {} }
+                try { target.first.close() } catch (_: IOException) {}
                 false
             }
             val ms = SystemClock.elapsedRealtime() - t

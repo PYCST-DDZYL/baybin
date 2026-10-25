@@ -88,7 +88,7 @@ class GlassesLink(private val context: Context) {
 
     private val retry = Runnable {
         val mac = savedMac
-        if (autoReconnect && mac != null && state != State.CONNECTED) connect(mac)
+        if (autoReconnect && mac != null && state !in setOf(State.CONNECTED, State.SCANNING, State.CONNECTING)) connect(mac)
     }
 
     /**
@@ -108,6 +108,7 @@ class GlassesLink(private val context: Context) {
 
     @SuppressLint("MissingPermission")
     fun startScan() {
+        main.removeCallbacks(retry)
         val a = adapter
         if (a == null) {
             cancelScan(restore = false)
@@ -131,12 +132,17 @@ class GlassesLink(private val context: Context) {
                 return
             }
             val cb = object : ScanCallback() {
-                override fun onScanResult(callbackType: Int, result: ScanResult) = report(result.device)
+                override fun onScanResult(callbackType: Int, result: ScanResult) {
+                    if (scanning === this) report(result.device)
+                }
                 override fun onScanFailed(errorCode: Int) {
-                    if (scanning == null) return
+                    if (scanning !== this) return
                     scanning = null
                     main.removeCallbacks(scanTimeout)
-                    if (state == State.SCANNING) setState(State.FAILED, "BLE scan failed: $errorCode")
+                    if (state == State.SCANNING) {
+                        setState(State.FAILED, "BLE scan failed: $errorCode")
+                        scheduleRetry()
+                    }
                 }
             }
             val filter = ScanFilter.Builder().setServiceUuid(ParcelUuid.fromString(ROKID_SERVICE_UUID)).build()
@@ -167,7 +173,10 @@ class GlassesLink(private val context: Context) {
         }
         if (restore && state == State.SCANNING) {
             if (socketUp()) setState(State.CONNECTED, "scan finished")
-            else setState(State.DISCONNECTED, "scan finished")
+            else {
+                setState(State.DISCONNECTED, "scan finished")
+                scheduleRetry()
+            }
         }
     }
 
@@ -241,13 +250,16 @@ class GlassesLink(private val context: Context) {
         main.removeCallbacks(retry)
         setState(State.CONNECTING, "connecting to $mac")
         Thread({
+            var candidate: BluetoothSocket? = null
             try {
                 val a = adapter ?: throw IOException("no Bluetooth adapter")
                 if (!a.isEnabled) throw IOException("Bluetooth is off")
                 val s = a.getRemoteDevice(mac).createInsecureRfcommSocketToServiceRecord(Proto.SERVICE_UUID)
+                candidate = s
                 a.cancelDiscovery()
                 s.connect()
                 attach(s)
+                candidate = null // The reader now owns and closes this socket.
             } catch (e: IOException) {
                 val bluetoothOff = adapter?.isEnabled != true // LinkService reconnects when it comes back on
                 connectFailed(
@@ -259,6 +271,7 @@ class GlassesLink(private val context: Context) {
             } catch (e: IllegalArgumentException) {
                 connectFailed("bad address $mac", retry = false, force = false, previousMac = previousMac)
             } finally {
+                try { candidate?.close() } catch (_: IOException) {}
                 connecting.set(false)
             }
         }, "baybin-connect").start()
@@ -295,12 +308,14 @@ class GlassesLink(private val context: Context) {
         if (old != null && old !== s) {
             try { old.close() } catch (_: IOException) {}
         }
-        Thread({ readLoop(s) }, "baybin-read").apply { isDaemon = true }.start()
-        send(Proto.HELLO, Proto.strings(BuildConfig.VERSION_NAME))
         main.post {
+            if (!isCurrent(s)) return@post
+            glassesVersion = null
             backoffMs = FIRST_RETRY_MS
             setState(State.CONNECTED, "glasses connected")
         }
+        Thread({ readLoop(s) }, "baybin-read").apply { isDaemon = true }.start()
+        send(Proto.HELLO, Proto.strings(BuildConfig.VERSION_NAME))
     }
 
     private fun readLoop(s: BluetoothSocket) {
@@ -313,6 +328,7 @@ class GlassesLink(private val context: Context) {
                     Proto.HELLO -> {
                         val version = Proto.stringsAt(p, 0, 1)[0]
                         main.post {
+                            if (!isCurrent(s)) return@post
                             glassesVersion = version
                             listener?.onHello(version)
                         }
@@ -321,13 +337,13 @@ class GlassesLink(private val context: Context) {
                         val reqId = Proto.intAt(p, 0)
                         val rotation = Proto.intAt(p, 4)
                         val jpeg = p.copyOfRange(8, p.size)
-                        main.post { listener?.onScan(reqId, jpeg, rotation) }
+                        main.post { if (isCurrent(s)) listener?.onScan(reqId, jpeg, rotation) }
                     }
                     Proto.PREPARE -> listener?.onPrepare()
                     Proto.PROBE -> {
                         val reqId = Proto.intAt(p, 0)
                         val received = p.size - 4
-                        main.post { listener?.onProbe(reqId, received) }
+                        main.post { if (isCurrent(s)) listener?.onProbe(reqId, received) }
                     }
                     else -> EventLog.add("unknown frame type ${f.type}")
                 }
@@ -352,11 +368,14 @@ class GlassesLink(private val context: Context) {
             }
         }
         if (wasCurrent) main.post {
+            if (synchronized(lock) { socket != null }) return@post
             glassesVersion = null
             setState(State.DISCONNECTED, "glasses disconnected")
             scheduleRetry()
         }
     }
+
+    private fun isCurrent(s: BluetoothSocket): Boolean = synchronized(lock) { socket === s }
 
     private fun scheduleRetry() {
         if (!autoReconnect || savedMac == null) return
@@ -367,13 +386,17 @@ class GlassesLink(private val context: Context) {
 
     /** Queues one frame for the writer thread. False if there is no link. */
     fun send(type: Int, vararg parts: ByteArray): Boolean {
-        val o = synchronized(lock) { out } ?: return false
+        val (s, o) = synchronized(lock) {
+            val current = socket ?: return false
+            current to (out ?: return false)
+        }
         writer.execute {
+            if (!isCurrent(s)) return@execute
             try {
                 Proto.write(o, type, *parts)
             } catch (e: IOException) {
                 EventLog.add("send failed: ${e.message}")
-                synchronized(lock) { socket }?.let { try { it.close() } catch (_: IOException) {} }
+                try { s.close() } catch (_: IOException) {}
             }
         }
         return true
