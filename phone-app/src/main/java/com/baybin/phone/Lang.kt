@@ -10,6 +10,9 @@ object Lang {
 
     fun s(lang: String, key: String): String = (if (zh(lang)) ZH else EN).getValue(key)
 
+    fun itemName(itemId: String?, englishName: String, lang: String): String =
+        if (zh(lang)) ITEM_ZH[itemId] ?: englishName else englishName
+
     /** The official English reason, or the same instruction in Chinese. */
     fun reason(text: String, lang: String): String {
         if (!zh(lang)) return text
@@ -33,7 +36,7 @@ object Lang {
         // The official preparation instruction is part of the answer, even on the lens.
         val instruction = Regex("(?i)\\b(empty|scrape|remove|bag|tie|wrap|tape|seal|flatten|rinse|clean|only|unless|without|if|first|never|drop|take|book)\\b")
         if (instruction.containsMatchIn(line2)) return reason(line2, lang)
-        return if (zh(lang)) ITEM_ZH[itemId] ?: englishName else englishName
+        return itemName(itemId, englishName, lang)
     }
 
     private val MIGHT = Regex("Might be (.+)\\. Look closer, tap again\\.")
@@ -81,6 +84,14 @@ object Lang {
         "throw" to "扔进",
         "result_label" to "识别结果",
         "working" to "识别中…",
+        "working_hint" to "正在分析照片，通常需要几秒钟。你可以随时换一张。",
+        "retry_gallery" to "重新识别这张照片",
+        "cancel_gallery" to "取消本次识别",
+        "gallery_cancelled" to "已取消识别，可以重新选择照片。",
+        "bluetooth_off" to "蓝牙尚未开启，仍可使用相册识别。",
+        "bluetooth_unavailable" to "这台设备无法使用蓝牙，仍可使用相册识别。",
+        "permissions_help" to "连接眼镜需要蓝牙和定位权限。请在应用权限设置中允许；相册识别无需这些权限。",
+        "open_settings" to "打开权限设置",
         "how" to "怎么用",
         "no_result" to "还没有结果",
         "how_body" to "先选 California，再选下面的城市。眼镜对准要扔的东西，戒指右键拍照，左键退出。没有眼镜时，用相册选一张照片。",
@@ -138,6 +149,14 @@ object Lang {
         "throw" to "Put it in",
         "result_label" to "Recognition result",
         "working" to "Looking…",
+        "working_hint" to "Analyzing the photo. This usually takes a few seconds; you can choose another anytime.",
+        "retry_gallery" to "Retry this photo",
+        "cancel_gallery" to "Cancel recognition",
+        "gallery_cancelled" to "Recognition cancelled. You can choose another photo.",
+        "bluetooth_off" to "Bluetooth is off. Gallery recognition is still available.",
+        "bluetooth_unavailable" to "Bluetooth is unavailable on this device. Gallery recognition still works.",
+        "permissions_help" to "Allow Bluetooth and location in app permissions to connect glasses. Gallery recognition needs neither permission.",
+        "open_settings" to "Open app permissions",
         "how" to "How to",
         "no_result" to "No result yet",
         "how_body" to "Pick California, then a city below it. On the glasses, aim and press the ring's right key. The left key exits. Or pick a photo from the gallery.",

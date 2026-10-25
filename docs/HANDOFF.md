@@ -1,6 +1,16 @@
 # Handoff: BayBin
 
-Written 2026-10-02; implementation update 2026-10-11. Read this, then `README.md`. The owner writes in Chinese. Reply to the owner in Chinese. This file is in English because the public repository is in English.
+Written 2026-10-02; subsequent implementation updates are listed below, newest first. Read this, then `README.md`. The owner writes in Chinese. Reply to the owner in Chinese. This file is in English because the public repository is in English.
+
+## October 25 usability update — phone v0.5.0
+
+Phone versionCode is now 6; glasses remain v0.3.0. Opening the phone app no longer requests Bluetooth/location/notification permissions. A saved pair with existing permissions can still start the link service automatically. Connect and Another pair retain the requested action across permission and Bluetooth-enable dialogs, then resume it. The permission policy checks all required grants, requests coarse and fine location together for the existing CXR discovery setup, and treats notifications as optional. Permanently denied permissions offer an app-settings shortcut. Language changes only refresh an already-active link service, so gallery-only use does not start it.
+
+The result card now has an indeterminate progress indicator and scrolls into view when recognition starts. The previous photo is hidden while a new answer is pending; result text uses a polite accessibility live region. Gallery jobs expose Cancel and invalidate their job token when cancelled, preventing late answers from replacing the restored previous result. Connection/service failures expose Retry this photo. `GalleryRetry` holds at most one failed gallery JPEG in memory and matches it to the displayed city's gallery job id; city switches preserve that id. A new scan/photo or cancellation releases the retry reference. Confirmed answers, retake guidance and missing-key results are not retained for retry. No retry image is written to disk. Chinese result metadata uses the existing translated item catalog instead of English names, and no longer repeats the bin name.
+
+Validation passed: 35 phone JVM tests (including 5 connection-permission/localization tests and 4 gallery-retry lifecycle tests), 5 Python tool tests, cached checks for five cities and 78 rules each, Debug Lint on both apps (0 errors; 34 phone / 10 glasses warnings), and both apps' Debug/Release builds. Three new permission-name warnings come from Lint not recognizing the helper's supplied SDK argument; those inlined strings are selected by tested SDK boundaries. Source hash: `c3e11e0a6a0cca8166cedd0624ce3271cf7f4db45b1648f0dc810627ddc2c1f1`.
+
+The connected phone was read-only checked and was locked, still running v0.4.0. No app installation or phone-setting changes were made. The new dialogs, scrolling, progress/cancel/retry controls and accessibility announcements have not been verified on its screen. No live-cloud accuracy or live quotation rerun was performed. Existing device reports and the unmet 90% accuracy target remain historical; unit/build success does not replace hardware validation.
 
 ## October 25 maintenance review
 

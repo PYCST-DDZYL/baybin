@@ -55,9 +55,12 @@ class App : Application(), GlassesLink.Listener {
         var answer: Pipeline.Answer? = null
         var photo: Bitmap? = null
         var source: String = ""
+        var galleryId: Int? = null
     }
 
     private val slots = HashMap<String, CitySlot>()
+    private val galleryRetry = GalleryRetry()
+    private var busySource = ""
 
     /** True while a scan or a gallery photo is in the pipeline. The selected city shows "识别中…". */
     @Volatile private var busy: Boolean = false
@@ -199,6 +202,7 @@ class App : Application(), GlassesLink.Listener {
         val next = newPipeline()
         busyToken += 1
         busy = false
+        busySource = ""
         pipeline = next
         ui?.refresh()
     }
@@ -227,7 +231,7 @@ class App : Application(), GlassesLink.Listener {
     override fun onScan(reqId: Int, jpeg: ByteArray, rotation: Int) {
         val tRecv = SystemClock.elapsedRealtime()
         val cityNow = city
-        val token = startBusy()
+        val token = startBusy("glasses")
         val runPipeline = pipeline
         EventLog.add("scan $reqId: ${jpeg.size} B, rotation $rotation, city $cityNow")
         worker.execute {
@@ -301,7 +305,7 @@ class App : Application(), GlassesLink.Listener {
 
     private fun classify(label: String, source: () -> ImageDecoder.Source) {
         val cityNow = city
-        val token = startBusy()
+        val token = startBusy("gallery")
         val runPipeline = pipeline
         worker.execute {
             if (token != busyToken) return@execute
@@ -337,10 +341,38 @@ class App : Application(), GlassesLink.Listener {
                 thumb?.recycle()
                 return@post
             }
+            galleryRetry.remember(token, a.kind, jpeg, label)
             val shown = settle(cityNow, a, thumb, "gallery", token)
             EventLog.add("BB_GALLERY file=$label city=${shown.cityId ?: cityNow} ${describe(shown)} total=${SystemClock.elapsedRealtime() - t0} " +
                 "| ${shown.line1} | ${shown.line2}")
         }
+    }
+
+    fun canRetryGallery(): Boolean =
+        galleryRetry.forResult(slots[city]?.galleryId, sourceFor(city), busy) != null
+
+    /** Reuse only the latest failed gallery photo. No picker, file writes, or URI permission needed. */
+    fun retryGallery() {
+        val photo = galleryRetry.forResult(slots[city]?.galleryId, sourceFor(city), busy) ?: return
+        val cityNow = city
+        val runPipeline = pipeline
+        val token = startBusy("gallery")
+        worker.execute {
+            if (token != busyToken) return@execute
+            classifyNow(photo.jpeg, photo.label, SystemClock.elapsedRealtime(), cityNow, token, runPipeline)
+        }
+    }
+
+    fun canCancelGallery(): Boolean = busy && busySource == "gallery"
+
+    fun cancelGallery() {
+        if (!canCancelGallery()) return
+        busyToken += 1
+        busy = false
+        busySource = ""
+        galleryRetry.clear()
+        EventLog.add("gallery recognition cancelled")
+        ui?.refresh()
     }
 
     /**
@@ -353,9 +385,10 @@ class App : Application(), GlassesLink.Listener {
             val from = answerFor(city)
             val photo = photoFor(city)
             val source = sourceFor(city)
+            val galleryId = slots[city]?.galleryId
             city = id
             // A scan still running will land on this city when it finishes. Don't paint the previous item first.
-            if (!busy) from?.let { pipeline.forCity(it, id) }?.let { remember(id, it, photo, source) }
+            if (!busy) from?.let { pipeline.forCity(it, id) }?.let { remember(id, it, photo, source, galleryId) }
         }
         EventLog.add("city $id")
         ui?.refresh()
@@ -369,23 +402,28 @@ class App : Application(), GlassesLink.Listener {
             EventLog.add("lang $id")
         }
         ui?.refresh()
-        try {
+        if (link.autoReconnect) try {
             startForegroundService(Intent(this, LinkService::class.java))
         } catch (_: Exception) {
             // The link service is not up yet (no Bluetooth permission). The screen already switched.
         }
     }
 
-    private fun startBusy(): Int {
+    private fun startBusy(source: String): Int {
         busyToken += 1
         busy = true
+        busySource = source
+        galleryRetry.clear()
         ui?.refresh()
         return busyToken
     }
 
     /** Only the newest job may leave the "识别中…" state. */
     private fun finishBusy(token: Int) {
-        if (token == busyToken) busy = false
+        if (token == busyToken) {
+            busy = false
+            busySource = ""
+        }
     }
 
     /** The answer stored for [cityId], and only if that same city produced it. */
@@ -399,12 +437,13 @@ class App : Application(), GlassesLink.Listener {
     /** True while a job is running and the phone is showing this city. */
     fun busyFor(cityId: String) = busy && cityId == city
 
-    private fun remember(cityId: String, a: Pipeline.Answer, thumb: Bitmap?, source: String) {
+    private fun remember(cityId: String, a: Pipeline.Answer, thumb: Bitmap?, source: String, galleryId: Int? = null) {
         if (a.cityId != cityId) return
         val s = slots.getOrPut(cityId) { CitySlot() }
         s.answer = a
         s.source = source
         s.photo = thumb
+        s.galleryId = galleryId
     }
 
     /**
@@ -412,10 +451,11 @@ class App : Application(), GlassesLink.Listener {
      * also stores that city's own ruling of the same item. Returns the answer to show now.
      */
     private fun settle(startCity: String, decided: Pipeline.Answer, thumb: Bitmap?, source: String, token: Int): Pipeline.Answer {
-        remember(startCity, decided, thumb, source)
+        val galleryId = token.takeIf { source == "gallery" }
+        remember(startCity, decided, thumb, source, galleryId)
         val selected = city
         val moved = if (selected == startCity) null else pipeline.forCity(decided, selected)
-        if (moved != null) remember(selected, moved, thumb, source)
+        if (moved != null) remember(selected, moved, thumb, source, galleryId)
         finishBusy(token)
         ui?.refresh()
         return if (moved != null && moved.cityId == selected) moved else decided

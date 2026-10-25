@@ -1,9 +1,11 @@
 package com.baybin.phone
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
+import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothManager
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -15,6 +17,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import android.provider.Settings
 import android.text.SpannableString
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
@@ -28,6 +31,7 @@ import android.widget.LinearLayout
 import android.widget.RadioGroup
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
 
 /**
  * Main screen: glasses connection, city, gallery test mode (no glasses needed), the last
@@ -63,6 +67,13 @@ class MainActivity : Activity(), App.Ui {
     private lateinit var keyInput: EditText
     private lateinit var keySave: Button
     private lateinit var keyState: TextView
+    private lateinit var progress: View
+    private lateinit var retryButton: Button
+    private lateinit var cancelButton: Button
+    private lateinit var pageScroll: ScrollView
+    private var wasProcessing = false
+    private enum class BluetoothAction { CONNECT, SEARCH }
+    private var pendingBluetooth: BluetoothAction? = null
     private val devices = ArrayList<BluetoothDevice>()
     private val mainHandler = Handler(Looper.getMainLooper())
     private var logOpen = false
@@ -95,6 +106,7 @@ class MainActivity : Activity(), App.Ui {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
         app = application as App
+        pendingBluetooth = BluetoothAction.entries.firstOrNull { it.name == savedInstanceState?.getString("pending_bluetooth") }
         title = findViewById(R.id.title)
         status = findViewById(R.id.status)
         statusHint = findViewById(R.id.status_hint)
@@ -110,6 +122,15 @@ class MainActivity : Activity(), App.Ui {
         logScroll = findViewById(R.id.log_scroll)
         logToggle = findViewById(R.id.log_toggle)
         photo = findViewById(R.id.photo)
+        pageScroll = findViewById(R.id.page_scroll)
+        progress = findViewById(R.id.recognition_progress)
+        retryButton = findViewById(R.id.retry_gallery)
+        cancelButton = findViewById(R.id.cancel_gallery)
+        retryButton.setOnClickListener { app.retryGallery() }
+        cancelButton.setOnClickListener {
+            app.cancelGallery()
+            message("gallery_cancelled")
+        }
         logToggle.setOnClickListener {
             logOpen = !logOpen
             logScroll.visibility = if (logOpen) View.VISIBLE else View.GONE
@@ -119,18 +140,14 @@ class MainActivity : Activity(), App.Ui {
         deviceBox = findViewById(R.id.devices)
         scanButton = findViewById(R.id.scan)
         scanButton.setOnClickListener {
-            if (!ensurePermissions()) return@setOnClickListener
-            val mac = app.link.savedMac
-            if (mac == null) beginScan()
-            else if (app.link.state != GlassesLink.State.CONNECTED &&
-                app.link.state != GlassesLink.State.CONNECTING &&
-                app.link.state != GlassesLink.State.SCANNING
-            ) {
-                app.link.connect(mac)
-            }
+            pendingBluetooth = if (app.link.savedMac == null) BluetoothAction.SEARCH else BluetoothAction.CONNECT
+            continueBluetoothAction()
         }
         otherButton = findViewById(R.id.connect_other)
-        otherButton.setOnClickListener { if (ensurePermissions()) beginScan() }
+        otherButton.setOnClickListener {
+            pendingBluetooth = BluetoothAction.SEARCH
+            continueBluetoothAction()
+        }
         galleryButton = findViewById(R.id.gallery)
         galleryButton.setOnClickListener { pickPhoto() }
 
@@ -181,7 +198,13 @@ class MainActivity : Activity(), App.Ui {
             }
         }
 
-        if (ensurePermissions()) startLinkService()
+        // Gallery-only use needs no Bluetooth, location, or notification permission prompt.
+        if (app.link.savedMac != null && hasBluetoothPermissions()) startLinkService()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        pendingBluetooth?.let { outState.putString("pending_bluetooth", it.name) }
+        super.onSaveInstanceState(outState)
     }
 
     override fun onResume() {
@@ -275,11 +298,22 @@ class MainActivity : Activity(), App.Ui {
         showDevices()
 
         val a = app.answerFor(app.city)
-        if (app.busyFor(app.city)) {
+        val processing = app.busyFor(app.city)
+        progress.visibility = if (processing) View.VISIBLE else View.GONE
+        progress.contentDescription = Lang.s(lang, "working")
+        retryButton.text = Lang.s(lang, "retry_gallery")
+        retryButton.visibility = if (app.canRetryGallery()) View.VISIBLE else View.GONE
+        cancelButton.text = Lang.s(lang, "cancel_gallery")
+        cancelButton.visibility = if (app.canCancelGallery()) View.VISIBLE else View.GONE
+        if (processing && !wasProcessing) pageScroll.post {
+            pageScroll.smoothScrollTo(0, (resultCard.top - dp(16)).coerceAtLeast(0))
+        }
+        wasProcessing = processing
+        if (processing) {
             resultLabel.text = Lang.s(lang, "result_label")
             line1.text = Lang.s(lang, "working")
             line1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 32f)
-            line2.text = ""
+            line2.text = Lang.s(lang, "working_hint")
             meta.text = ""
             showPage(null)
             paint(R.color.card, onLight = true)
@@ -302,18 +336,18 @@ class MainActivity : Activity(), App.Ui {
                 face.note != null -> face.note
                 else -> reason
             }
-            val name = a.itemId?.let { app.rules.item(it)?.name }
+            val name = a.itemId?.let { id -> app.rules.item(id)?.name?.let { Lang.itemName(id, it, lang) } }
             val source = when (val src = app.sourceFor(app.city)) {
                 "glasses" -> Lang.s(lang, "source_glasses")
                 "gallery" -> Lang.s(lang, "source_gallery")
                 else -> src.takeIf { it.isNotEmpty() }
             }
-            meta.text = listOfNotNull(source, name, a.line1).joinToString("  ·  ")
+            meta.text = listOfNotNull(source, name).joinToString("  ·  ")
             showPage(a.sourceUrl ?: app.rules.cities[app.city]?.guideUrl)
             paint(face.background, face.onLight)
         }
         val bmp = app.photoFor(app.city)
-        if (bmp == null) photo.visibility = View.GONE
+        if (bmp == null || processing) photo.visibility = View.GONE
         else {
             photo.visibility = View.VISIBLE
             photo.setImageBitmap(bmp)
@@ -478,18 +512,34 @@ class MainActivity : Activity(), App.Ui {
         try {
             startActivityForResult(intent, REQ_PICK)
         } catch (e: ActivityNotFoundException) {
-            EventLog.add(Lang.s(app.lang, "gallery_closed"))
+            message("gallery_closed")
         }
     }
 
     @Deprecated("Activity result API needs AndroidX; this app has none")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQ_ENABLE_BLUETOOTH) {
+            if (resultCode == RESULT_OK) continueBluetoothAction()
+            else {
+                pendingBluetooth = null
+                message("bluetooth_off")
+            }
+            return
+        }
+        if (requestCode == REQ_APP_SETTINGS) {
+            if (hasBluetoothPermissions()) continueBluetoothAction()
+            else {
+                pendingBluetooth = null
+                message("no_bt")
+            }
+            return
+        }
         if (requestCode != REQ_PICK || resultCode != RESULT_OK) return
         // Samsung's photo picker often leaves data null and puts the uri in clipData only.
         val uri = data?.data ?: data?.clipData?.takeIf { it.itemCount > 0 }?.getItemAt(0)?.uri
         if (uri == null) {
-            EventLog.add(Lang.s(app.lang, "gallery_empty"))
+            message("gallery_empty")
             return
         }
         app.classifyUri(uri)
@@ -497,30 +547,74 @@ class MainActivity : Activity(), App.Ui {
 
     // ---- permissions ----
 
-    private fun ensurePermissions(): Boolean {
-        val needed = buildList {
-            add(Manifest.permission.ACCESS_FINE_LOCATION)
-            if (Build.VERSION.SDK_INT >= 31) {
-                add(Manifest.permission.BLUETOOTH_SCAN)
-                add(Manifest.permission.BLUETOOTH_CONNECT)
+    private fun granted(permission: String) = checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
+
+    private fun hasBluetoothPermissions() = BluetoothAccess.canUse(Build.VERSION.SDK_INT, ::granted)
+
+    @SuppressLint("MissingPermission")
+    private fun continueBluetoothAction() {
+        val action = pendingBluetooth ?: return
+        val needed = BluetoothAccess.request(Build.VERSION.SDK_INT, ::granted)
+        if (needed.isNotEmpty()) {
+            val asked = getPreferences(MODE_PRIVATE).getBoolean("bluetooth_permissions_requested", false)
+            val blocked = BluetoothAccess.required(Build.VERSION.SDK_INT).any {
+                !granted(it) && !shouldShowRequestPermissionRationale(it)
             }
-            if (Build.VERSION.SDK_INT >= 33) add(Manifest.permission.POST_NOTIFICATIONS)
-        }.filter { checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }
-        if (needed.isEmpty()) return true
-        requestPermissions(needed.toTypedArray(), REQ_PERMS)
-        return false
+            if (asked && blocked) {
+                AlertDialog.Builder(this)
+                    .setMessage(Lang.s(app.lang, "permissions_help"))
+                    .setPositiveButton(Lang.s(app.lang, "open_settings")) { _, _ ->
+                        startActivityForResult(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.parse("package:$packageName")), REQ_APP_SETTINGS)
+                    }
+                    .setNegativeButton(android.R.string.cancel) { _, _ -> pendingBluetooth = null }
+                    .setOnCancelListener { pendingBluetooth = null }
+                    .show()
+            } else {
+                getPreferences(MODE_PRIVATE).edit().putBoolean("bluetooth_permissions_requested", true).apply()
+                requestPermissions(needed.toTypedArray(), REQ_PERMS)
+            }
+            return
+        }
+        try {
+            val adapter = getSystemService(BluetoothManager::class.java)?.adapter
+            if (adapter == null) {
+                pendingBluetooth = null
+                message("bluetooth_unavailable")
+                return
+            }
+            if (!adapter.isEnabled) {
+                startActivityForResult(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQ_ENABLE_BLUETOOTH)
+                return
+            }
+            pendingBluetooth = null
+            startLinkService()
+            val mac = app.link.savedMac
+            if (action == BluetoothAction.SEARCH || mac == null) beginScan()
+            else app.link.connect(mac)
+        } catch (_: SecurityException) {
+            pendingBluetooth = null
+            message("no_bt")
+        } catch (_: ActivityNotFoundException) {
+            pendingBluetooth = null
+            message("bluetooth_unavailable")
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        val bluetooth = Build.VERSION.SDK_INT < 31 ||
-            checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
-        if (requestCode == REQ_PERMS && bluetooth) {
-            EventLog.add("permissions granted")
-            startLinkService()
-        } else {
-            EventLog.add(Lang.s(app.lang, "no_bt"))
+        if (requestCode != REQ_PERMS) return
+        if (hasBluetoothPermissions()) continueBluetoothAction()
+        else {
+            pendingBluetooth = null
+            message("no_bt")
         }
+    }
+
+    private fun message(key: String) {
+        val text = Lang.s(app.lang, key)
+        EventLog.add(text)
+        Toast.makeText(this, text, Toast.LENGTH_LONG).show()
     }
 
     private fun startLinkService() {
@@ -577,6 +671,8 @@ class MainActivity : Activity(), App.Ui {
     companion object {
         private const val REQ_PERMS = 1
         private const val REQ_PICK = 2
+        private const val REQ_ENABLE_BLUETOOTH = 3
+        private const val REQ_APP_SETTINGS = 4
         private val CA_CITIES = listOf(
             "cupertino" to R.id.city_cupertino,
             "san_jose" to R.id.city_sanjose,
