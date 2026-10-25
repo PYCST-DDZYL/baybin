@@ -384,8 +384,8 @@ class MainActivity : Activity(), PhoneLink.Listener {
             addAction(ACTION_PING)
             addAction(ACTION_SHOW)
         }
-        if (Build.VERSION.SDK_INT >= 33) registerReceiver(r, filter, Context.RECEIVER_EXPORTED)
-        else registerReceiver(r, filter)
+        // The flags overload exists since API 26; exported flags are understood since 33.
+        registerReceiver(r, filter, if (Build.VERSION.SDK_INT >= 33) Context.RECEIVER_EXPORTED else 0)
         debugReceiver = r
     }
 

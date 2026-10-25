@@ -483,8 +483,7 @@ class App : Application(), GlassesLink.Listener {
             listOf(ACTION_FIND, ACTION_DISCONNECT, ACTION_RECONNECT, ACTION_STATUS, ACTION_CITY, ACTION_LANG, ACTION_CLASSIFY, ACTION_RESTORE, ACTION_REVIEW)
                 .forEach { addAction(it) }
         }
-        if (Build.VERSION.SDK_INT >= 33) registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED)
-        else registerReceiver(receiver, filter)
+        registerReceiver(receiver, filter, if (Build.VERSION.SDK_INT >= 33) Context.RECEIVER_EXPORTED else 0)
     }
 
     companion object {
