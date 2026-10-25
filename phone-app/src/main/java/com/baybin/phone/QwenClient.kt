@@ -86,6 +86,11 @@ class QwenClient(
     fun ask(jpeg: ByteArray, prompt: String, hedgeAtMs: LongArray, deadlineMs: Long, maxTokens: Int = 16,
             logprobs: Boolean = true,
             isCurrent: () -> Boolean = { true }): Reply {
+        fun checkCurrent() {
+            if (!isCurrent()) throw IOException("superseded by a newer photo or configuration")
+        }
+        // Do not serialize a superseded photo or send even its first billed request.
+        checkCurrent()
         val body = requestBody(jpeg, prompt, maxTokens, logprobs)
         val answers = LinkedBlockingQueue<Result<Reply>>()
         val calls = ArrayList<Call>(hedgeAtMs.size + 1)
@@ -111,12 +116,14 @@ class QwenClient(
 
         val t0 = System.nanoTime()
         fun elapsed() = (System.nanoTime() - t0) / 1_000_000
-        launch()
-        var launched = 1
+        var launched = 0
         var failed = 0
         try {
+            checkCurrent()
+            launch()
+            launched = 1
             while (true) {
-                if (!isCurrent()) throw IOException("superseded by a newer photo")
+                checkCurrent()
                 val left = deadlineMs - elapsed()
                 if (left <= 0) {
                     // Whatever connection(s) these calls sat on may be dead; don't hand them to the next scan.
@@ -126,6 +133,7 @@ class QwenClient(
                 val nextHedge = hedgeAtMs.getOrNull(launched - 1)
                 val wait = if (nextHedge != null) minOf(left, maxOf(0L, nextHedge - elapsed())) else left
                 val answer = answers.poll(minOf(wait, 100L), TimeUnit.MILLISECONDS)
+                checkCurrent()
                 if (answer == null) {
                     if (nextHedge != null && elapsed() >= nextHedge) {
                         launch()

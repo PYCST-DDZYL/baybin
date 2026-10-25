@@ -43,7 +43,7 @@ class App : Application(), GlassesLink.Listener {
         private set
     lateinit var link: GlassesLink
         private set
-    lateinit var pipeline: Pipeline
+    @Volatile lateinit var pipeline: Pipeline
         private set
 
     /**
@@ -87,7 +87,7 @@ class App : Application(), GlassesLink.Listener {
         val name = value.trim()
         if (!name.matches(Regex("[A-Za-z0-9][A-Za-z0-9_./:-]{0,99}"))) return false
         qwenModel = name
-        pipeline = newPipeline()
+        replacePipeline()
         pipeline.warmUp()
         return true
     }
@@ -98,7 +98,7 @@ class App : Application(), GlassesLink.Listener {
             prefs.edit().putString(KEY_PREF, sealed).commit()
         }
         if (result == KeyStorage.Result.SAVED) {
-            pipeline = newPipeline()
+            replacePipeline()
             EventLog.add("Qwen: key saved on this phone")
         }
         return result
@@ -194,6 +194,15 @@ class App : Application(), GlassesLink.Listener {
         return Pipeline(this, rules, qwen)
     }
 
+    /** Main thread. Configuration changes supersede jobs using the previous credentials/model. */
+    private fun replacePipeline() {
+        val next = newPipeline()
+        busyToken += 1
+        busy = false
+        pipeline = next
+        ui?.refresh()
+    }
+
     private val worker = Executors.newSingleThreadExecutor { Thread(it, "baybin-pipeline") }
     private val main = Handler(Looper.getMainLooper())
 
@@ -219,11 +228,12 @@ class App : Application(), GlassesLink.Listener {
         val tRecv = SystemClock.elapsedRealtime()
         val cityNow = city
         val token = startBusy()
+        val runPipeline = pipeline
         EventLog.add("scan $reqId: ${jpeg.size} B, rotation $rotation, city $cityNow")
         worker.execute {
             if (token != busyToken) return@execute
             val a = try {
-                pipeline.run(jpeg, rotation, cityNow) { token == busyToken }
+                runPipeline.run(jpeg, rotation, cityNow) { token == busyToken }
             } catch (e: Exception) {
                 EventLog.add("scan $reqId failed: ${e.message}")
                 Pipeline.Answer(Proto.KIND_ERROR, "Try again", Recognition.Help.INVALID.text, cityId = cityNow)
@@ -292,6 +302,7 @@ class App : Application(), GlassesLink.Listener {
     private fun classify(label: String, source: () -> ImageDecoder.Source) {
         val cityNow = city
         val token = startBusy()
+        val runPipeline = pipeline
         worker.execute {
             if (token != busyToken) return@execute
             val t0 = SystemClock.elapsedRealtime()
@@ -308,14 +319,14 @@ class App : Application(), GlassesLink.Listener {
                 }
                 return@execute
             }
-            classifyNow(jpeg, label, t0, cityNow, token)
+            classifyNow(jpeg, label, t0, cityNow, token, runPipeline)
         }
     }
 
     /** Worker thread. [cityNow] is the city captured when the job started, so the log matches the answer. */
-    private fun classifyNow(jpeg: ByteArray, label: String, t0: Long, cityNow: String, token: Int) {
+    private fun classifyNow(jpeg: ByteArray, label: String, t0: Long, cityNow: String, token: Int, runPipeline: Pipeline) {
         val a = try {
-            pipeline.run(jpeg, 0, cityNow) { token == busyToken }
+            runPipeline.run(jpeg, 0, cityNow) { token == busyToken }
         } catch (e: Exception) {
             EventLog.add("BB_GALLERY file=$label failed: ${e.message}")
             Pipeline.Answer(Proto.KIND_ERROR, "Try again", Recognition.Help.INVALID.text, cityId = cityNow)
