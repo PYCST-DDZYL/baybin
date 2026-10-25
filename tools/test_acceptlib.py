@@ -1,5 +1,7 @@
 """Device-free regression tests for phone cleanup and truthful acceptance reporting."""
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from unittest.mock import Mock, patch
 
 import acceptlib
@@ -7,6 +9,22 @@ import accept_all
 
 
 class PhoneTestSafety(unittest.TestCase):
+    def test_report_preserves_brief_homepage_and_updates_detailed_results(self):
+        with TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / "docs").mkdir()
+            homepage = "# BayBin\n\nShort introduction.\n"
+            (root / "README.md").write_text(homepage, encoding="utf-8")
+            details = root / "docs" / "TECHNICAL_DETAILS.md"
+            details.write_text("# Details\n<!-- RESULTS -->\nOld table\n<!-- /RESULTS -->\n", encoding="utf-8")
+            with patch.object(accept_all, "ROOT", folder), \
+                 patch.object(accept_all, "load", return_value=None), patch("builtins.print"):
+                accept_all.report()
+            self.assertEqual(homepage, (root / "README.md").read_text(encoding="utf-8"))
+            self.assertNotIn("Old table", details.read_text(encoding="utf-8"))
+            self.assertIn("| 8 |", details.read_text(encoding="utf-8"))
+            self.assertTrue((root / "docs" / "acceptance.md").is_file())
+
     def test_unsafe_private_filename_is_rejected_before_reading_or_pushing(self):
         for name in ("../photo.jpg", "x;touch.jpg", "x y.jpg", "..", "/sdcard/x.jpg"):
             with self.assertRaises(ValueError):

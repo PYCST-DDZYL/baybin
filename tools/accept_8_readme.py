@@ -1,9 +1,9 @@
 r"""
-验收 8：README 有架构图、演示视频位置、测试结果、"为什么用眼镜而不是手机"。
+验收 8：README 或其直接链接的技术文档有架构图、演示视频位置、测试结果、"为什么用眼镜而不是手机"。
 
     python tools\accept_8_readme.py
 
-PASS: README.md has all four, the architecture section contains a diagram (a code block
+PASS: README.md or its linked technical details have all four; the architecture section contains a diagram (a code block
 or mermaid block naming both the glasses and the phone), and the test-results section
 covers all eight acceptance criteria.
 """
@@ -26,6 +26,11 @@ def section(text, *titles):
 def main():
     path = os.path.join(ROOT, "README.md")
     text = open(path, encoding="utf-8").read() if os.path.exists(path) else ""
+    # Keep the homepage brief while checking the technical document it actually links.
+    details = os.path.join(ROOT, "docs", "TECHNICAL_DETAILS.md")
+    if re.search(r"\]\(docs/TECHNICAL_DETAILS\.md\)", text) and os.path.isfile(details):
+        with open(details, encoding="utf-8") as f:
+            text += "\n" + f.read()
     arch = section(text, "架构", "Architecture") or ""
     demo = section(text, "演示视频", "Demo") or ""
     tests = section(text, "测试结果", "Test results") or ""
@@ -38,7 +43,7 @@ def main():
     }
     ok = all(checks.values())
     save("8_readme", {"pass": ok, "checks": checks})
-    verdict(ok, "README 内容齐全", ["%-34s %s" % (k, "yes" if v else "MISSING") for k, v in checks.items()])
+    verdict(ok, "项目介绍与技术文档内容齐全", ["%-34s %s" % (k, "yes" if v else "MISSING") for k, v in checks.items()])
     return ok
 
 

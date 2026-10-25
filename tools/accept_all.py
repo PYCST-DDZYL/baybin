@@ -32,7 +32,7 @@ TITLES = {
     5: "Zero crashes across 100 scans",
     6: "Offline shows No connection, no hang",
     7: "Phone gallery test (no glasses)",
-    8: "README has the required sections",
+    8: "Project introduction and linked technical documentation",
 }
 FILES = {1: "1_latency", 2: "2_accuracy", 3: "3_memory", 4: "4_leak", 5: "5_crash", 6: "6_offline", 7: "7_gallery",
          8: "8_readme"}
@@ -91,16 +91,20 @@ def report():
         f.write("\n".join(lines) + "\n")
     print("\n".join(lines))
     print("\n->", path)
-    # The same table goes into README.md, between <!-- RESULTS --> and <!-- /RESULTS -->.
-    readme = os.path.join(ROOT, "README.md")
-    text = open(readme, encoding="utf-8").read()
-    a, b = text.find("<!-- RESULTS -->"), text.find("<!-- /RESULTS -->")
-    if 0 <= a < b:
-        table = [l for l in lines if l.startswith("|")]
-        text = text[:a] + "<!-- RESULTS -->\n" + "\n".join(table) + "\n" + text[b:]
-        with open(readme, "w", encoding="utf-8") as f:
-            f.write(text)
-        print("-> README.md")
+    # Update existing result markers; the brief homepage need not contain a table.
+    for relative in ("README.md", "docs/TECHNICAL_DETAILS.md"):
+        path = os.path.join(ROOT, relative)
+        if not os.path.isfile(path):
+            continue
+        with open(path, encoding="utf-8") as f:
+            text = f.read()
+        a, b = text.find("<!-- RESULTS -->"), text.find("<!-- /RESULTS -->")
+        if 0 <= a < b:
+            table = [l for l in lines if l.startswith("|")]
+            text = text[:a] + "<!-- RESULTS -->\n" + "\n".join(table) + "\n" + text[b:]
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(text)
+            print("->", relative)
 
 
 def main(argv):
