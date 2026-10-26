@@ -110,6 +110,7 @@ object Recognition {
         if (id in setOf("plastic_bottle", "plastic_jug")) {
             if (seen.label in setOf("unknown", "cleaner", "oil")) return Help.LABEL
         }
+        if (id in CARTONS && seen.label in setOf("cleaner", "oil")) return Help.LABEL
         if (id == "carton" && seen.label !in setOf("milk", "juice")) return Help.LABEL
         if (id == "paperboard_box" && seen.label in setOf("milk", "juice", "cleaner", "oil")) return Help.LABEL
         if (id in setOf("cardboard_box", "paperboard_box") && seen.paper != "clean" && "soiled" !in checks) return Help.CLEAN

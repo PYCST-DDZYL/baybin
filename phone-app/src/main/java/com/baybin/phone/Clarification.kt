@@ -28,6 +28,21 @@ internal object Clarification {
                 listOf(Choice("clean", "内外都干净、无食物油渍", "Clean inside and outside"), Choice("soiled", "有食物或油渍", "Food or grease stains"), unknown)) else null
             Recognition.Help.LINING -> if (seen.paper == "unknown") Question("paper", "打开查看：纸容器内侧有涂层吗？", "Is the open paper container lined?",
                 listOf(Choice("uncoated", "确认无塑料或铝箔涂层", "Confirmed no plastic/foil lining"), Choice("coated", "有涂层", "Lined"), unknown)) else null
+            Recognition.Help.LABEL -> if (seen.item != answer.itemId) null else when {
+                seen.label == "unknown" && seen.item in setOf("plastic_bottle", "plastic_jug", "carton") ->
+                    Question("label", "标签上写的是什么？请查看文字，不要只看外形", "What does the label say? Read the text, not just the shape",
+                        listOf(Choice("milk", "明确写着牛奶", "Clearly labelled milk"),
+                            Choice("juice", "明确写着果汁", "Clearly labelled juice"),
+                            Choice("other", "明确是其他饮料，如水或汽水", "Clearly another drink, e.g. water or soda"),
+                            Choice("cleaner", "清洁剂或危险化学品标识", "Cleaner or hazardous chemical markings"),
+                            Choice("oil", "明确写着食用油", "Clearly labelled cooking oil"), unknown))
+                seen.paper == "unknown" && (seen.item == "carton" && seen.label in setOf("milk", "juice") ||
+                    seen.item == "aseptic_carton" && seen.label !in setOf("cleaner", "oil")) ->
+                    Question("paper", "核实纸盒类型：仅凭形状或 Tetra Pak 字样不能确定", "Confirm the carton type; shape or the Tetra Pak name alone is insufficient",
+                        listOf(Choice("gable", "屋顶形开口，且标着新鲜 / 冷藏奶或果汁", "Gable top AND labelled fresh/refrigerated milk or juice"),
+                            Choice("aseptic", "标着 UHT / 无菌 / 常温保存，或看清铝箔夹层", "UHT / aseptic / shelf-stable label, or visible foil layers"), unknown))
+                else -> null
+            }
             else -> null
         }
         return question?.takeUnless { it.field in reply.userFields }

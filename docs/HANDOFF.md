@@ -2,6 +2,14 @@
 
 Written 2026-10-02; subsequent implementation updates are listed below, newest first. Read this, then `README.md`. The owner writes in Chinese. Reply to the owner in Chinese. This file is in English because the public repository is in English.
 
+## October 25 label-evidence follow-up — phone v0.6.0
+
+Drink bottles, milk jugs and fresh cartons now offer explicit missing-label questions. If a city's carton rule requires construction evidence, a subsequent question requests labelled fresh/refrigerated gable-top construction or aseptic/UHT/shelf-stable/foil-layer evidence. Shape or the Tetra Pak name alone is not offered as confirmation. Questions cannot replace known conflicting labels or item evidence, weak-confidence photo results, or unknown answers already given.
+
+Known cleaner/oil labels now also block aseptic cartons after construction-based canonicalization; previously that category could bypass the fresh-carton label check. No city rules or confidence thresholds changed. Regression coverage includes zero-call manual label input, hazardous/unknown labels, city-specific fresh-versus-aseptic bins, construction-based category changes and weak/conflicting photo evidence. Phone device acceptance and photo accuracy remain unverified because the phone is absent from ADB.
+
+Final validation passed: 61 phone JVM tests (five new label-evidence tests), phone Debug/Release builds and Debug Lint with zero errors. Application/rule source hash: `7ccfb0dcc9b7b8abd871ef1c9c39bba8303145364f8227d2dedfe6f5e72dc88c`.
+
 ## October 25 lookup/settings follow-up — phone v0.6.0
 
 Offline lookup now matches all query words within the same item regardless of order or punctuation separators, ranks exact IDs/names ahead of partial matches and returns no results for punctuation-only input. Ambiguous materials remain explicit choices. Saving the service profile, key or model no longer closes Settings and discards drafts in other sections. Successful key/model saves clear validation errors and show feedback. Housing/service spinners now have stable IDs for Android's view-state restoration on rotation; key text remains excluded from saved state.
