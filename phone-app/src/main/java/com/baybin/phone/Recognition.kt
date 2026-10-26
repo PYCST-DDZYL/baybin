@@ -56,12 +56,13 @@ object Recognition {
 
     fun canonicalId(id: String, seen: Observation?): String = when {
         seen?.food == "present" && seen.item == "food_in_container" && id in FOOD_CONTAINERS -> "food_in_container"
+        seen?.food == "none" && seen.material == "compostable" && seen.item == "compostable_plastic" && id in PLASTIC -> "compostable_plastic"
         id in CARTONS && seen?.item in CARTONS && seen?.paper in setOf("gable", "aseptic") -> seen!!.item
         else -> id
     }
 
     /** Strict, small line format: missing, duplicate, or invented fields fail closed. */
-    fun parseObservation(text: String, ids: Set<String>): Observation? {
+    fun parseObservation(text: String, ids: Set<String>, allowUnmarked: Boolean = false): Observation? {
         val fields = LinkedHashMap<String, String>()
         for (line in text.trim().lines()) {
             val parts = line.trim().split('=', limit = 2)
@@ -73,7 +74,8 @@ object Recognition {
         if (fields.keys != setOf("item", "food", "material", "empty", "paper", "label", "multiple")) return null
         if (fields["item"] !in ids && fields["item"] != "unknown") return null
         if (fields["food"] !in setOf("present", "none", "unknown")) return null
-        if (fields["material"] !in setOf("1", "2", "3", "4", "5", "6", "7", "compostable", "unknown")) return null
+        val materials = setOf("1", "2", "3", "4", "5", "6", "7", "compostable", "unknown") + if (allowUnmarked) setOf("unmarked") else emptySet()
+        if (fields["material"] !in materials) return null
         if (fields["empty"] !in setOf("yes", "no", "unknown")) return null
         if (fields["paper"] !in setOf("clean", "soiled", "uncoated", "coated", "gable", "aseptic", "unknown")) return null
         if (fields["label"] !in setOf("milk", "juice", "cleaner", "oil", "other", "unknown")) return null
@@ -84,6 +86,7 @@ object Recognition {
         val carton = when (fields["paper"]) { "gable" -> "carton"; "aseptic" -> "aseptic_carton"; else -> null }
         val canonical = when {
             fields["food"] == "present" && observedItem in FOOD_CONTAINERS && "food_in_container" in ids -> "food_in_container"
+            fields["food"] == "none" && fields["material"] == "compostable" && observedItem in PLASTIC && "compostable_plastic" in ids -> "compostable_plastic"
             observedItem in CARTONS && carton in ids -> carton!!
             else -> observedItem
         }
@@ -91,7 +94,7 @@ object Recognition {
             fields.getValue("empty"), fields.getValue("paper"), fields.getValue("label"), fields.getValue("multiple"))
     }
 
-    val CHECKS = setOf("resin_1_5", "resin_recyclable", "uncoated", "empty", "not_compostable", "carton_gable", "carton_aseptic", "soiled")
+    val CHECKS = setOf("resin_1_5", "resin_recyclable", "uncoated", "empty", "not_compostable", "carton_gable", "carton_aseptic", "soiled", "clean")
 
     fun help(id: String, seen: Observation?, checks: Set<String>): Help? {
         if (seen == null) return Help.VERIFY
@@ -119,10 +122,11 @@ object Recognition {
                 "resin_recyclable" -> if (seen.material !in setOf("1", "2", "3", "4", "5", "7")) return Help.MARK
                 "uncoated" -> if (seen.paper != "uncoated") return Help.LINING
                 "empty" -> if (seen.empty != "yes") return Help.EMPTY
-                "not_compostable" -> if (seen.material == "unknown" || seen.material == "compostable") return Help.MARK
+                "not_compostable" -> if (seen.material !in setOf("1", "2", "3", "4", "5", "6", "7")) return Help.MARK
                 "carton_gable" -> if (seen.paper != "gable") return Help.LABEL
                 "carton_aseptic" -> if (seen.paper != "aseptic") return Help.LABEL
                 "soiled" -> if (seen.paper != "soiled") return Help.CLEAN
+                "clean" -> if (seen.paper != "clean") return Help.CLEAN
                 else -> return Help.VERIFY
             }
         }
@@ -134,6 +138,6 @@ object Recognition {
     private val CONTAINERS = setOf("food_in_container", "pizza_box_greasy", "paper_cup", "paper_plate_used",
         "paper_takeout", "plastic_tub", "plastic_clamshell", "plastic_takeout", "foam_food_container", "frozen_food_box",
         "ceramic", "aluminum_tray", "aluminum_foil", "glass_jar", "food_can", "cardboard_box", "paperboard_box")
-    private val FOOD_CONTAINERS = CONTAINERS + setOf("plastic_cup", "drinking_glass")
+    private val FOOD_CONTAINERS = CONTAINERS + setOf("plastic_cup", "drinking_glass", "compostable_plastic")
     private val CARTONS = setOf("carton", "aseptic_carton")
 }

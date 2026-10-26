@@ -30,7 +30,7 @@ from sources import ROOT, contains, norm, page_text
 RULES = os.path.join(ROOT, "rules")
 MAX_REASON_WORDS = 15
 MIN_QUOTE_CHARS = 20
-CHECKS = {"resin_1_5", "resin_recyclable", "uncoated", "empty", "not_compostable", "carton_gable", "carton_aseptic", "soiled"}
+CHECKS = {"resin_1_5", "resin_recyclable", "uncoated", "empty", "not_compostable", "carton_gable", "carton_aseptic", "soiled", "clean"}
 
 
 def load(path):
@@ -124,7 +124,7 @@ def check_city(path, items, live):
 
     entries = list(rules.items())
     for item, rule in rules.items():
-        for field, allowed in (("material", set("1234567")), ("paper", {"clean", "soiled", "coated", "uncoated"})):
+        for field, allowed in (("material", set("1234567") | {"unmarked"}), ("paper", {"clean", "soiled", "coated", "uncoated"})):
             variants = rule.get("by_" + field, {})
             if not isinstance(variants, dict):
                 errors.append("%s: by_%s must be an object" % (item, field))

@@ -80,7 +80,7 @@ class Rules internal constructor(
                         val byPaper = rule.optJSONObject("by_paper")
                         require(!conditional || (byMaterial == null && byPaper == null)) { "Nested conditional rule: $id" }
                         val variants = byMaterial?.keys()?.asSequence()?.associateWith { code ->
-                            require(code in setOf("1", "2", "3", "4", "5", "6", "7"))
+                            require(code in setOf("1", "2", "3", "4", "5", "6", "7", "unmarked"))
                             parseRule(byMaterial.getJSONObject(code), true)
                         } ?: emptyMap()
                         val paperVariants = byPaper?.keys()?.asSequence()?.associateWith { code ->

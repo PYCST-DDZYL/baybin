@@ -21,6 +21,12 @@ class FocusMetricsTest(unittest.TestCase):
         self.assertIsNone(metrics([])["success_rate"])
         self.assertIsNone(metrics([])["definite_precision"])
 
+    def test_unconfirmed_service_and_missing_key_are_not_photo_retakes(self):
+        result = metrics([{"kind": 1, "guidance": "Confirm housing and city collection service in Settings."}, {"kind": 4}])
+        self.assertEqual(0, result["retakes"])
+        self.assertEqual(1, result["outside_scope"])
+        self.assertEqual(1, result["not_configured"])
+
     def test_old_measurements_and_manual_answers_are_not_new_first_pass_successes(self):
         photo = dict(item="paper_cup", kind=0, want="Garbage", got="Garbage")
         user = dict(photo, evidence="user")

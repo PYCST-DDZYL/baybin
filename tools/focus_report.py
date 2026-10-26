@@ -14,7 +14,7 @@ from adbutil import ROOT
 
 def metrics(rows):
     counts = dict(total=len(rows), correct=0, wrong_bins=0, retakes=0, timeouts=0,
-                  connection_errors=0, service_errors=0, missing=0)
+                  connection_errors=0, service_errors=0, outside_scope=0, not_configured=0, missing=0)
     for row in rows:
         kind = str(row.get("kind"))
         if row.get("got") == "(no answer)":
@@ -25,11 +25,16 @@ def metrics(rows):
             else:
                 counts["correct" if row["got"] == row["want"] else "wrong_bins"] += 1
         elif kind == "1":
-            counts["retakes"] += 1
+            if str(row.get("guidance", "")).startswith("Confirm housing and city collection service"):
+                counts["outside_scope"] += 1
+            else:
+                counts["retakes"] += 1
         elif kind == "2":
             counts["timeouts" if int(row.get("model_ms", -1)) >= 7000 else "connection_errors"] += 1
         elif kind == "3":
             counts["service_errors"] += 1
+        elif kind == "4":
+            counts["not_configured"] += 1
         else:
             counts["missing"] += 1
     n = counts["total"]

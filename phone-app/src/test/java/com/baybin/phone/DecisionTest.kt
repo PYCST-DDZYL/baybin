@@ -5,14 +5,14 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class DecisionTest {
-    private val ids = listOf("plastic_takeout", "plastic_cup", "paper_cup", "plastic_bag", "cardboard_box", "pizza_box_greasy", "food_in_container")
+    private val ids = listOf("plastic_takeout", "plastic_cup", "paper_cup", "plastic_bag", "cardboard_box", "pizza_box_greasy", "food_in_container", "compostable_plastic", "frozen_food_box")
     private val garbage = Rules.Rule("landfill", "Empty first, then garbage.", "https://example.com/garbage")
     private val recycling = Rules.Rule("recycling", "Empty and scrape first.", "https://example.com/recycling")
     private val city = Rules.City("san_jose", "San Jose", mapOf("landfill" to "Garbage", "recycling" to "Recycling"),
         mapOf("plastic_takeout" to Rules.Rule("recycling", "Empty and scrape first.", null, setOf("not_compostable")),
             "plastic_cup" to Rules.Rule("recycling", "Empty cups.", null, setOf("resin_recyclable"), mapOf("6" to garbage)),
             "paper_cup" to garbage, "plastic_bag" to garbage, "cardboard_box" to recycling,
-            "pizza_box_greasy" to garbage, "food_in_container" to garbage), "https://example.com/guide")
+            "pizza_box_greasy" to garbage, "food_in_container" to garbage, "compostable_plastic" to garbage), "https://example.com/guide")
     private val rules = Rules(ids.map { Rules.Item(it, it, "") }, mapOf(city.id to city), "", "")
     private val decision = Decision(rules)
     private fun photo(id: String, p: Double = 0.9, food: String = "unknown", paper: String = "unknown") =
@@ -87,5 +87,44 @@ class DecisionTest {
         assertEquals(Proto.KIND_UNSURE, decision.decide(city, reply).kind)
         assertEquals(Proto.KIND_UNSURE, Decision(localRules).decide(local,
             reply.copy(observation = seen.copy(paper = "unknown"))).kind)
+    }
+
+    @Test fun explicitCompostableMarkingChangesMaterialCategoryAfterContentsAreConfirmed() {
+        val empty = decision.supplement(photo("plastic_takeout"), "none")!!
+        val marked = decision.supplement(empty, "compostable")!!
+        assertEquals("compostable_plastic", marked.itemId)
+        assertEquals(Proto.KIND_OK, marked.kind)
+        val text = "item=plastic_takeout\nfood=unknown\nmaterial=compostable\nempty=unknown\npaper=unknown\nlabel=unknown\nmultiple=no"
+        val hidden = Recognition.parseObservation(text, rules.ids)!!
+        assertEquals("plastic_takeout", hidden.item)
+        assertEquals(Recognition.Help.OPEN, Recognition.help(hidden.item, hidden, emptySet()))
+        assertEquals("food_in_container", Recognition.parseObservation(text.replace("food=unknown", "food=present"), rules.ids)!!.item)
+    }
+
+    @Test fun unmarkedMustBeExplicitlyConfirmedAndOnlyADeclaredVariantCanSelectItsBin() {
+        val text = "item=plastic_takeout\nfood=none\nmaterial=unmarked\nempty=unknown\npaper=unknown\nlabel=unknown\nmultiple=no"
+        assertNull(Recognition.parseObservation(text, rules.ids))
+        assertNotNull(Recognition.parseObservation(text, rules.ids, allowUnmarked = true))
+        val unanswered = photo("plastic_takeout", food = "none")
+        assertEquals(Proto.KIND_UNSURE, decision.supplement(unanswered, "unmarked")!!.kind)
+        val localRule = Rules.Rule("recycling", "Marked packaging", null, setOf("resin_recyclable"), mapOf("unmarked" to garbage))
+        val local = Rules.City("san_jose", "San Jose", city.binLabels, city.rules + ("plastic_takeout" to localRule), city.guideUrl)
+        val engine = Decision(Rules(rules.items, mapOf(local.id to local), "", ""))
+        val first = engine.lookup("plastic_takeout", local.id)
+        val noFood = engine.supplement(first, "none")!!
+        assertEquals("landfill", engine.supplement(noFood, "unmarked")!!.bin)
+        assertEquals(Proto.KIND_UNSURE, engine.supplement(noFood, "unknown")!!.kind)
+    }
+
+    @Test fun frozenFoodBoxesNeedCleanlinessAndUseTheCitedSoiledVariant() {
+        val soiled = Rules.Rule("landfill", "Food residue goes in garbage", null, setOf("soiled"))
+        val base = Rules.Rule("recycling", "Clean frozen food box", null, setOf("clean"), paperRules = mapOf("soiled" to soiled))
+        val local = Rules.City("san_jose", "San Jose", city.binLabels, city.rules + ("frozen_food_box" to base), city.guideUrl)
+        val engine = Decision(Rules(rules.items, mapOf(local.id to local), "", ""))
+        val empty = engine.supplement(engine.lookup("frozen_food_box", local.id), "none")!!
+        assertEquals(Proto.KIND_UNSURE, empty.kind)
+        assertEquals("paper", Clarification.next(empty)!!.field)
+        assertEquals("recycling", engine.supplement(empty, "clean")!!.bin)
+        assertEquals("landfill", engine.supplement(empty, "soiled")!!.bin)
     }
 }

@@ -42,7 +42,7 @@ internal class Decision(private val rules: Rules) {
         val fields = linkedMapOf("item" to seen.item, "food" to seen.food, "material" to seen.material,
             "empty" to seen.empty, "paper" to seen.paper, "label" to seen.label, "multiple" to seen.multiple)
         fields[question.field] = value
-        val updated = Recognition.parseObservation(fields.entries.joinToString("\n") { "${it.key}=${it.value}" }, rules.ids)
+        val updated = Recognition.parseObservation(fields.entries.joinToString("\n") { "${it.key}=${it.value}" }, rules.ids, allowUnmarked = true)
             ?: return null
         val city = rules.cities[previous.cityId] ?: return null
         return decide(city, reply.copy(observation = updated, calls = 0, userFields = reply.userFields + question.field))

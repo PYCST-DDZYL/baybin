@@ -24,7 +24,7 @@ import os
 import sys
 
 from acceptlib import (clear_private, classify_private, expected_line1, load_rules, preserve_phone,
-                       push_private, review_all, save, set_city, verdict)
+                       phone_status, push_private, review_all, save, set_city, verdict)
 from adbutil import PHONE_PKG, ROOT, phone
 
 KINDS = {
@@ -50,6 +50,9 @@ def run_set(p, rules, path, cities_to_test):
     clear_private(p)
     try:
         set_city(p, cities_to_test[0])
+        status = phone_status(p)
+        if "housing" in status and (status["housing"] != "SINGLE_FAMILY" or status.get("city_service") != "true"):
+            raise RuntimeError("Confirm the first city's single-family residential service in phone Settings before evaluating photos")
         for i, (src, item) in enumerate(photos):
             fname = "%s_%03d_%s.jpg" % (name[:4], i, item)
             push_private(p, src, fname)
@@ -69,7 +72,10 @@ def run_set(p, rules, path, cities_to_test):
             clear_private(p)
     finally:
         clear_private(p)
-    return name, {"kind": KINDS.get(name, name), "n": len(photos), "results": results}
+    return name, {"kind": KINDS.get(name, name), "n": len(photos), "results": results,
+                  "scope": "Single-family city residential rules; other-city reviews reuse evidence, not user-service eligibility",
+                  "first_city": cities_to_test[0], "first_city_housing": status.get("housing"),
+                  "first_city_service": status.get("city_service")}
 
 
 def main(argv):
