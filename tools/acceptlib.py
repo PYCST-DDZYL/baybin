@@ -19,6 +19,21 @@ OUT = os.path.join(ROOT, "tools", "out", "accept")
 SCAN_RX = r"BB_SCAN id=(\d+) outcome=(\S+) open=(-?\d+) shot=(-?\d+) send=(-?\d+) bytes=(-?\d+) total=(\d+)"
 PHONE_LOG = ("BayBinPhone:I", "*:S")
 GLASS_LOG = ("BayBin:I", "*:S")
+STATUS_RX = (r"BB_STATUS link=(\S+) mac=(\S+) glasses=(\S+) city=(\S+) online=(\S+)"
+             r"(?: auto=(\S+) lang=(\S+) app=(\S+))?"
+             r"(?: housing=(\S+) city_service=(\S+))?")
+
+
+def parse_phone_status(text):
+    match = re.search(STATUS_RX, text)
+    if not match:
+        return None
+    return dict(zip(("link", "mac", "glasses", "city", "online", "auto", "lang", "app", "housing", "city_service"), match.groups()))
+
+
+def require_residential_scope(status):
+    if not status or status.get("housing") != "SINGLE_FAMILY" or status.get("city_service") != "true":
+        raise RuntimeError("Confirm the first city's single-family residential service in phone Settings before evaluating photos")
 
 
 def save(name, data):
@@ -85,11 +100,10 @@ def phone_status(p):
     """Asks the phone app for BB_STATUS; returns dict or None."""
     p.logcat_clear()
     p.shell("am broadcast -a com.baybin.phone.STATUS -p %s" % PHONE_PKG)
-    m = p.wait_log(r"BB_STATUS link=(\S+) mac=(\S+) glasses=(\S+) city=(\S+) online=(\S+)"
-                   r"(?: auto=(\S+) lang=(\S+) app=(\S+))?", timeout=8, filters=PHONE_LOG)
+    m = p.wait_log(STATUS_RX, timeout=8, filters=PHONE_LOG)
     if not m:
         return None
-    return dict(zip(("link", "mac", "glasses", "city", "online", "auto", "lang", "app"), m.groups()))
+    return parse_phone_status(m.group(0))
 
 
 @contextmanager
