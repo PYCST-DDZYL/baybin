@@ -2,6 +2,16 @@
 
 Written 2026-10-02; subsequent implementation updates are listed below, newest first. Read this, then `README.md`. The owner writes in Chinese. Reply to the owner in Chinese. This file is in English because the public repository is in English.
 
+## October 26 draft and dialog usability — phone v0.6.1
+
+Phone is now versionCode 8 / v0.6.1; glasses remain v0.3.0. Settings protects unsaved housing/collection, model and typed-key changes with Keep editing / Discard changes on both back paths. Saving individual sections remains independent. The advanced section preserves its expansion state on recreation; secret key input remains excluded from saved state.
+
+Home replaces its duplicated password input with a photo-setup shortcut to Settings. Offline lookup remembers the last query and saves an open query dialog across activity recreation. Evidence dialogs resume only for the same current city/item while its result still exists in App. Accepted evidence advances automatically to the next required question; stale answers cannot advance a replacement result. Dialogs are dismissed on Activity destruction, and a closing old question cannot clear a newer dialog's reference.
+
+Final source: `e4faf219c6899b7d7116a00f31b2c4c779ea7a34dc0e988601ee3a0aa877a971`. Validation passed: 61 phone JVM tests, 10 Python tests, cached five-city/78-item rule checks, README checks, phone Debug/Release builds and Debug Lint with zero errors. All **40 local-flow device cases passed** on this source; review APK SHA-256 `f39a42d62a051a0c8f408293f04c9926e41bb60bc84db50c692b0b33864a3ec4`. The review package was removed and production remained v0.4.0.
+
+The UI harness now defines 12 checks, adding compact home, unsaved service/key drafts, retained queries and consecutive evidence questions. Its latest run stopped before its first UI check because the phone had automatically locked; cleanup succeeded. **The new 12-case UI run is unverified.** The previous seven UI passes below apply to v0.6.0 only. Rotation restoration, actual camera capture, glasses regression and photo accuracy were not measured for this source. No city rules or confidence gates changed.
+
 ## October 25 physical-device checks — phone v0.6.0
 
 The Samsung phone connected and authorized ADB. The isolated review package at source `7ccfb0dcc9b7b8abd871ef1c9c39bba8303145364f8227d2dedfe6f5e72dc88c` passed all 40 local-flow cases and six touch-UI checks. The UI checks exercised the actual service spinners/save button, reordered catalog query, evidence question/answer and missing-key camera fallback. Both runs removed their review package; the production package remained v0.4.0.
