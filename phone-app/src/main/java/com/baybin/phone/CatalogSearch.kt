@@ -21,8 +21,21 @@ internal object CatalogSearch {
     private fun normalized(text: String) = text.lowercase(Locale.ROOT).filter { it.isLetterOrDigit() }
 
     fun find(items: List<Rules.Item>, query: String): List<Rules.Item> {
+        if (query.isBlank()) return items
+        val terms = Regex("[\\p{L}\\p{N}]+").findAll(query.lowercase(Locale.ROOT)).map { it.value }.toList()
+        if (terms.isEmpty()) return emptyList()
         val needle = normalized(query)
-        return items.filter { item -> needle.isEmpty() || listOf(item.id, item.name,
-            Lang.itemName(item.id, item.name, "zh"), aliases[item.id].orEmpty()).any { normalized(it).contains(needle) } }
+        return items.mapNotNull { item ->
+            val names = listOf(item.id, item.name, Lang.itemName(item.id, item.name, "zh")).map(::normalized)
+            val searchable = names + normalized(aliases[item.id].orEmpty())
+            if (!terms.all { term -> searchable.any { term in it } }) return@mapNotNull null
+            val rank = when {
+                normalized(item.id) == needle -> 0
+                needle in names -> 1
+                searchable.any { needle in it } -> 2
+                else -> 3
+            }
+            item to rank
+        }.sortedBy { it.second }.map { it.first }
     }
 }

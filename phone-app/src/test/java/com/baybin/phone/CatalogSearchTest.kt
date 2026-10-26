@@ -20,4 +20,23 @@ class CatalogSearchTest {
         assertTrue(CatalogSearch.find(items, "不存在的物品").isEmpty())
         assertEquals(items, CatalogSearch.find(items, ""))
     }
+
+    @Test fun wordsCanBeReorderedOrSeparatedByPunctuation() {
+        for (query in listOf("cup paper", "CUP, PAPER!", "takeout plastic", "塑料 外卖盒")) {
+            val expected = if ("cup" in query.lowercase()) "paper_cup" else "plastic_takeout"
+            assertEquals(listOf(expected), CatalogSearch.find(items, query).map { it.id })
+        }
+        assertTrue(CatalogSearch.find(items, "paper battery").isEmpty())
+    }
+
+    @Test fun punctuationAloneDoesNotDisplayTheWholeCatalog() {
+        assertTrue(CatalogSearch.find(items, "!?，。").isEmpty())
+        assertEquals(items, CatalogSearch.find(items, "  "))
+    }
+
+    @Test fun exactNameAppearsBeforePartialMatches() {
+        val crowded = listOf(Rules.Item("cup_lid", "Paper coffee cup lid", ""), items.first())
+        assertEquals(listOf("paper_cup", "cup_lid"), CatalogSearch.find(crowded, "Paper coffee cup").map { it.id })
+        assertEquals("paper_cup", CatalogSearch.find(crowded, "paper_cup").first().id)
+    }
 }
