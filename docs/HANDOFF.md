@@ -2,6 +2,16 @@
 
 Written 2026-10-02; subsequent implementation updates are listed below, newest first. Read this, then `README.md`. The owner writes in Chinese. Reply to the owner in Chinese. This file is in English because the public repository is in English.
 
+## October 25 physical-device checks — phone v0.6.0
+
+The Samsung phone connected and authorized ADB. The isolated review package at source `7ccfb0dcc9b7b8abd871ef1c9c39bba8303145364f8227d2dedfe6f5e72dc88c` passed all 40 local-flow cases and six touch-UI checks. The UI checks exercised the actual service spinners/save button, reordered catalog query, evidence question/answer and missing-key camera fallback. Both runs removed their review package; the production package remained v0.4.0.
+
+Visual inspection of the resulting paper-cup screenshot exposed dark authority/check-date text on the black result card. `paint()` now also applies the card's secondary text color to rule provenance and special-waste booking notes. Source hash after this fix: `5c580876a9b6b53ec3fbc657c7a98117976ceee3d32624d85dc090f5d229b0ac`. The 61 phone JVM tests, phone Debug/Release builds and Debug Lint passed with zero errors. The new `tools/check_local_ui.py` additionally checks the special-waste booking button/note and keeps its screenshots in ignored `tools/out/`.
+
+Final-source device reruns passed **40 local-flow checks and seven UI checks**. Both reports match the source hash above and review APK SHA-256 `70e7d176c36ec330635759cdac601da709dcbc31c2752f30f7d418a0c4160065`. Paper-cup and battery-result screenshots were visually inspected: provenance and appointment notes are now readable on the black and brown cards. The review package was confirmed absent after cleanup, and the production phone app was rechecked at v0.4.0. Current ignored evidence: `tools/out/local_flows.json`, `tools/out/local_ui.json`, `tools/out/local_ui_result.png` and `tools/out/local_ui_special.png`. Earlier “not connected/unverified” notes below are historical; the remaining limits in the next paragraph still apply.
+
+These tests use explicit user selections in a fresh package without a key. They do not establish photo recognition accuracy, a completed system-camera capture, rotation restoration or glasses acceptance. No phone security, orientation or permission settings were changed, and no shared photo library was opened.
+
 ## October 25 device-check preparation — phone v0.6.0
 
 The disposable review APK was rebuilt successfully from source hash `7ccfb0dcc9b7b8abd871ef1c9c39bba8303145364f8227d2dedfe6f5e72dc88c`. The local-flow harness now has 40 checks: the original packaging/special-waste scenarios, unconfirmed collection service, drink-label input, hazardous/unknown label blocks, per-city service confirmation, fresh/aseptic carton evidence and actual San José/Palo Alto rule reapplication through REVIEW. Syntax validation passed; these 40 device cases are **not yet run**. A connection recheck found only Rokid glasses in ADB, despite Windows seeing a Samsung device. No new APK was installed on the phone. Earlier 21-case references below describe the prior harness and remain historical.
