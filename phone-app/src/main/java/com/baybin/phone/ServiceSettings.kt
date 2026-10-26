@@ -12,7 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 
 internal object ServiceSettings {
-    fun bind(activity: Activity, app: App) {
+    fun bind(activity: Activity, app: App): () -> Boolean {
         val box = activity.findViewById<LinearLayout>(R.id.service_settings)
         val cityId = app.city
         val city = app.rules.cities.getValue(cityId)
@@ -56,5 +56,9 @@ internal object ServiceSettings {
                 Toast.makeText(activity, if (zh) "服务范围已保存" else "Service area saved", Toast.LENGTH_SHORT).show()
             }
         })
+        return {
+            ServiceScope.Housing.entries[housing.selectedItemPosition] != app.housing(cityId) ||
+                (service.selectedItemPosition == 1) != app.cityCollection(cityId)
+        }
     }
 }
