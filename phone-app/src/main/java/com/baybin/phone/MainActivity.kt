@@ -299,6 +299,17 @@ class MainActivity : Activity(), App.Ui {
 
         val a = app.answerFor(app.city)
         val processing = app.busyFor(app.city)
+        val answerQuestion = findViewById<Button>(R.id.answer_question)
+        val question = a?.let { Clarification.next(it) }
+        answerQuestion.visibility = if (!processing && question != null) View.VISIBLE else View.GONE
+        answerQuestion.text = if (Lang.zh(lang)) "补充一个信息" else "Answer a question"
+        answerQuestion.setOnClickListener {
+            if (question != null && a != null) AlertDialog.Builder(this)
+                .setTitle(question.title(lang))
+                .setItems(question.choices.map { it.label(lang) }.toTypedArray()) { _, index ->
+                    app.clarify(a, question.choices[index].value)
+                }.setNegativeButton(android.R.string.cancel, null).show()
+        }
         progress.visibility = if (processing) View.VISIBLE else View.GONE
         progress.contentDescription = Lang.s(lang, "working")
         retryButton.text = Lang.s(lang, "retry_gallery")
@@ -342,7 +353,10 @@ class MainActivity : Activity(), App.Ui {
                 "gallery" -> Lang.s(lang, "source_gallery")
                 else -> src.takeIf { it.isNotEmpty() }
             }
-            meta.text = listOfNotNull(source, name).joinToString("  ·  ")
+            val evidence = if (a.reply?.userFields?.isNotEmpty() == true) {
+                if (Lang.zh(lang)) "含你补充的信息" else "Includes your answers"
+            } else null
+            meta.text = listOfNotNull(source, name, evidence).joinToString("  ·  ")
             showPage(a.sourceUrl ?: app.rules.cities[app.city]?.guideUrl)
             paint(face.background, face.onLight)
         }

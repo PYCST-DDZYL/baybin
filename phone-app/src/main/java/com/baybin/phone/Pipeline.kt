@@ -27,6 +27,7 @@ import java.security.MessageDigest
  *    useless (always ~0.95), hence the logprobs.
  */
 class Pipeline(private val context: Context, private val rules: Rules, private val qwen: QwenClient?) {
+    private val decision = Decision(rules)
     private data class Cached(val reply: QwenClient.Reply, val at: Long)
     // Results only, no photos and no files. A new key/model creates a fresh Pipeline.
     private val recent = LinkedHashMap<String, Cached>()
@@ -55,6 +56,7 @@ class Pipeline(private val context: Context, private val rules: Rules, private v
         val cityId: String? = null,
         /** Official page for this ruling, when the rule cites one. Not shown as a raw URL. */
         val sourceUrl: String? = null,
+        val help: Recognition.Help? = null,
     )
 
     /** Opens the cloud connection ahead of time (async, result ignored). */
@@ -129,35 +131,15 @@ class Pipeline(private val context: Context, private val rules: Rules, private v
     fun forCity(previous: Answer, cityId: String): Answer? {
         val city = rules.cities[cityId] ?: return null
         val reply = previous.reply ?: return previous.copy(cityId = city.id)
-        if (previous.cityId == cityId) return previous
         return decide(city, reply, previous.prepMs, previous.modelMs)
     }
 
-    private fun decide(city: Rules.City, reply: QwenClient.Reply, prepMs: Long, modelMs: Long): Answer {
-        val rawId = parseId(reply.text, rules.ids)
-        val id = Recognition.canonicalId(rawId, reply.observation)
-        fun answer(kind: Int, line1: String, line2: String, bin: String?, page: String? = null) =
-            Answer(kind, line1, line2, id, bin, reply.firstP, prepMs, modelMs, reply.calls, reply, city.id, page)
+    fun lookup(itemId: String, cityId: String): Answer = decision.lookup(itemId, cityId)
 
-        val item = rules.item(id)
-            ?: return answer(Proto.KIND_UNSURE, Proto.TEXT_UNSURE, "Couldn't tell what it is. Try closer.", null)
-        val baseRule = city.rules[id]
-        val rule = baseRule?.forMaterial(reply.observation?.material)
-        if (rule == null || rule.bin == "unknown") {
-            return answer(Proto.KIND_UNSURE, Proto.TEXT_UNSURE, Recognition.Help.CITY.text, rule?.bin, rule?.sourceUrl)
-        }
-        val p = reply.firstP
-        val rival = reply.alternatives.firstOrNull { (token, pAlt) ->
-            pAlt >= P_ALT && changesBin(city, token, rawId, rule.bin)
-        }
-        if (!Recognition.reliableToken(p, reply.firstToken, rawId) || rival != null) {
-            return answer(Proto.KIND_UNSURE, Proto.TEXT_UNSURE, Recognition.Help.CLOSER.text, rule.bin, rule.sourceUrl)
-        }
-        Recognition.help(id, reply.observation, rule.checks)?.let { help ->
-            return answer(Proto.KIND_UNSURE, Proto.TEXT_UNSURE, help.text, rule.bin, rule.sourceUrl)
-        }
-        val label = city.binLabels[rule.bin] ?: rule.bin
-        return answer(Proto.KIND_OK, label, rule.reason, rule.bin, rule.sourceUrl)
+    fun supplement(previous: Answer, value: String): Answer? = decision.supplement(previous, value)
+
+    private fun decide(city: Rules.City, reply: QwenClient.Reply, prepMs: Long, modelMs: Long): Answer {
+        return decision.decide(city, reply, prepMs, modelMs)
     }
 
     /**
@@ -168,15 +150,6 @@ class Pipeline(private val context: Context, private val rules: Rules, private v
      * starts food_in_container, same bin as a greasy pizza box, so food_can alone is not
      * a bin change. Empty prefix (a code fence, punctuation) is not an item.
      */
-    private fun changesBin(city: Rules.City, token: String, selectedId: String, selectedBin: String): Boolean {
-        val prefix = token.lowercase().filter { it in 'a'..'z' || it in '0'..'9' || it == '_' }
-        if (prefix.isEmpty() || selectedId.startsWith(prefix)) return false
-        val bins = HashSet<String>()
-        if ("unknown".startsWith(prefix)) bins += "unknown"
-        for (cid in rules.ids) if (cid.startsWith(prefix)) bins += city.rules[cid]?.bin ?: "unknown"
-        return bins.isNotEmpty() && bins.all { it != selectedBin }
-    }
-
     companion object {
         /** Long side of the image sent to the model: ~400 fewer image tokens than 1024px, faster, same answers. */
         const val MODEL_SIDE = 768

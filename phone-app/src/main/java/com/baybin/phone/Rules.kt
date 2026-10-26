@@ -9,7 +9,7 @@ import org.json.JSONObject
  * files tools/verify_rules.py checks against the official pages), so app and checks
  * always use the same data.
  */
-class Rules private constructor(
+class Rules internal constructor(
     val items: List<Item>,
     val cities: Map<String, City>,
     private val promptTemplate: String,

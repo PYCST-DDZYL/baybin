@@ -383,6 +383,14 @@
                 android:visibility="gone" />
 
             <Button
+                android:id="@+id/answer_question"
+                style="@style/Button.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:visibility="gone" />
+
+            <Button
                 android:id="@+id/cancel_gallery"
                 style="@style/Button.Secondary"
                 android:layout_width="match_parent"

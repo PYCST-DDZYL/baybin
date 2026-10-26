@@ -38,13 +38,15 @@ class QwenClient(
      * token only: [firstToken] with probability [firstP], plus the runner-up first tokens in
      * [alternatives]. [calls] is how many requests went out (2 when the hedge fired).
      */
-    class Reply(
+    data class Reply(
         val text: String,
         val firstToken: String?,
         val firstP: Double?,
         val alternatives: List<Pair<String, Double>>,
         val calls: Int = 1,
         val observation: Recognition.Observation? = null,
+        val userIdentified: Boolean = false,
+        val userFields: Set<String> = emptySet(),
     )
 
     // HTTP/1.1 on purpose: over one shared HTTP/2 connection a stalled connection took the
