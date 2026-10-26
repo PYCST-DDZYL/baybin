@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.content.ActivityNotFoundException
+import android.content.ClipData
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
@@ -19,19 +20,25 @@ import android.os.Looper
 import android.provider.MediaStore
 import android.provider.Settings
 import android.text.SpannableString
+import android.text.Editable
+import android.text.TextWatcher
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.util.TypedValue
 import android.view.View
 import android.widget.Button
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ListView
 import android.widget.RadioGroup
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.FileProvider
+import java.io.File
 
 /**
  * Main screen: glasses connection, city, gallery test mode (no glasses needed), the last
@@ -74,6 +81,7 @@ class MainActivity : Activity(), App.Ui {
     private var wasProcessing = false
     private enum class BluetoothAction { CONNECT, SEARCH }
     private var pendingBluetooth: BluetoothAction? = null
+    private var pendingCapture: File? = null
     private val devices = ArrayList<BluetoothDevice>()
     private val mainHandler = Handler(Looper.getMainLooper())
     private var logOpen = false
@@ -106,6 +114,7 @@ class MainActivity : Activity(), App.Ui {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
         app = application as App
+        pendingCapture = CaptureFiles.restore(cacheDir, savedInstanceState?.getString("camera_file"))
         pendingBluetooth = BluetoothAction.entries.firstOrNull { it.name == savedInstanceState?.getString("pending_bluetooth") }
         title = findViewById(R.id.title)
         status = findViewById(R.id.status)
@@ -150,6 +159,8 @@ class MainActivity : Activity(), App.Ui {
         }
         galleryButton = findViewById(R.id.gallery)
         galleryButton.setOnClickListener { pickPhoto() }
+        findViewById<Button>(R.id.phone_camera).setOnClickListener { takePhoto() }
+        findViewById<Button>(R.id.text_search).setOnClickListener { showCatalog() }
 
         regionGroup = findViewById(R.id.region)
         cityGroup = findViewById(R.id.city)
@@ -204,6 +215,7 @@ class MainActivity : Activity(), App.Ui {
 
     override fun onSaveInstanceState(outState: Bundle) {
         pendingBluetooth?.let { outState.putString("pending_bluetooth", it.name) }
+        pendingCapture?.let { outState.putString("camera_file", it.name) }
         super.onSaveInstanceState(outState)
     }
 
@@ -250,6 +262,8 @@ class MainActivity : Activity(), App.Ui {
         otherButton.isEnabled = !busy
         otherButton.alpha = if (otherButton.isEnabled) 1f else 0.45f
         galleryButton.text = Lang.s(lang, "gallery")
+        findViewById<Button>(R.id.phone_camera).text = if (Lang.zh(lang)) "拍照识别" else "Take a photo"
+        findViewById<Button>(R.id.text_search).text = if (Lang.zh(lang)) "文字查询（免费）" else "Text lookup (free)"
         settingsButton.text = Lang.s(lang, "settings")
         val showKey = !app.hasQwenKey()
         keyBlock.visibility = if (showKey) View.VISIBLE else View.GONE
@@ -304,13 +318,7 @@ class MainActivity : Activity(), App.Ui {
         val question = a?.let { Clarification.next(it) }
         answerQuestion.visibility = if (!processing && question != null) View.VISIBLE else View.GONE
         answerQuestion.text = if (Lang.zh(lang)) "补充一个信息" else "Answer a question"
-        answerQuestion.setOnClickListener {
-            if (question != null) AlertDialog.Builder(this)
-                .setTitle(question.title(lang))
-                .setItems(question.choices.map { it.label(lang) }.toTypedArray()) { _, index ->
-                    app.clarify(a, question.choices[index].value)
-                }.setNegativeButton(android.R.string.cancel, null).show()
-        }
+        answerQuestion.setOnClickListener { a?.let { showQuestion(it) } }
         progress.visibility = if (processing) View.VISIBLE else View.GONE
         progress.contentDescription = Lang.s(lang, "working")
         retryButton.text = Lang.s(lang, "retry_gallery")
@@ -374,10 +382,13 @@ class MainActivity : Activity(), App.Ui {
             val source = when (val src = app.sourceFor(app.city)) {
                 "glasses" -> Lang.s(lang, "source_glasses")
                 "gallery" -> Lang.s(lang, "source_gallery")
+                "lookup" -> if (Lang.zh(lang)) "文字查询" else "Text lookup"
                 else -> src.takeIf { it.isNotEmpty() }
             }
             val evidence = if (a.reply?.userFields?.isNotEmpty() == true) {
                 if (Lang.zh(lang)) "含你补充的信息" else "Includes your answers"
+            } else if (a.reply?.userIdentified == true) {
+                if (Lang.zh(lang)) "按你选择的物品" else "Based on your item selection"
             } else null
             meta.text = listOfNotNull(source, name, evidence).joinToString("  ·  ")
             showPage(a.sourceUrl ?: app.rules.cities[app.city]?.guideUrl)
@@ -539,6 +550,7 @@ class MainActivity : Activity(), App.Ui {
     // ---- gallery test mode ----
 
     private fun pickPhoto() {
+        if (!readyForPhoto()) return
         app.pipeline.warmUp() // the cloud connections are ready by the time a photo is picked
         val intent = if (Build.VERSION.SDK_INT >= 33) {
             Intent(MediaStore.ACTION_PICK_IMAGES)
@@ -556,6 +568,18 @@ class MainActivity : Activity(), App.Ui {
     @Deprecated("Activity result API needs AndroidX; this app has none")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQ_CAMERA) {
+            val file = pendingCapture ?: return
+            pendingCapture = null
+            val uri = FileProvider.getUriForFile(this, "$packageName.capture", file)
+            revokeUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            if (resultCode == RESULT_OK && file.length() > 0) app.classifyCapture(file)
+            else {
+                file.delete()
+                if (resultCode == RESULT_OK) message("camera_failed")
+            }
+            return
+        }
         if (requestCode == REQ_ENABLE_BLUETOOTH) {
             if (resultCode == RESULT_OK) continueBluetoothAction()
             else {
@@ -654,6 +678,91 @@ class MainActivity : Activity(), App.Ui {
         Toast.makeText(this, text, Toast.LENGTH_LONG).show()
     }
 
+    private fun showQuestion(previous: Pipeline.Answer) {
+        val question = Clarification.next(previous) ?: return
+        AlertDialog.Builder(this).setTitle(question.title(app.lang))
+            .setItems(question.choices.map { it.label(app.lang) }.toTypedArray()) { _, index ->
+                app.clarify(previous, question.choices[index].value)
+            }.setNegativeButton(android.R.string.cancel, null).show()
+    }
+
+    private fun showCatalog() {
+        val zh = Lang.zh(app.lang)
+        val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(18), dp(8), dp(18), 0) }
+        val input = EditText(this).apply {
+            hint = if (zh) "物品名称，如外卖盒、电池" else "Item name, e.g. takeout box or battery"
+            setSingleLine(true)
+        }
+        box.addView(input)
+        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1)
+        val list = ListView(this).apply { this.adapter = adapter }
+        box.addView(list, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(320)))
+        val empty = TextView(this).apply { text = if (zh) "没有匹配的物品，请换个词或查看官方指南。" else "No matching item. Try another term or open the official guide." }
+        box.addView(empty)
+        list.emptyView = empty
+        var matches = emptyList<Rules.Item>()
+        fun filter() {
+            matches = CatalogSearch.find(app.rules.items, input.text.toString())
+            adapter.clear()
+            adapter.addAll(matches.map { if (zh) "${Lang.itemName(it.id, it.name, app.lang)} · ${it.name}" else it.name })
+        }
+        input.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = filter()
+            override fun afterTextChanged(s: Editable?) {}
+        })
+        filter()
+        val dialog = AlertDialog.Builder(this)
+            .setTitle(if (zh) "离线文字查询 · 请确认具体物品" else "Offline lookup · choose the exact item")
+            .setView(box).setNegativeButton(android.R.string.cancel, null)
+            .setNeutralButton(if (zh) "官方指南" else "Official guide") { _, _ -> app.rules.cities[app.city]?.let { openPage(it.guideUrl) } }
+            .create()
+        list.setOnItemClickListener { _, _, index, _ ->
+            val item = matches.getOrNull(index) ?: return@setOnItemClickListener
+            dialog.dismiss()
+            app.lookup(item.id)
+            app.answerFor(app.city)?.let { showQuestion(it) }
+        }
+        dialog.show()
+    }
+
+    private fun readyForPhoto(): Boolean {
+        if (!app.serviceCovered()) {
+            Toast.makeText(this, if (Lang.zh(app.lang)) "请先确认住房类型和清运服务" else "Confirm housing and collection service first", Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, SettingsActivity::class.java))
+            return false
+        }
+        if (app.hasQwenKey()) return true
+        AlertDialog.Builder(this).setMessage(Lang.s(app.lang, "key_missing"))
+            .setPositiveButton(Lang.s(app.lang, "settings")) { _, _ -> startActivity(Intent(this, SettingsActivity::class.java)) }
+            .setNeutralButton(if (Lang.zh(app.lang)) "先用文字查询" else "Use text lookup") { _, _ -> showCatalog() }
+            .setNegativeButton(android.R.string.cancel, null).show()
+        return false
+    }
+
+    private fun takePhoto() {
+        if (pendingCapture != null || !readyForPhoto()) return
+        var file: File? = null
+        var captureUri: Uri? = null
+        try {
+            file = CaptureFiles.create(cacheDir)
+            val uri = FileProvider.getUriForFile(this, "$packageName.capture", file)
+            captureUri = uri
+            pendingCapture = file
+            app.pipeline.warmUp()
+            startActivityForResult(Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+                putExtra(MediaStore.EXTRA_OUTPUT, uri)
+                clipData = ClipData.newRawUri("BayBin capture", uri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            }, REQ_CAMERA)
+        } catch (_: Exception) {
+            captureUri?.let { revokeUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION) }
+            file?.delete()
+            pendingCapture = null
+            message("camera_failed")
+        }
+    }
+
     private fun startLinkService() {
         try {
             startForegroundService(Intent(this, LinkService::class.java))
@@ -710,6 +819,7 @@ class MainActivity : Activity(), App.Ui {
         private const val REQ_PICK = 2
         private const val REQ_ENABLE_BLUETOOTH = 3
         private const val REQ_APP_SETTINGS = 4
+        private const val REQ_CAMERA = 5
         private val CA_CITIES = listOf(
             "cupertino" to R.id.city_cupertino,
             "san_jose" to R.id.city_sanjose,

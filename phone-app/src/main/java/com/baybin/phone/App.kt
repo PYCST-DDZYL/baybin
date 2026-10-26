@@ -244,6 +244,7 @@ class App : Application(), GlassesLink.Listener {
 
     override fun onCreate() {
         super.onCreate()
+        CaptureFiles.prune(cacheDir)
         rules = Rules.load(this)
         absorbKeyFile()
         EventLog.add(if (qwenKey().isNotBlank()) "Qwen: key on this phone, ${rules.items.size} items, city $city" else "Qwen: no API key")
@@ -321,6 +322,19 @@ class App : Application(), GlassesLink.Listener {
         classify(uri.lastPathSegment ?: "photo") { ImageDecoder.createSource(contentResolver, uri) }
     }
 
+    fun classifyCapture(file: File) {
+        classify(file.name, cleanup = { file.delete() }) { ImageDecoder.createSource(file) }
+    }
+
+    fun lookup(itemId: String) {
+        if (itemId !in rules.ids) return
+        val cityNow = city
+        val token = startBusy("lookup")
+        val answer = pipeline.lookup(itemId, cityNow) // Presentation remains gated by scoped(). No cloud request.
+        val shown = settle(cityNow, answer, null, "lookup", token)
+        EventLog.add("BB_LOOKUP city=$cityNow ${describe(shown)} evidence=user | ${shown.line1} | ${shown.line2}")
+    }
+
     private fun classifyFile(file: File) {
         if (!file.isFile) {
             EventLog.add("BB_GALLERY file=${file.name} missing")
@@ -329,12 +343,15 @@ class App : Application(), GlassesLink.Listener {
         classify(file.name) { ImageDecoder.createSource(file) }
     }
 
-    private fun classify(label: String, source: () -> ImageDecoder.Source) {
+    private fun classify(label: String, cleanup: () -> Unit = {}, source: () -> ImageDecoder.Source) {
         val cityNow = city
         val token = startBusy("gallery")
         val runPipeline = pipeline
         worker.execute {
-            if (token != busyToken) return@execute
+            if (token != busyToken) {
+                cleanup()
+                return@execute
+            }
             val t0 = SystemClock.elapsedRealtime()
             val jpeg = try {
                 Gallery.toJpeg(source(), GALLERY_SIDE)
@@ -348,6 +365,8 @@ class App : Application(), GlassesLink.Listener {
                         "| ${shown.line1} | ${shown.line2}")
                 }
                 return@execute
+            } finally {
+                cleanup()
             }
             classifyNow(jpeg, label, t0, cityNow, token, runPipeline)
         }
@@ -536,7 +555,14 @@ class App : Application(), GlassesLink.Listener {
                     }
                     ACTION_STATUS -> EventLog.add("BB_STATUS link=${link.state} mac=${link.savedMac} " +
                         "glasses=${link.glassesVersion} city=$city online=${Net.online(this@App)} " +
-                        "auto=${link.autoReconnect} lang=$lang app=${BuildConfig.VERSION_NAME}")
+                        "auto=${link.autoReconnect} lang=$lang app=${BuildConfig.VERSION_NAME} housing=${housing().name} city_service=${cityCollection()}")
+                    ACTION_PROFILE -> {
+                        val selected = ServiceScope.Housing.entries.firstOrNull { it.name == intent.getStringExtra("housing") }
+                            ?: ServiceScope.Housing.UNKNOWN
+                        saveService(city, selected, intent.getBooleanExtra("city_service", false))
+                    }
+                    ACTION_LOOKUP -> intent.getStringExtra("id")?.let { lookup(it) }
+                    ACTION_ANSWER -> answerFor(city)?.let { previous -> intent.getStringExtra("value")?.let { clarify(previous, it) } }
                     ACTION_RESTORE -> {
                         link.autoReconnect = intent.getBooleanExtra("auto", false)
                         val connected = intent.getBooleanExtra("connected", false)
@@ -569,7 +595,8 @@ class App : Application(), GlassesLink.Listener {
             }
         }
         val filter = IntentFilter().apply {
-            listOf(ACTION_FIND, ACTION_DISCONNECT, ACTION_RECONNECT, ACTION_STATUS, ACTION_CITY, ACTION_LANG, ACTION_CLASSIFY, ACTION_RESTORE, ACTION_REVIEW)
+            listOf(ACTION_FIND, ACTION_DISCONNECT, ACTION_RECONNECT, ACTION_STATUS, ACTION_CITY, ACTION_LANG, ACTION_CLASSIFY, ACTION_RESTORE, ACTION_REVIEW,
+                ACTION_PROFILE, ACTION_LOOKUP, ACTION_ANSWER)
                 .forEach { addAction(it) }
         }
         registerReceiver(receiver, filter, if (Build.VERSION.SDK_INT >= 33) Context.RECEIVER_EXPORTED else 0)
@@ -587,6 +614,9 @@ class App : Application(), GlassesLink.Listener {
         private const val ACTION_CITY = "com.baybin.phone.CITY"
         private const val ACTION_LANG = "com.baybin.phone.LANG"
         private const val ACTION_CLASSIFY = "com.baybin.phone.CLASSIFY"
+        private const val ACTION_PROFILE = "com.baybin.phone.PROFILE"
+        private const val ACTION_LOOKUP = "com.baybin.phone.LOOKUP"
+        private const val ACTION_ANSWER = "com.baybin.phone.ANSWER"
         private const val KEY_PREF = "qwenKey"
         private const val KEY_FILE = "qwen.key"
         private const val KEY_ALIAS = "baybin-qwen"

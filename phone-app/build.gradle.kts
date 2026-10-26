@@ -33,8 +33,8 @@ android {
         applicationId = "com.baybin.phone"
         minSdk = 29 // CXR-M needs 28; LinkService uses the connectedDevice service type (29)
         targetSdk = 34
-        versionCode = 6
-        versionName = "0.5.0"
+        versionCode = 7
+        versionName = "0.6.0"
 
         // The Qwen key is never a build field. It is typed into the phone and kept in
         // app-private storage, so a decompile of this APK cannot recover it.
@@ -67,6 +67,7 @@ kotlin {
 
 dependencies {
     implementation(project(":protocol"))
+    implementation("androidx.core:core:1.13.1") // Private full-size capture URI via FileProvider.
     // Only used to read the glasses' Bluetooth address on first setup (GlassesLink.pair).
     implementation("com.rokid.cxr:client-m:1.2.2")
     // Same OkHttp the Rokid SDK already pulls in; used for the Qwen call.
