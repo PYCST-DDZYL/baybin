@@ -71,7 +71,22 @@ def main():
         blocked = result("LOOKUP", "--es id plastic_bag", "BB_LOOKUP")
         assert blocked["kind"] == 1 and blocked["bin"] == "null", blocked
         report["checks"].append({"name": "apartment does not borrow single-family rules", "pass": True})
+        broadcast("PROFILE", "--es housing SINGLE_FAMILY --ez city_service false")
+        blocked = result("LOOKUP", "--es id plastic_bag", "BB_LOOKUP")
+        assert blocked["kind"] == 1 and blocked["bin"] == "null", blocked
+        report["checks"].append({"name": "unconfirmed collection service blocks definite answers", "pass": True})
         broadcast("PROFILE", "--es housing SINGLE_FAMILY --ez city_service true")
+        current_city = "san_jose"
+
+        def scenario(item, answers, want, kind=0):
+            got = result("LOOKUP", "--es id " + item, "BB_LOOKUP")
+            for answer in answers:
+                assert got["kind"] == 1, (item, got)
+                got = result("ANSWER", "--es value " + answer, "BB_CLARIFY")
+            assert got["kind"] == kind and (kind != 0 or got["bin"] == want), (item, got, want)
+            report["checks"].append({"name": item, "city": current_city, "answers": answers,
+                                     "want_kind": kind, "want": want, "got": got, "pass": True})
+
         cases = [
             ("plastic_takeout", ["none", "5"], "recycling"),
             ("plastic_takeout", ["none", "6"], "landfill"),
@@ -90,14 +105,30 @@ def main():
             ("frozen_food_box", ["none", "clean"], "recycling"),
             ("frozen_food_box", ["none", "soiled"], "landfill"),
             ("battery", [], "special"), ("bulb_fluorescent", [], "special"), ("phone_electronics", [], "special"),
+            ("plastic_bottle", ["other"], "recycling"),
+            ("plastic_jug", ["milk"], "recycling"),
+            ("carton", ["milk"], "recycling"),
         ]
         for item, answers, want in cases:
-            got = result("LOOKUP", "--es id " + item, "BB_LOOKUP")
-            for answer in answers:
-                assert got["kind"] == 1, (item, got)
-                got = result("ANSWER", "--es value " + answer, "BB_CLARIFY")
-            assert got["kind"] == 0 and got["bin"] == want, (item, got, want)
-            report["checks"].append({"name": item, "answers": answers, "want": want, "got": got, "pass": True})
+            scenario(item, answers, want)
+        for item in ("plastic_bottle", "plastic_jug", "carton"):
+            for label in ("cleaner", "oil", "unknown"):
+                scenario(item, [label], None, kind=1)
+
+        current_city = "palo_alto"
+        broadcast("CITY", "--es id " + current_city)
+        blocked = result("LOOKUP", "--es id plastic_bag", "BB_LOOKUP")
+        assert blocked["kind"] == 1 and blocked["bin"] == "null", blocked
+        report["checks"].append({"name": "another city requires its own service confirmation", "pass": True})
+        broadcast("PROFILE", "--es housing SINGLE_FAMILY --ez city_service true")
+        scenario("carton", ["milk", "unknown"], None, kind=1)
+        scenario("carton", ["milk", "gable"], "compost")
+        scenario("carton", ["milk", "aseptic"], "garbage")
+        for city, want in (("san_jose", "recycling"), ("palo_alto", "garbage")):
+            got = result("REVIEW", "--es id " + city, "BB_REVIEW")
+            assert got == dict(kind=0, item="aseptic_carton", bin=want), (city, got)
+            report["checks"].append({"name": "city switch reapplies its own carton rule", "city": city,
+                                     "want": want, "got": got, "pass": True})
         assert "FATAL EXCEPTION" not in log()
         report["pass"] = True
     except Exception as error:

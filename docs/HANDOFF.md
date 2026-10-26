@@ -2,6 +2,10 @@
 
 Written 2026-10-02; subsequent implementation updates are listed below, newest first. Read this, then `README.md`. The owner writes in Chinese. Reply to the owner in Chinese. This file is in English because the public repository is in English.
 
+## October 25 device-check preparation — phone v0.6.0
+
+The disposable review APK was rebuilt successfully from source hash `7ccfb0dcc9b7b8abd871ef1c9c39bba8303145364f8227d2dedfe6f5e72dc88c`. The local-flow harness now has 40 checks: the original packaging/special-waste scenarios, unconfirmed collection service, drink-label input, hazardous/unknown label blocks, per-city service confirmation, fresh/aseptic carton evidence and actual San José/Palo Alto rule reapplication through REVIEW. Syntax validation passed; these 40 device cases are **not yet run**. A connection recheck found only Rokid glasses in ADB, despite Windows seeing a Samsung device. No new APK was installed on the phone. Earlier 21-case references below describe the prior harness and remain historical.
+
 ## October 25 label-evidence follow-up — phone v0.6.0
 
 Drink bottles, milk jugs and fresh cartons now offer explicit missing-label questions. If a city's carton rule requires construction evidence, a subsequent question requests labelled fresh/refrigerated gable-top construction or aseptic/UHT/shelf-stable/foil-layer evidence. Shape or the Tetra Pak name alone is not offered as confirmation. Questions cannot replace known conflicting labels or item evidence, weak-confidence photo results, or unknown answers already given.
