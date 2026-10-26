@@ -43,4 +43,12 @@ class GalleryRetryTest {
         retry.clear()
         assertNull(retry.forResult(10, "gallery", false))
     }
+
+    @Test fun phoneCaptureRetainsItsOwnSourceDuringRetry() {
+        val retry = GalleryRetry()
+        retry.remember(10, Proto.KIND_NO_CONNECTION, jpeg, "capture", "camera")
+        assertEquals("camera", retry.forResult(10, "camera", false)!!.source)
+        assertNull(retry.forResult(10, "gallery", false))
+        assertNull(retry.forResult(10, "glasses", false))
+    }
 }

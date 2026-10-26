@@ -2,6 +2,16 @@
 
 Written 2026-10-02; subsequent implementation updates are listed below, newest first. Read this, then `README.md`. The owner writes in Chinese. Reply to the owner in Chinese. This file is in English because the public repository is in English.
 
+## October 25 daily-use update — phone v0.6.0
+
+Phone versionCode is 7; glasses remain v0.3.0. San José is the focus city. Phone capture, bilingual offline catalog search, one-question-at-a-time user evidence, explicit housing/service coverage and cited special-waste booking links are implemented. Manual selections have no model confidence and use zero cloud calls. Unsupported profiles receive the official guide instead of a definite bin. Camera and gallery results retain separate source labels through cancellation and retry. See `TECHNICAL_DETAILS.md` for behavior and `TRIAL_SERVICE.md` for the unprovisioned hosted trial.
+
+Validation: 53 phone JVM tests and 10 Python tests passed; cached quotation checks passed for five cities with 78 base rules each. Both apps' Debug/Release builds and Debug Lint passed with zero errors. The release APK identifies as phone v0.6.0 / versionCode 7. Application/rule source hash: `2111db365c636776a42f80c21377bde19a1923f8cf9f4ca2540658b507ceb848`.
+
+`tools/check_local_flows.py` is an optional 21-case device check using a fresh, disposable review package; it refuses to overwrite the production app or an existing review installation. It checks explicit catalog choices and scope handling, not photo accuracy or touch UI. An earlier partial run was cleaned up but failed because the frozen-food-box fixture expected the wrong bin. The official clean/soiled distinction and fixture were corrected. The phone subsequently disconnected from ADB, so the final 21-case run is **not verified**. Do not cite the old ignored `local_flows.json` as a current pass. The production phone app was last observed at v0.4.0; it was not replaced.
+
+No new photo benchmark or camera touch acceptance was completed. The historical focused report is STALE: 43 photos, 22 correct definite bins, 16 retakes, 5 timeouts and zero wrong definite bins. No 90% accuracy claim is established. Offline no-key lookup is available; no hosted free vision trial has been deployed.
+
 ## October 25 usability update — phone v0.5.0
 
 Phone versionCode is now 6; glasses remain v0.3.0. Opening the phone app no longer requests Bluetooth/location/notification permissions. A saved pair with existing permissions can still start the link service automatically. Connect and Another pair retain the requested action across permission and Bluetooth-enable dialogs, then resume it. The permission policy checks all required grants, requests coarse and fine location together for the existing CXR discovery setup, and treats notifications as optional. Permanently denied permissions offer an app-settings shortcut. Language changes only refresh an already-active link service, so gallery-only use does not start it.

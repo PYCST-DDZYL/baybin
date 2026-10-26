@@ -382,6 +382,7 @@ class MainActivity : Activity(), App.Ui {
             val source = when (val src = app.sourceFor(app.city)) {
                 "glasses" -> Lang.s(lang, "source_glasses")
                 "gallery" -> Lang.s(lang, "source_gallery")
+                "camera" -> if (Lang.zh(lang)) "手机拍照" else "Phone camera"
                 "lookup" -> if (Lang.zh(lang)) "文字查询" else "Text lookup"
                 else -> src.takeIf { it.isNotEmpty() }
             }

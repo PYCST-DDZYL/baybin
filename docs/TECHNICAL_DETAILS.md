@@ -2,6 +2,21 @@
 
 Detailed technical documentation and historical test results. For a short Chinese introduction, see the [project homepage](../README.md).
 
+## Current behavior — phone v0.6.0
+
+- The default city for a new installation is San José. Confirm housing and city-managed residential collection in Settings before receiving definite guidance. Current tables cover single-family homes; apartment, business and other service profiles link the official guide instead. The authority, table-update date and recorded per-source check date appear with applicable results. Missing check dates are displayed as unrecorded.
+- Free offline text search accepts Chinese/English names and aliases and asks the user to select the exact catalog item. It shares the city's decision path with photos but has no model confidence and makes zero cloud requests. Missing evidence is requested one field at a time. User-supplied evidence is labelled separately and is never counted as a successful first-pass photo recognition.
+- Food contents, readable resin numbers, explicit absence of recycling markings, paper cleanliness and empty-state confirmation can be supplied on the phone. Weak photo confidence, unrelated targets, conflicting evidence and unsupported city rules remain uncertain. Follow-up results are shown on the phone; they are not a new glasses scan or a live replacement of a finished lens result.
+- Phone capture delegates to the installed camera with a full-size private-cache FileProvider URI. URI grants are revoked on return; the private capture file is deleted after decoding or cancellation. Stale files left by process death are removed on a subsequent launch/capture after 24 hours. The latest failed phone JPEG can be retried from bounded process memory, retaining its camera or gallery source. No camera photo is saved to shared storage by BayBin.
+- San José has cited conditions for #6 and unmarked rigid takeaway packaging, stained cardboard and clean/soiled frozen-food boxes. Visible food takes priority over packaging material. Readable compostable markings choose the compostable-plastic category only after contents are established; the selected city still decides the bin.
+- San José batteries, fluorescent bulbs and small electronics expose the County's [official booking entry](https://hhw.santaclaracounty.gov/make-hhw-appointment), checked 2026-10-25. The [County conditions](https://hhw.santaclaracounty.gov/drop-household-waste) require booking and provide the address afterward. This is a verified booking route, not a nearest-location claim or a business-waste service.
+
+`python tools/focus_report.py tools/out/accept/2_accuracy.json --output tools/out/focus.json` summarizes the 12-item San José focus scope. It separates wrong definite bins, retakes, cloud timeouts, connection/service errors and setup/scope blocks; old hashes stay STALE. The October 11 historical input yielded 43 focused photos: 22 correct definite bins, 16 retakes, 5 timeouts and zero wrong definite bins. These are old measurements, not a v0.6.0 benchmark. New evaluation must use annotated photos, preserve original labels and record user-assisted outcomes separately. The photo-acceptance runner now checks the first city's configured residential scope before uploading photos.
+
+See [no-key trial considerations](TRIAL_SERVICE.md). Offline lookup is available now; a hosted free vision trial has not been provisioned. All build/test commands in this document run from the repository root. The sections below retain earlier implementation and device-test history and do not establish current photo accuracy.
+
+For the optional 21-case local device check, build the disposable package with `bash 构建.sh --init-script tools/review.init.gradle :phone-app:assembleDebug`, then run `python tools/check_local_flows.py --apk tools/out/review-build/outputs/apk/debug/phone-app-debug.apk` from Windows with the phone connected to ADB. The harness uninstalls its fresh review package afterward and refuses to replace existing installations. The final v0.6.0 device run remains unverified because the phone disconnected; this test does not measure photo accuracy or camera UI acceptance.
+
 Look at a piece of trash through Rokid glasses and press the ring's right button. The lens shows a framing guide, then the bin and any preparation or retake instruction.
 
 ```

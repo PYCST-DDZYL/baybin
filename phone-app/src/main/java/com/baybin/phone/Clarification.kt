@@ -21,7 +21,7 @@ internal object Clarification {
             Recognition.Help.MARK -> if (seen.material == "unknown") Question("material", "查看编号；若有 COMPOSTABLE / PLA 字样请优先选", "Read the number; COMPOSTABLE / PLA overrides it",
                 (1..7).map { Choice(it.toString(), "清楚标着 #$it", "Clearly marked #$it") } +
                     Choice("compostable", "标着 COMPOSTABLE / PLA", "Marked COMPOSTABLE / PLA") +
-                    Choice("unmarked", "已检查整个物品，确认没有编号", "Checked the whole item: no number") + unknown) else null
+                    Choice("unmarked", "确认无回收三角标志、无编号", "Confirmed: no recycling mark or number") + unknown) else null
             Recognition.Help.EMPTY -> if (seen.empty == "unknown") Question("empty", "你确认容器已完全用空了吗？", "Can you confirm the container is completely empty?",
                 listOf(Choice("yes", "已确认完全用空", "Confirmed completely empty"), Choice("no", "还没用空", "Not empty"), unknown)) else null
             Recognition.Help.CLEAN -> if (seen.paper == "unknown") Question("paper", "打开查看：纸盒有没有食物或油渍？", "Open it: are there food or grease stains?",

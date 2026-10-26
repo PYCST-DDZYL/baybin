@@ -323,7 +323,7 @@ class App : Application(), GlassesLink.Listener {
     }
 
     fun classifyCapture(file: File) {
-        classify(file.name, cleanup = { file.delete() }) { ImageDecoder.createSource(file) }
+        classify(file.name, resultSource = "camera", cleanup = { file.delete() }) { ImageDecoder.createSource(file) }
     }
 
     fun lookup(itemId: String) {
@@ -343,9 +343,9 @@ class App : Application(), GlassesLink.Listener {
         classify(file.name) { ImageDecoder.createSource(file) }
     }
 
-    private fun classify(label: String, cleanup: () -> Unit = {}, source: () -> ImageDecoder.Source) {
+    private fun classify(label: String, resultSource: String = "gallery", cleanup: () -> Unit = {}, source: () -> ImageDecoder.Source) {
         val cityNow = city
-        val token = startBusy("gallery")
+        val token = startBusy(resultSource)
         val runPipeline = pipeline
         worker.execute {
             if (token != busyToken) {
@@ -360,7 +360,7 @@ class App : Application(), GlassesLink.Listener {
                 main.post {
                     if (token != busyToken) return@post
                     val failed = Pipeline.Answer(Proto.KIND_ERROR, "Try again", Recognition.Help.INVALID.text, cityId = cityNow)
-                    val shown = settle(cityNow, failed, null, "gallery", token)
+                    val shown = settle(cityNow, failed, null, resultSource, token)
                     EventLog.add("BB_GALLERY file=$label city=${shown.cityId} ${describe(shown)} total=${SystemClock.elapsedRealtime() - t0} " +
                         "| ${shown.line1} | ${shown.line2}")
                 }
@@ -368,12 +368,12 @@ class App : Application(), GlassesLink.Listener {
             } finally {
                 cleanup()
             }
-            classifyNow(jpeg, label, t0, cityNow, token, runPipeline)
+            classifyNow(jpeg, label, t0, cityNow, token, runPipeline, resultSource)
         }
     }
 
     /** Worker thread. [cityNow] is the city captured when the job started, so the log matches the answer. */
-    private fun classifyNow(jpeg: ByteArray, label: String, t0: Long, cityNow: String, token: Int, runPipeline: Pipeline) {
+    private fun classifyNow(jpeg: ByteArray, label: String, t0: Long, cityNow: String, token: Int, runPipeline: Pipeline, resultSource: String = "gallery") {
         val a = try {
             inspect(runPipeline, jpeg, 0, cityNow, token)
         } catch (e: Exception) {
@@ -386,8 +386,8 @@ class App : Application(), GlassesLink.Listener {
                 thumb?.recycle()
                 return@post
             }
-            galleryRetry.remember(token, a.kind, jpeg, label)
-            val shown = settle(cityNow, a, thumb, "gallery", token)
+            galleryRetry.remember(token, a.kind, jpeg, label, resultSource)
+            val shown = settle(cityNow, a, thumb, resultSource, token)
             EventLog.add("BB_GALLERY file=$label city=${shown.cityId ?: cityNow} ${describe(shown)} total=${SystemClock.elapsedRealtime() - t0} " +
                 "| ${shown.line1} | ${shown.line2}")
         }
@@ -410,14 +410,14 @@ class App : Application(), GlassesLink.Listener {
         val photo = galleryRetry.forResult(slots[city]?.galleryId, sourceFor(city), busy) ?: return
         val cityNow = city
         val runPipeline = pipeline
-        val token = startBusy("gallery")
+        val token = startBusy(photo.source)
         worker.execute {
             if (token != busyToken) return@execute
-            classifyNow(photo.jpeg, photo.label, SystemClock.elapsedRealtime(), cityNow, token, runPipeline)
+            classifyNow(photo.jpeg, photo.label, SystemClock.elapsedRealtime(), cityNow, token, runPipeline, photo.source)
         }
     }
 
-    fun canCancelGallery(): Boolean = busy && busySource == "gallery"
+    fun canCancelGallery(): Boolean = busy && busySource in setOf("gallery", "camera")
 
     fun cancelGallery() {
         if (!canCancelGallery()) return
@@ -425,7 +425,7 @@ class App : Application(), GlassesLink.Listener {
         busy = false
         busySource = ""
         galleryRetry.clear()
-        EventLog.add("gallery recognition cancelled")
+        EventLog.add("phone photo recognition cancelled")
         ui?.refresh()
     }
 
@@ -505,7 +505,7 @@ class App : Application(), GlassesLink.Listener {
      * also stores that city's own ruling of the same item. Returns the answer to show now.
      */
     private fun settle(startCity: String, decided: Pipeline.Answer, thumb: Bitmap?, source: String, token: Int): Pipeline.Answer {
-        val galleryId = token.takeIf { source == "gallery" }
+        val galleryId = token.takeIf { source in setOf("gallery", "camera") }
         remember(startCity, decided, thumb, source, galleryId)
         val selected = city
         val moved = if (selected == startCity) null else pipeline.forCity(decided, selected)

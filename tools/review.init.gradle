@@ -1,0 +1,11 @@
+// Disposable package for check_local_flows.py; never replaces the production app.
+gradle.beforeProject { p ->
+    if (p.path == ':phone-app') {
+        p.layout.buildDirectory.set(p.rootProject.layout.projectDirectory.dir('tools/out/review-build'))
+        p.plugins.withId('com.android.application') {
+            p.extensions.getByName('androidComponents').finalizeDsl { dsl ->
+                dsl.defaultConfig.applicationId = 'com.baybin.phone.review20261025'
+            }
+        }
+    }
+}
