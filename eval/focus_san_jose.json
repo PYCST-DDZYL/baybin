@@ -1,0 +1,6 @@
+{
+  "city": "san_jose",
+  "residence": "single-family",
+  "note": "Evaluation scope, not a new measured photo set. Keep original photo labels and evidence annotations. Report first-pass and user-supplemented results separately.",
+  "items": ["plastic_takeout", "plastic_clamshell", "plastic_cup", "paper_takeout", "paper_cup", "plastic_bag", "cardboard_box", "pizza_box_greasy", "foam_food_container", "food_in_container", "compostable_plastic", "frozen_food_box"]
+}
