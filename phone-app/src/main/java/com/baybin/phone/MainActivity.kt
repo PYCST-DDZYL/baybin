@@ -412,6 +412,8 @@ class MainActivity : Activity(), App.Ui {
         line1.setTextColor(main)
         line2.setTextColor(main)
         meta.setTextColor(soft)
+        findViewById<TextView>(R.id.rule_provenance).setTextColor(soft)
+        findViewById<TextView>(R.id.disposal_note).setTextColor(soft)
         val link = getColor(if (onLight) R.color.accent else R.color.on_bin)
         sourceLink.setTextColor(link)
         // Spans go on after setTextColor, which would otherwise paint the whole line one color.
