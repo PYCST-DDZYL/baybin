@@ -21,6 +21,21 @@ class FocusMetricsTest(unittest.TestCase):
         self.assertIsNone(metrics([])["success_rate"])
         self.assertIsNone(metrics([])["definite_precision"])
 
+    def test_input_and_processing_failures_are_not_cloud_service_errors(self):
+        result = metrics([{"kind": 3, "failure_stage": "input"}, {"kind": 3, "failure_stage": "processing"},
+                          {"kind": 3, "failure_stage": "service"}, {"kind": 3}])
+        self.assertEqual(1, result["input_errors"])
+        self.assertEqual(1, result["processing_errors"])
+        self.assertEqual(2, result["service_errors"])
+        self.assertEqual(0, result["correct"])
+
+    def test_missing_test_results_are_separate_from_observed_cloud_deadlines(self):
+        result = metrics([{"got": "(no answer)"}, {"kind": 2, "model_ms": 7010}, {"kind": 2, "model_ms": 400}])
+        self.assertEqual(2, result["timeouts"])
+        self.assertEqual(1, result["cloud_timeouts"])
+        self.assertEqual(1, result["result_timeouts"])
+        self.assertEqual(1, result["connection_errors"])
+
     def test_unconfirmed_service_and_missing_key_are_not_photo_retakes(self):
         result = metrics([{"kind": 1, "guidance": "Confirm housing and city collection service in Settings."}, {"kind": 4}])
         self.assertEqual(0, result["retakes"])

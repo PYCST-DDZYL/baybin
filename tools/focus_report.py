@@ -13,12 +13,14 @@ from adbutil import ROOT
 
 
 def metrics(rows):
-    counts = dict(total=len(rows), correct=0, wrong_bins=0, retakes=0, timeouts=0,
-                  connection_errors=0, service_errors=0, outside_scope=0, not_configured=0, missing=0)
+    counts = dict(total=len(rows), correct=0, wrong_bins=0, retakes=0, timeouts=0, cloud_timeouts=0, result_timeouts=0,
+                  connection_errors=0, service_errors=0, input_errors=0, processing_errors=0,
+                  outside_scope=0, not_configured=0, missing=0)
     for row in rows:
         kind = str(row.get("kind"))
         if row.get("got") == "(no answer)":
             counts["timeouts"] += 1
+            counts["result_timeouts"] += 1
         elif kind == "0":
             if not row.get("want") or not row.get("got"):
                 counts["missing"] += 1
@@ -31,8 +33,11 @@ def metrics(rows):
                 counts["retakes"] += 1
         elif kind == "2":
             counts["timeouts" if int(row.get("model_ms", -1)) >= 7000 else "connection_errors"] += 1
+            if int(row.get("model_ms", -1)) >= 7000:
+                counts["cloud_timeouts"] += 1
         elif kind == "3":
-            counts["service_errors"] += 1
+            category = {"input": "input_errors", "processing": "processing_errors"}.get(row.get("failure_stage"), "service_errors")
+            counts[category] += 1
         elif kind == "4":
             counts["not_configured"] += 1
         else:

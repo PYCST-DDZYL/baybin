@@ -1,0 +1,30 @@
+{
+  "when": "2026-10-26T08:23:20.996071+00:00",
+  "code_hash": "e4faf219c6899b7d7116a00f31b2c4c779ea7a34dc0e988601ee3a0aa877a971",
+  "apk_sha256": "f39a42d62a051a0c8f408293f04c9926e41bb60bc84db50c692b0b33864a3ec4",
+  "version": "0.6.1",
+  "manifest_sha256": "91ea8f8e92334793a061e1a5533fe5659dc97d0a957d215b0e95a6107c3bf542",
+  "dataset": "realworld",
+  "context": "Locked phone, first-pass public-photo pipeline; not foreground UI acceptance",
+  "metrics": {
+    "total": 51,
+    "correct": 26,
+    "wrong_bins": 0,
+    "retakes": 7,
+    "timeouts": 18,
+    "cloud_timeouts": 10,
+    "result_timeouts": 8,
+    "connection_errors": 0,
+    "service_errors": 0,
+    "input_errors": 0,
+    "processing_errors": 0,
+    "outside_scope": 0,
+    "not_configured": 0,
+    "missing": 0,
+    "success_rate": 0.5098039215686274,
+    "definite_precision": 1.0
+  },
+  "acceptance_pass": false,
+  "review_removed": true,
+  "note": "Eight unobserved results remain in the denominator. No causal improvement claim."
+}
