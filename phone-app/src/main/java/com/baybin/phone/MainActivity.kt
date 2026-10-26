@@ -71,7 +71,6 @@ class MainActivity : Activity(), App.Ui {
     private lateinit var langGroup: RadioGroup
     private lateinit var settingsButton: TextView
     private lateinit var keyBlock: View
-    private lateinit var keyInput: EditText
     private lateinit var keySave: Button
     private lateinit var keyState: TextView
     private lateinit var progress: View
@@ -82,6 +81,11 @@ class MainActivity : Activity(), App.Ui {
     private enum class BluetoothAction { CONNECT, SEARCH }
     private var pendingBluetooth: BluetoothAction? = null
     private var pendingCapture: File? = null
+    private var catalogDialog: AlertDialog? = null
+    private var catalogOpen = false
+    private var catalogQuery = ""
+    private var questionDialog: AlertDialog? = null
+    private var questionAnswer: Pipeline.Answer? = null
     private val devices = ArrayList<BluetoothDevice>()
     private val mainHandler = Handler(Looper.getMainLooper())
     private var logOpen = false
@@ -115,6 +119,7 @@ class MainActivity : Activity(), App.Ui {
         setContentView(R.layout.main)
         app = application as App
         pendingCapture = CaptureFiles.restore(cacheDir, savedInstanceState?.getString("camera_file"))
+        catalogQuery = savedInstanceState?.getString("catalog_query").orEmpty()
         pendingBluetooth = BluetoothAction.entries.firstOrNull { it.name == savedInstanceState?.getString("pending_bluetooth") }
         title = findViewById(R.id.title)
         status = findViewById(R.id.status)
@@ -194,28 +199,31 @@ class MainActivity : Activity(), App.Ui {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
         keyBlock = findViewById(R.id.key_block)
-        keyInput = findViewById(R.id.key_input)
         keySave = findViewById(R.id.key_save)
         keyState = findViewById(R.id.key_state)
         keySave.setOnClickListener {
-            val typed = keyInput.text?.toString()?.trim().orEmpty()
-            when (app.saveQwenKey(typed)) {
-                KeyStorage.Result.SAVED -> {
-                    keyInput.text.clear()
-                    refresh()
-                }
-                KeyStorage.Result.INVALID -> keyInput.error = Lang.s(app.lang, "key_invalid")
-                KeyStorage.Result.FAILED -> keyInput.error = Lang.s(app.lang, "key_save_failed")
-            }
+            startActivity(Intent(this, SettingsActivity::class.java))
         }
 
         // Gallery-only use needs no Bluetooth, location, or notification permission prompt.
         if (app.link.savedMac != null && hasBluetoothPermissions()) startLinkService()
+        if (savedInstanceState?.getBoolean("catalog_open") == true) mainHandler.post { showCatalog() }
+        else if (savedInstanceState?.containsKey("question_city") == true) mainHandler.post {
+            val a = app.answerFor(app.city)
+            if (a != null && a.cityId == savedInstanceState.getString("question_city") &&
+                a.itemId == savedInstanceState.getString("question_item")) showQuestion(a)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         pendingBluetooth?.let { outState.putString("pending_bluetooth", it.name) }
         pendingCapture?.let { outState.putString("camera_file", it.name) }
+        outState.putBoolean("catalog_open", catalogOpen)
+        outState.putString("catalog_query", catalogQuery)
+        questionAnswer?.takeIf { questionDialog?.isShowing == true }?.let {
+            outState.putString("question_city", it.cityId)
+            outState.putString("question_item", it.itemId)
+        }
         super.onSaveInstanceState(outState)
     }
 
@@ -236,6 +244,9 @@ class MainActivity : Activity(), App.Ui {
 
     override fun onDestroy() {
         mainHandler.removeCallbacks(autoPick)
+        catalogDialog?.setOnDismissListener(null)
+        catalogDialog?.dismiss()
+        questionDialog?.dismiss()
         super.onDestroy()
     }
 
@@ -268,8 +279,7 @@ class MainActivity : Activity(), App.Ui {
         val showKey = !app.hasQwenKey()
         keyBlock.visibility = if (showKey) View.VISIBLE else View.GONE
         if (showKey) {
-            keyInput.hint = Lang.s(lang, "key_hint")
-            keySave.text = Lang.s(lang, "key_save")
+            keySave.text = if (Lang.zh(lang)) "设置照片识别" else "Set up photo recognition"
             keyState.text = Lang.s(lang, "key_missing")
         }
         logToggle.text = Lang.s(lang, if (logOpen) "log_hide" else "log")
@@ -682,19 +692,33 @@ class MainActivity : Activity(), App.Ui {
     }
 
     private fun showQuestion(previous: Pipeline.Answer) {
+        if (isFinishing || isDestroyed || questionDialog?.isShowing == true) return
         val question = Clarification.next(previous) ?: return
-        AlertDialog.Builder(this).setTitle(question.title(app.lang))
+        questionAnswer = previous
+        val dialog = AlertDialog.Builder(this).setTitle(question.title(app.lang))
             .setItems(question.choices.map { it.label(app.lang) }.toTypedArray()) { _, index ->
-                app.clarify(previous, question.choices[index].value)
+                val accepted = app.clarify(previous, question.choices[index].value)
+                val updated = app.answerFor(app.city)
+                if (accepted && updated != null && updated !== previous) mainHandler.post {
+                    if (app.answerFor(app.city) === updated) showQuestion(updated)
+                }
             }.setNegativeButton(android.R.string.cancel, null).show()
+        questionDialog = dialog
+        dialog.setOnDismissListener {
+            if (questionDialog === dialog) { questionDialog = null; questionAnswer = null }
+        }
     }
 
     private fun showCatalog() {
+        if (isFinishing || isDestroyed || catalogDialog?.isShowing == true) return
+        catalogOpen = true
         val zh = Lang.zh(app.lang)
         val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(18), dp(8), dp(18), 0) }
         val input = EditText(this).apply {
             hint = if (zh) "物品名称，如外卖盒、电池" else "Item name, e.g. takeout box or battery"
             setSingleLine(true)
+            setText(catalogQuery)
+            setSelection(text.length)
         }
         box.addView(input)
         val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1)
@@ -705,7 +729,8 @@ class MainActivity : Activity(), App.Ui {
         list.emptyView = empty
         var matches = emptyList<Rules.Item>()
         fun filter() {
-            matches = CatalogSearch.find(app.rules.items, input.text.toString())
+            catalogQuery = input.text.toString()
+            matches = CatalogSearch.find(app.rules.items, catalogQuery)
             adapter.clear()
             adapter.addAll(matches.map { if (zh) "${Lang.itemName(it.id, it.name, app.lang)} · ${it.name}" else it.name })
         }
@@ -727,6 +752,8 @@ class MainActivity : Activity(), App.Ui {
             app.answerFor(app.city)?.let { showQuestion(it) }
         }
         dialog.show()
+        catalogDialog = dialog
+        dialog.setOnDismissListener { catalogOpen = false; catalogDialog = null }
     }
 
     private fun readyForPhoto(): Boolean {

@@ -396,13 +396,14 @@ class App : Application(), GlassesLink.Listener {
     fun canRetryGallery(): Boolean =
         galleryRetry.forResult(slots[city]?.galleryId, sourceFor(city), busy) != null
 
-    fun clarify(previous: Pipeline.Answer, value: String) {
-        if (busy || answerFor(city) !== previous) return
-        val updated = pipeline.supplement(previous, value) ?: return
-        val slot = slots[city] ?: return
+    fun clarify(previous: Pipeline.Answer, value: String): Boolean {
+        if (busy || answerFor(city) !== previous) return false
+        val updated = pipeline.supplement(previous, value) ?: return false
+        val slot = slots[city] ?: return false
         remember(city, updated, slot.photo, slot.source, slot.galleryId)
         EventLog.add("BB_CLARIFY city=$city ${describe(updated)} evidence=user | ${updated.line1} | ${updated.line2}")
         ui?.refresh()
+        return true
     }
 
     /** Reuse only the latest failed gallery photo. No picker, file writes, or URI permission needed. */
