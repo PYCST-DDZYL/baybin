@@ -71,13 +71,39 @@ class App : Application(), GlassesLink.Listener {
 
     /** A [Rules.CITY_IDS] id; picked on the main screen. The glasses are not told. */
     var city: String
-        get() = prefs.getString("city", null)?.takeIf { it in Rules.CITY_IDS } ?: Rules.CITY_IDS[0]
+        get() = prefs.getString("city", null)?.takeIf { it in Rules.CITY_IDS } ?: "san_jose"
         set(value) { prefs.edit().putString("city", value).apply() }
 
     /** "zh" or "en". Display only; the logged bin name stays English. */
     var lang: String
         get() = prefs.getString("lang", null)?.takeIf { it == "zh" || it == "en" } ?: "zh"
         set(value) { prefs.edit().putString("lang", value).apply() }
+
+    internal fun housing(cityId: String = city): ServiceScope.Housing = ServiceScope.Housing.entries
+        .firstOrNull { it.name == prefs.getString("housing_$cityId", null) } ?: ServiceScope.Housing.UNKNOWN
+
+    fun cityCollection(cityId: String = city) = prefs.getBoolean("city_service_$cityId", false)
+
+    fun serviceCovered(cityId: String = city): Boolean = rules.cities[cityId]?.let {
+        ServiceScope.covered(it, housing(cityId), cityCollection(cityId))
+    } ?: false
+
+    internal fun saveService(cityId: String, housing: ServiceScope.Housing, cityService: Boolean) {
+        if (cityId !in rules.cities) return
+        prefs.edit().putString("housing_$cityId", housing.name).putBoolean("city_service_$cityId", cityService).apply()
+        replacePipeline()
+    }
+
+    private fun scoped(answer: Pipeline.Answer): Pipeline.Answer {
+        val cityRule = rules.cities[answer.cityId] ?: return answer
+        return if (serviceCovered(cityRule.id)) answer else ServiceScope.blocked(cityRule)
+    }
+
+    private fun inspect(runPipeline: Pipeline, jpeg: ByteArray, rotation: Int, cityId: String, token: Int): Pipeline.Answer {
+        val cityRule = rules.cities.getValue(cityId)
+        if (!serviceCovered(cityId)) return ServiceScope.blocked(cityRule)
+        return runPipeline.run(jpeg, rotation, cityId) { token == busyToken }
+    }
 
     /** True when this phone has a key saved. The key itself is never logged or shown. */
     fun hasQwenKey(): Boolean = qwenKey().isNotBlank()
@@ -237,7 +263,7 @@ class App : Application(), GlassesLink.Listener {
         worker.execute {
             if (token != busyToken) return@execute
             val a = try {
-                runPipeline.run(jpeg, rotation, cityNow) { token == busyToken }
+                inspect(runPipeline, jpeg, rotation, cityNow, token)
             } catch (e: Exception) {
                 EventLog.add("scan $reqId failed: ${e.message}")
                 Pipeline.Answer(Proto.KIND_ERROR, "Try again", Recognition.Help.INVALID.text, cityId = cityNow)
@@ -330,7 +356,7 @@ class App : Application(), GlassesLink.Listener {
     /** Worker thread. [cityNow] is the city captured when the job started, so the log matches the answer. */
     private fun classifyNow(jpeg: ByteArray, label: String, t0: Long, cityNow: String, token: Int, runPipeline: Pipeline) {
         val a = try {
-            runPipeline.run(jpeg, 0, cityNow) { token == busyToken }
+            inspect(runPipeline, jpeg, 0, cityNow, token)
         } catch (e: Exception) {
             EventLog.add("BB_GALLERY file=$label failed: ${e.message}")
             Pipeline.Answer(Proto.KIND_ERROR, "Try again", Recognition.Help.INVALID.text, cityId = cityNow)
@@ -391,7 +417,7 @@ class App : Application(), GlassesLink.Listener {
     fun onCityChanged(id: String) {
         if (id !in Rules.CITY_IDS) return
         if (id != city) {
-            val from = answerFor(city)
+            val from = slots[city]?.answer
             val photo = photoFor(city)
             val source = sourceFor(city)
             val galleryId = slots[city]?.galleryId
@@ -437,7 +463,7 @@ class App : Application(), GlassesLink.Listener {
 
     /** The answer stored for [cityId], and only if that same city produced it. */
     fun answerFor(cityId: String): Pipeline.Answer? =
-        slots[cityId]?.answer?.takeIf { it.cityId == cityId }
+        slots[cityId]?.answer?.takeIf { it.cityId == cityId }?.let { scoped(it) }
 
     fun photoFor(cityId: String): Bitmap? = slots[cityId]?.photo
 
@@ -467,7 +493,7 @@ class App : Application(), GlassesLink.Listener {
         if (moved != null) remember(selected, moved, thumb, source, galleryId)
         finishBusy(token)
         ui?.refresh()
-        return if (moved != null && moved.cityId == selected) moved else decided
+        return scoped(if (moved != null && moved.cityId == selected) moved else decided)
     }
 
     private fun describe(a: Pipeline.Answer) = "kind=${a.kind} item=${a.itemId} bin=${a.bin} " +

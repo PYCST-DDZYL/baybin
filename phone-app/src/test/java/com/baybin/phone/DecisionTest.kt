@@ -72,4 +72,20 @@ class DecisionTest {
         assertEquals(Proto.KIND_UNSURE, decision.lookup("not_in_catalog", city.id).kind)
         assertEquals(Proto.KIND_UNSURE, decision.lookup("plastic_bag", "unsupported").kind)
     }
+
+    @Test fun soiledCardboardUsesOnlyAnExplicitlyCitedPaperVariant() {
+        val variant = Rules.Rule("landfill", "Soiled cardboard goes in garbage.", "https://example.com/cardboard", setOf("soiled"))
+        val conditional = Rules.Rule("recycling", "Clean cardboard.", null, paperRules = mapOf("soiled" to variant))
+        val local = Rules.City("san_jose", "San Jose", city.binLabels, city.rules + ("cardboard_box" to conditional), city.guideUrl)
+        val localRules = Rules(rules.items, mapOf(local.id to local), "", "")
+        val seen = Recognition.Observation("cardboard_box", "none", "unknown", "unknown", "soiled", "unknown", "no")
+        val reply = QwenClient.Reply("cardboard_box", "cardboard", 0.9, emptyList(), observation = seen)
+        val selected = Decision(localRules).decide(local, reply)
+        assertEquals(Proto.KIND_OK, selected.kind)
+        assertEquals("landfill", selected.bin)
+        assertEquals(variant.sourceUrl, selected.sourceUrl)
+        assertEquals(Proto.KIND_UNSURE, decision.decide(city, reply).kind)
+        assertEquals(Proto.KIND_UNSURE, Decision(localRules).decide(local,
+            reply.copy(observation = seen.copy(paper = "unknown"))).kind)
+    }
 }

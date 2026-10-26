@@ -19,12 +19,17 @@ class Rules internal constructor(
 
     /** [bin] is a key of [City.binLabels], or "unknown" when the official sources don't settle it. */
     class Rule(val bin: String, val reason: String, val sourceUrl: String?, val checks: Set<String> = emptySet(),
-               val materialRules: Map<String, Rule> = emptyMap()) {
+               val materialRules: Map<String, Rule> = emptyMap(), val paperRules: Map<String, Rule> = emptyMap(),
+               val checkedOn: String = "") {
         fun forMaterial(material: String?): Rule = material?.let { materialRules[it] } ?: this
+        fun forEvidence(material: String?, paper: String?): Rule = paper?.let { paperRules[it] } ?: forMaterial(material)
     }
 
     class City(val id: String, val name: String, val binLabels: Map<String, String>, val rules: Map<String, Rule>,
-               val guideUrl: String)
+               val guideUrl: String, val residence: String = "single-family", val authority: String = "",
+               val updated: String = "", val destinations: Map<String, Destination> = emptyMap())
+
+    data class Destination(val url: String, val source: String, val checkedOn: String, val noteZh: String, val noteEn: String)
 
     val ids: Set<String> = items.mapTo(HashSet()) { it.id }
 
@@ -72,16 +77,31 @@ class Rules internal constructor(
                         } ?: emptySet()
                         require(checks.all { it in Recognition.CHECKS }) { "Unsupported rule check: $id" }
                         val byMaterial = rule.optJSONObject("by_material")
-                        require(!conditional || byMaterial == null) { "Nested conditional rule: $id" }
+                        val byPaper = rule.optJSONObject("by_paper")
+                        require(!conditional || (byMaterial == null && byPaper == null)) { "Nested conditional rule: $id" }
                         val variants = byMaterial?.keys()?.asSequence()?.associateWith { code ->
                             require(code in setOf("1", "2", "3", "4", "5", "6", "7"))
                             parseRule(byMaterial.getJSONObject(code), true)
                         } ?: emptyMap()
-                        return Rule(rule.getString("bin"), rule.optString("reason"), page(rule.optString("source")), checks, variants)
+                        val paperVariants = byPaper?.keys()?.asSequence()?.associateWith { code ->
+                            require(code in setOf("clean", "soiled", "uncoated", "coated"))
+                            parseRule(byPaper.getJSONObject(code), true)
+                        } ?: emptyMap()
+                        val checkedOn = sources?.optJSONObject(rule.optString("source"))?.optString("checked_on").orEmpty()
+                        return Rule(rule.getString("bin"), rule.optString("reason"), page(rule.optString("source")), checks,
+                            variants, paperVariants, checkedOn)
                     }
                     r.keys().asSequence().associateWith { k -> parseRule(r.getJSONObject(k)) }
                 }
-                City(id, o.getString("name"), bins, rules, o.getString("guide_url"))
+                val routes = o.optJSONObject("destinations")
+                val destinations = routes?.keys()?.asSequence()?.associateWith { item ->
+                    val d = routes.getJSONObject(item)
+                    val url = d.getString("url")
+                    require(url.startsWith("https://"))
+                    Destination(url, d.getString("source"), d.getString("checked_on"), d.getString("note_zh"), d.getString("note_en"))
+                } ?: emptyMap()
+                City(id, o.getString("name"), bins, rules, o.getString("guide_url"), o.getString("residence"),
+                    o.getString("authority"), o.getString("updated"), destinations)
             }
             return Rules(items, cities, read("prompt.txt"), read("inspection.txt"))
         }

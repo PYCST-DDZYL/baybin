@@ -33,6 +33,11 @@ def cell(city, item):
         s = city["sources"][also["source"]]
         link += " [basis](%s)" % s.get("live_url", s["url"])
     extra = "".join("<br>📝 %s" % rule[k] for k in ("note", "exception") if rule.get(k))
+    for field in ("material", "paper"):
+        for value, variant in rule.get("by_" + field, {}).items():
+            page = city["sources"][variant["source"]]
+            extra += "<br>%s=%s: **%s** — %s [source](%s)" % (field, value,
+                city["bins"][variant["bin"]]["line1"], variant["reason"], page.get("live_url", page["url"]))
     return "**%s** — %s %s%s" % (label, rule["reason"], link, extra)
 
 

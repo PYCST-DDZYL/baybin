@@ -91,7 +91,7 @@ object Recognition {
             fields.getValue("empty"), fields.getValue("paper"), fields.getValue("label"), fields.getValue("multiple"))
     }
 
-    val CHECKS = setOf("resin_1_5", "resin_recyclable", "uncoated", "empty", "not_compostable", "carton_gable", "carton_aseptic")
+    val CHECKS = setOf("resin_1_5", "resin_recyclable", "uncoated", "empty", "not_compostable", "carton_gable", "carton_aseptic", "soiled")
 
     fun help(id: String, seen: Observation?, checks: Set<String>): Help? {
         if (seen == null) return Help.VERIFY
@@ -109,7 +109,7 @@ object Recognition {
         }
         if (id == "carton" && seen.label !in setOf("milk", "juice")) return Help.LABEL
         if (id == "paperboard_box" && seen.label in setOf("milk", "juice", "cleaner", "oil")) return Help.LABEL
-        if (id in setOf("cardboard_box", "paperboard_box") && seen.paper != "clean") return Help.CLEAN
+        if (id in setOf("cardboard_box", "paperboard_box") && seen.paper != "clean" && "soiled" !in checks) return Help.CLEAN
         if (id == "pizza_box_greasy" && seen.paper != "soiled") return Help.CLEAN
         if (id == "compostable_plastic" && seen.material != "compostable") return Help.MARK
         if (id in PLASTIC && seen.material == "compostable") return Help.MARK
@@ -122,6 +122,7 @@ object Recognition {
                 "not_compostable" -> if (seen.material == "unknown" || seen.material == "compostable") return Help.MARK
                 "carton_gable" -> if (seen.paper != "gable") return Help.LABEL
                 "carton_aseptic" -> if (seen.paper != "aseptic") return Help.LABEL
+                "soiled" -> if (seen.paper != "soiled") return Help.CLEAN
                 else -> return Help.VERIFY
             }
         }

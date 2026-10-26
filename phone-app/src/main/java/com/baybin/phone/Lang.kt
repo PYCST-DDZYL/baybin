@@ -16,6 +16,7 @@ object Lang {
     /** The official English reason, or the same instruction in Chinese. */
     fun reason(text: String, lang: String): String {
         if (!zh(lang)) return text
+        if (text == ServiceScope.MESSAGE) return "请在设置中确认住房类型和所在城市的居民清运服务。当前规则只覆盖独立住宅；公寓、商业或其他服务请查官方指南。"
         REASON[text]?.let { return it }
         MIGHT.matchEntire(text)?.let { return "可能是${it.groupValues[1]}。再靠近一点，按一下。" }
         NO_RULE.matchEntire(text)?.let { return "${it.groupValues[1]}：${it.groupValues[2]}没有说清。" }

@@ -30,7 +30,7 @@ from sources import ROOT, contains, norm, page_text
 RULES = os.path.join(ROOT, "rules")
 MAX_REASON_WORDS = 15
 MIN_QUOTE_CHARS = 20
-CHECKS = {"resin_1_5", "resin_recyclable", "uncoated", "empty", "not_compostable", "carton_gable", "carton_aseptic"}
+CHECKS = {"resin_1_5", "resin_recyclable", "uncoated", "empty", "not_compostable", "carton_gable", "carton_aseptic", "soiled"}
 
 
 def load(path):
@@ -124,22 +124,32 @@ def check_city(path, items, live):
 
     entries = list(rules.items())
     for item, rule in rules.items():
-        variants = rule.get("by_material", {})
-        if not isinstance(variants, dict):
-            errors.append("%s: by_material must be an object" % item)
-            continue
-        for code, variant in variants.items():
-            if code not in set("1234567") or not isinstance(variant, dict) or "by_material" in variant:
-                errors.append("%s: invalid material variant %s" % (item, code))
-            else:
-                entries.append((item + ":material=" + code, variant))
+        for field, allowed in (("material", set("1234567")), ("paper", {"clean", "soiled", "coated", "uncoated"})):
+            variants = rule.get("by_" + field, {})
+            if not isinstance(variants, dict):
+                errors.append("%s: by_%s must be an object" % (item, field))
+                continue
+            for code, variant in variants.items():
+                if code not in allowed or not isinstance(variant, dict) or any(k in variant for k in ("by_material", "by_paper")):
+                    errors.append("%s: invalid %s variant %s" % (item, field, code))
+                else:
+                    entries.append((item + ":" + field + "=" + code, variant))
+    for item, route in city.get("destinations", {}).items():
+        if item not in items or rules.get(item, {}).get("bin") != "special":
+            errors.append("%s: destination requires a special-handling rule" % item)
+        for key in ("url", "source"):
+            url = urlparse(route.get(key, ""))
+            if url.scheme != "https" or url.hostname not in domains:
+                errors.append("%s: destination %s is not on an official HTTPS domain" % (item, key))
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", route.get("checked_on", "")) or not route.get("note_zh") or not route.get("note_en"):
+            errors.append("%s: destination needs a review date and bilingual conditions" % item)
     counts = {}
     for item, rule in entries:
         checks = rule.get("checks", [])
         if not isinstance(checks, list) or any(c not in CHECKS for c in checks):
             errors.append("%s: unsupported evidence checks %r" % (item, checks))
         b = rule.get("bin")
-        if ":material=" not in item:
+        if ":material=" not in item and ":paper=" not in item:
             counts[b] = counts.get(b, 0) + 1
         if b == "unknown":
             if not rule.get("note"):

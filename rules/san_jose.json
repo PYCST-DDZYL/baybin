@@ -7,8 +7,32 @@
  "updated": "2026-10-01",
  "official_domains": [
   "sanjoserecycles.org",
-  "sanjoseca.gov"
+  "sanjoseca.gov",
+  "hhw.santaclaracounty.gov"
  ],
+ "destinations": {
+  "battery": {
+   "url": "https://hhw.santaclaracounty.gov/make-hhw-appointment",
+   "source": "https://hhw.santaclaracounty.gov/drop-household-waste",
+   "checked_on": "2026-10-25",
+   "note_zh": "San José 居民：先核对接收清单并预约，官方在预约后提供地址。商业废物不适用。",
+   "note_en": "San Jose residents: check accepted materials and book first. The address is supplied after booking. Business waste is excluded."
+  },
+  "bulb_fluorescent": {
+   "url": "https://hhw.santaclaracounty.gov/make-hhw-appointment",
+   "source": "https://hhw.santaclaracounty.gov/drop-household-waste",
+   "checked_on": "2026-10-25",
+   "note_zh": "San José 居民：先核对接收清单并预约，官方在预约后提供地址。商业废物不适用。",
+   "note_en": "San Jose residents: check accepted materials and book first. The address is supplied after booking. Business waste is excluded."
+  },
+  "phone_electronics": {
+   "url": "https://hhw.santaclaracounty.gov/make-hhw-appointment",
+   "source": "https://hhw.santaclaracounty.gov/drop-household-waste",
+   "checked_on": "2026-10-25",
+   "note_zh": "San José 居民：先核对电子废物接收清单并预约，官方在预约后提供地址。商业废物不适用。",
+   "note_en": "San Jose residents: check accepted e-waste and book first. The address is supplied after booking. Business waste is excluded."
+  }
+ },
  "notes": "San José single-family homes have no food-scraps cart: garbage goes to a materials recovery facility that pulls out organics for composting. Yard trimmings have their own cart or street pile.",
  "page_disposal": {
   "content_after": "\n\\s*More\\s*\n",
@@ -39,10 +63,12 @@
  "sources": {
   "cardboard": {
    "title": "SanJoseRecycles.org: cardboard",
+   "checked_on": "2026-10-25",
    "url": "https://sanjoserecycles.org/guide/cardboard/"
   },
   "pizza-boxes": {
    "title": "SanJoseRecycles.org: pizza boxes",
+   "checked_on": "2026-10-25",
    "url": "https://sanjoserecycles.org/guide/pizza-boxes/"
   },
   "office-paper": {
@@ -67,10 +93,12 @@
   },
   "paper-cups": {
    "title": "SanJoseRecycles.org: paper cups",
+   "checked_on": "2026-10-25",
    "url": "https://sanjoserecycles.org/guide/paper-cups/"
   },
   "takeout-containers-cardboard": {
    "title": "SanJoseRecycles.org: takeout containers cardboard",
+   "checked_on": "2026-10-25",
    "url": "https://sanjoserecycles.org/guide/takeout-containers-cardboard/"
   },
   "milk-juice-cartons": {
@@ -115,10 +143,12 @@
   },
   "takeout-containers-plastic": {
    "title": "SanJoseRecycles.org: takeout containers plastic",
+   "checked_on": "2026-10-25",
    "url": "https://sanjoserecycles.org/guide/takeout-containers-plastic/"
   },
   "plastic-bags": {
    "title": "SanJoseRecycles.org: plastic bags",
+   "checked_on": "2026-10-25",
    "url": "https://sanjoserecycles.org/guide/plastic-bags/"
   },
   "bubble-wrap": {
@@ -235,10 +265,12 @@
   },
   "batteries-single-use": {
    "title": "SanJoseRecycles.org: batteries single use",
+   "checked_on": "2026-10-25",
    "url": "https://sanjoserecycles.org/guide/batteries-single-use/"
   },
   "cell-phones": {
    "title": "SanJoseRecycles.org: cell phones",
+   "checked_on": "2026-10-25",
    "url": "https://sanjoserecycles.org/guide/cell-phones/"
   },
   "electrical-cords-cables": {
@@ -247,6 +279,7 @@
   },
   "light-bulbs-fluorescent-cfl": {
    "title": "SanJoseRecycles.org: light bulbs fluorescent cfl",
+   "checked_on": "2026-10-25",
    "url": "https://sanjoserecycles.org/guide/light-bulbs-fluorescent-cfl/"
   },
   "light-bulbs-led": {
@@ -339,7 +372,17 @@
    "bin": "recycling",
    "reason": "Cut boxes small enough to fit loosely in the cart.",
    "source": "cardboard",
-   "quote": "Cut large boxes small enough to fit loosely inside the recycling cart."
+   "quote": "Cut large boxes small enough to fit loosely inside the recycling cart.",
+   "by_paper": {
+    "soiled": {
+     "bin": "landfill",
+     "reason": "Food- or oil-soiled cardboard goes in garbage; recycle clean pieces separately.",
+     "source": "cardboard",
+     "checks": ["soiled"],
+     "quote": "Boxes stained with grease or oil should be put in the garbage cart.",
+     "exception": "The cardboard page labels clean cardboard recycling, but explicitly sends oil-stained boxes to garbage."
+    }
+   }
   },
   "pizza_box_greasy": {
    "bin": "landfill",

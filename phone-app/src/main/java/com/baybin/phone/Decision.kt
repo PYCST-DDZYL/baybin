@@ -12,7 +12,7 @@ internal class Decision(private val rules: Rules) {
             prepMs, modelMs, reply.calls, reply, city.id, page, help)
         if (rules.item(id) == null) return answer(Proto.KIND_UNSURE, Proto.TEXT_UNSURE,
             "Couldn't tell what it is. Try closer.", null)
-        val rule = city.rules[id]?.forMaterial(reply.observation?.material)
+        val rule = city.rules[id]?.forEvidence(reply.observation?.material, reply.observation?.paper)
         if (rule == null || rule.bin == "unknown") return answer(Proto.KIND_UNSURE, Proto.TEXT_UNSURE,
             Recognition.Help.CITY.text, rule?.bin, rule?.sourceUrl)
         if (!reply.userIdentified) {

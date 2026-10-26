@@ -274,7 +274,8 @@ class MainActivity : Activity(), App.Ui {
             GlassesLink.State.CONNECTING, GlassesLink.State.SCANNING -> R.color.dot_wait
             else -> R.color.dot_off
         }))
-        cityHint.text = Lang.s(lang, hintKey(app.city))
+        cityHint.text = Lang.s(lang, hintKey(app.city)) + "\n" + if (app.serviceCovered()) app.housing().label(lang)
+            else if (Lang.zh(lang)) "服务范围待确认，请打开设置" else "Confirm service area in Settings"
         val wantLang = if (lang == "en") R.id.lang_en else R.id.lang_zh
         if (langGroup.checkedRadioButtonId != wantLang) {
             langGroup.setOnCheckedChangeListener(null)
@@ -304,7 +305,7 @@ class MainActivity : Activity(), App.Ui {
         answerQuestion.visibility = if (!processing && question != null) View.VISIBLE else View.GONE
         answerQuestion.text = if (Lang.zh(lang)) "补充一个信息" else "Answer a question"
         answerQuestion.setOnClickListener {
-            if (question != null && a != null) AlertDialog.Builder(this)
+            if (question != null) AlertDialog.Builder(this)
                 .setTitle(question.title(lang))
                 .setItems(question.choices.map { it.label(lang) }.toTypedArray()) { _, index ->
                     app.clarify(a, question.choices[index].value)
@@ -320,6 +321,28 @@ class MainActivity : Activity(), App.Ui {
             pageScroll.smoothScrollTo(0, (resultCard.top - dp(16)).coerceAtLeast(0))
         }
         wasProcessing = processing
+        val cityRule = app.rules.cities.getValue(app.city)
+        val provenance = findViewById<TextView>(R.id.rule_provenance)
+        val applied = a?.itemId?.let { cityRule.rules[it]?.forEvidence(a.reply?.observation?.material, a.reply?.observation?.paper) }
+        provenance.visibility = if (!processing && applied != null && app.serviceCovered()) View.VISIBLE else View.GONE
+        provenance.text = if (Lang.zh(lang)) "规则来源：${cityRule.authority}\n规则版本：${cityRule.updated} · 核查：${applied?.checkedOn?.ifEmpty { "未记录" }}"
+            else "Authority: ${cityRule.authority}\nTable: ${cityRule.updated} · Checked: ${applied?.checkedOn?.ifEmpty { "not recorded" }}"
+        findViewById<Button>(R.id.profile_settings).apply {
+            visibility = if (!app.serviceCovered()) View.VISIBLE else View.GONE
+            text = if (Lang.zh(lang)) "确认住房和清运服务" else "Confirm housing and collection service"
+            setOnClickListener { startActivity(Intent(this@MainActivity, SettingsActivity::class.java)) }
+        }
+        val route = a?.takeIf { it.kind == com.baybin.protocol.Proto.KIND_OK && it.bin == "special" }
+            ?.itemId?.let { cityRule.destinations[it] }
+        findViewById<Button>(R.id.disposal_destination).apply {
+            visibility = if (!processing && route != null) View.VISIBLE else View.GONE
+            text = if (Lang.zh(lang)) "打开官方投放预约" else "Open official drop-off booking"
+            setOnClickListener { route?.let { openPage(it.url) } }
+        }
+        findViewById<TextView>(R.id.disposal_note).apply {
+            visibility = if (!processing && route != null) View.VISIBLE else View.GONE
+            text = route?.let { if (Lang.zh(lang)) "${it.noteZh}\n入口核查：${it.checkedOn}" else "${it.noteEn}\nLink checked: ${it.checkedOn}" }.orEmpty()
+        }
         if (processing) {
             resultLabel.text = Lang.s(lang, "result_label")
             line1.text = Lang.s(lang, "working")

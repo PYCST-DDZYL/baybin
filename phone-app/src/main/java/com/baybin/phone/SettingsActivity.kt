@@ -17,6 +17,7 @@ class SettingsActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings)
         val app = application as App
+        ServiceSettings.bind(this, app)
         val back = findViewById<TextView>(R.id.settings_back)
         val title = findViewById<TextView>(R.id.settings_title)
         val note = findViewById<TextView>(R.id.settings_note)
