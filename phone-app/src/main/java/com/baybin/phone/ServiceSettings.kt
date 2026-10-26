@@ -25,6 +25,7 @@ internal object ServiceSettings {
         label(if (zh) "服务范围：${city.name}" else "Service area: ${city.name}")
         label(if (zh) "住房类型" else "Housing type")
         val housing = Spinner(activity).apply {
+            id = R.id.service_housing
             adapter = ArrayAdapter(activity, android.R.layout.simple_spinner_dropdown_item,
                 ServiceScope.Housing.entries.map { it.label(app.lang) })
             setSelection(app.housing(cityId).ordinal)
@@ -32,6 +33,7 @@ internal object ServiceSettings {
         box.addView(housing)
         label(if (zh) "清运服务" else "Collection service")
         val service = Spinner(activity).apply {
+            id = R.id.service_collection
             adapter = ArrayAdapter(activity, android.R.layout.simple_spinner_dropdown_item,
                 if (zh) listOf("其他服务 / 尚未确认", "该城市指定的居民清运服务")
                 else listOf("Other / not confirmed", "This city's residential collection service"))
@@ -52,7 +54,6 @@ internal object ServiceSettings {
             setOnClickListener {
                 app.saveService(cityId, ServiceScope.Housing.entries[housing.selectedItemPosition], service.selectedItemPosition == 1)
                 Toast.makeText(activity, if (zh) "服务范围已保存" else "Service area saved", Toast.LENGTH_SHORT).show()
-                activity.finish()
             }
         })
     }

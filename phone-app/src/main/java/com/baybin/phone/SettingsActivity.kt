@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 
 /**
  * Replace the Qwen key. The glasses never see it; the phone is what calls the model.
@@ -44,7 +45,11 @@ class SettingsActivity : Activity() {
             modelBlock.visibility = if (modelBlock.visibility == View.VISIBLE) View.GONE else View.VISIBLE
         }
         modelSave.setOnClickListener {
-            if (app.saveQwenModel(modelInput.text.toString())) finish()
+            if (app.saveQwenModel(modelInput.text.toString())) {
+                modelInput.error = null
+                modelInput.setText(app.qwenModel)
+                Toast.makeText(this, Lang.s(lang, "model_saved"), Toast.LENGTH_SHORT).show()
+            }
             else modelInput.error = Lang.s(lang, "model_invalid")
         }
         back.setOnClickListener { finish() }
@@ -53,7 +58,10 @@ class SettingsActivity : Activity() {
             when (app.saveQwenKey(typed)) {
                 KeyStorage.Result.SAVED -> {
                     input.text.clear()
-                    finish()
+                    input.error = null
+                    input.hint = Lang.s(lang, "key_replace")
+                    state.text = Lang.s(lang, "key_set")
+                    Toast.makeText(this, Lang.s(lang, "key_saved"), Toast.LENGTH_SHORT).show()
                 }
                 KeyStorage.Result.INVALID -> input.error = Lang.s(lang, "key_invalid")
                 KeyStorage.Result.FAILED -> input.error = Lang.s(lang, "key_save_failed")

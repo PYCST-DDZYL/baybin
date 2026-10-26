@@ -2,6 +2,12 @@
 
 Written 2026-10-02; subsequent implementation updates are listed below, newest first. Read this, then `README.md`. The owner writes in Chinese. Reply to the owner in Chinese. This file is in English because the public repository is in English.
 
+## October 25 lookup/settings follow-up — phone v0.6.0
+
+Offline lookup now matches all query words within the same item regardless of order or punctuation separators, ranks exact IDs/names ahead of partial matches and returns no results for punctuation-only input. Ambiguous materials remain explicit choices. Saving the service profile, key or model no longer closes Settings and discards drafts in other sections. Successful key/model saves clear validation errors and show feedback. Housing/service spinners now have stable IDs for Android's view-state restoration on rotation; key text remains excluded from saved state.
+
+Validation: 56 phone JVM tests passed (including three new search regressions); phone Debug/Release builds and Debug Lint passed with zero errors. No rules, cloud decision thresholds or glasses sources changed in this follow-up. Application/rule source hash: `f30a854d898b92b6082c4ee4eed616cd468458e8e576f60d2177757ae4d8515b`. Only the glasses were available over ADB; phone UI/rotation, the optional 21-case device run and new photo accuracy remain unverified. The prior Python/rule checks below apply to their unchanged sources.
+
 ## October 25 daily-use update — phone v0.6.0
 
 Phone versionCode is 7; glasses remain v0.3.0. San José is the focus city. Phone capture, bilingual offline catalog search, one-question-at-a-time user evidence, explicit housing/service coverage and cited special-waste booking links are implemented. Manual selections have no model confidence and use zero cloud calls. Unsupported profiles receive the official guide instead of a definite bin. Camera and gallery results retain separate source labels through cancellation and retry. See `TECHNICAL_DETAILS.md` for behavior and `TRIAL_SERVICE.md` for the unprovisioned hosted trial.
