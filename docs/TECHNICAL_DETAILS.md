@@ -2,6 +2,8 @@
 
 Detailed technical documentation and historical test results. For a short Chinese introduction, see the [project homepage](../README.md).
 
+Current prioritized work is tracked in [the defect/verification list](ISSUES.md). The phone was updated in place from v0.4.0 to v0.6.1, with package identity, first-install time and installed APK hash verified; the existing encrypted key remained readable at startup. Foreground UI acceptance is still blocked by the locked phone. A new 51-photo locked-device diagnostic is documented in [the measurements](MEASUREMENTS.md); it did not pass the 90% target and does not establish normal foreground accuracy or a causal improvement.
+
 ## Current behavior — phone v0.6.1
 
 - The default city for a new installation is San José. Confirm housing and city-managed residential collection in Settings before receiving definite guidance. Current tables cover single-family homes; apartment, business and other service profiles link the official guide instead. The authority, table-update date and recorded per-source check date appear with applicable results. Missing check dates are displayed as unrecorded.

@@ -2,6 +2,16 @@
 
 Written 2026-10-02; subsequent implementation updates are listed below, newest first. Read this, then `README.md`. The owner writes in Chinese. Reply to the owner in Chinese. This file is in English because the public repository is in English.
 
+## October 26 verification and delivery follow-through
+
+`docs/ISSUES.md` now separates confirmed defects, unresolved symptoms and validation gaps by priority. Fixed a real acceptance-tool bug: `phone_status()` omitted housing/service from its parsed result, so the earlier optional guard could silently skip scope validation. The parser now retains the fields and photo acceptance refuses missing/unsupported scope. Metrics also distinguish input/processing failures, explicit cloud deadlines and unobserved test results. **17 Python regression tests pass**, including these cases and Android's userId/appId metadata variants.
+
+The new isolated `tools/check_photo_accuracy.py` uses only a fresh review package and the existing local test key, validates transferred photo hashes, never changes the owner's service profile, writes partial results and removes its review package. The original 51 realworld photos/labels were measured on source `e4faf219c6899b7d7116a00f31b2c4c779ea7a34dc0e988601ee3a0aa877a971`: 26 correct definite results, zero wrong definite bins, seven retakes, ten explicit cloud timeouts and eight unobserved results. The phone was locked; the 51.0% observed success rate fails 90% and cannot be promoted to foreground-use accuracy. Public derived summary: `docs/measurements-v061.json`; caveats and procedure: `docs/MEASUREMENTS.md`. Later diagnostic attempts hit an install timeout and an incomplete one-shot key import; their review packages were subsequently verified/cleaned. Do not merge diagnostic retries into the 51-photo run or claim those retries succeeded.
+
+**Production delivery is now real:** `tools/update_phone.py` installed v0.6.1 over v0.4.0 with `adb install -r`, without uninstalling or auto-granting permissions. The retained application identity/first-install time and installed APK hash were verified. The production process started, the saved key was detected as readable in its own startup log, and no fatal exception was observed. Only booleans about the key were collected. Local receipt: `tools/out/phone_update.json`. The earlier “production remains v0.4.0” notes below are historical.
+
+The phone remains locked, so the twelve UI cases, Activity recreation, actual camera capture and normal interactive first-use check remain open. An unlock request is pending. Do not mark the whole quality/accuracy objective complete or treat the production update as UI acceptance.
+
 ## October 26 draft and dialog usability — phone v0.6.1
 
 Phone is now versionCode 8 / v0.6.1; glasses remain v0.3.0. Settings protects unsaved housing/collection, model and typed-key changes with Keep editing / Discard changes on both back paths. Saving individual sections remains independent. The advanced section preserves its expansion state on recreation; secret key input remains excluded from saved state.
