@@ -339,7 +339,7 @@ class GlassesLink(private val context: Context) {
                         val jpeg = p.copyOfRange(8, p.size)
                         main.post { if (isCurrent(s)) listener?.onScan(reqId, jpeg, rotation) }
                     }
-                    Proto.PREPARE -> listener?.onPrepare()
+                    Proto.PREPARE -> main.post { if (isCurrent(s)) listener?.onPrepare() }
                     Proto.PROBE -> {
                         val reqId = Proto.intAt(p, 0)
                         val received = p.size - 4
