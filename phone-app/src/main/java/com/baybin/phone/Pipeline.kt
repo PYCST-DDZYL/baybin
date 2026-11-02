@@ -95,10 +95,13 @@ class Pipeline(private val context: Context, private val rules: Rules, private v
         val reply = try {
             qwen.ask(image, rules.inspectionPrompt, HEDGE_AT_MS, DEADLINE_MS,
                 maxTokens = 160, isCurrent = isCurrent)
-        } catch (_: IOException) {
-            EventLog.add("Qwen unreachable")
-            return Answer(Proto.KIND_NO_CONNECTION, Proto.TEXT_NO_CONNECTION, "Cloud didn't answer. Tap to retry.",
-                prepMs = prepMs, modelMs = SystemClock.elapsedRealtime() - t1, calls = HEDGE_AT_MS.size + 1,
+        } catch (e: IOException) {
+            val noAnswer = e as? QwenClient.NoAnswer
+            EventLog.add("Qwen ${if (noAnswer?.deadlineExpired == true) "deadline expired" else "connection failed"} calls=${noAnswer?.calls ?: 0}")
+            return Answer(Proto.KIND_NO_CONNECTION, Proto.TEXT_NO_CONNECTION,
+                if (noAnswer?.deadlineExpired == true) "Cloud didn't answer in time. Tap to retry."
+                else "Couldn't reach the cloud. Check the connection and retry.",
+                prepMs = prepMs, modelMs = SystemClock.elapsedRealtime() - t1, calls = noAnswer?.calls ?: 0,
                 cityId = city.id)
         } catch (e: QwenClient.ApiError) {
             EventLog.add("Qwen error ${e.code}")

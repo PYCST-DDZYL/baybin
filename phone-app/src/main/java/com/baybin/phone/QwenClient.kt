@@ -32,6 +32,9 @@ class QwenClient(
     val model: String,
 ) {
     class ApiError(val code: Int, message: String) : Exception(message)
+    /** A request batch that produced no usable response; [calls] counts requests actually sent. */
+    class NoAnswer(val calls: Int, val deadlineExpired: Boolean, cause: IOException) :
+        IOException(cause.message, cause)
 
     /**
      * [text] is the model's reply. The endpoint returns a log-probability for the first output
@@ -130,7 +133,7 @@ class QwenClient(
                 if (left <= 0) {
                     // Whatever connection(s) these calls sat on may be dead; don't hand them to the next scan.
                     http.connectionPool.evictAll()
-                    throw IOException("no answer within $deadlineMs ms")
+                    throw NoAnswer(launched, true, IOException("no answer within $deadlineMs ms"))
                 }
                 val nextHedge = hedgeAtMs.getOrNull(launched - 1)
                 val wait = if (nextHedge != null) minOf(left, maxOf(0L, nextHedge - elapsed())) else left
@@ -157,6 +160,7 @@ class QwenClient(
                         launched++
                         continue
                     }
+                    if (e is IOException) throw NoAnswer(launched, false, e)
                     throw e
                 }
             }
