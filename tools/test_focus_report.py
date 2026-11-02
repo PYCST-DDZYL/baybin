@@ -1,6 +1,7 @@
 import unittest
 
 from focus_report import metrics, summarize
+from check_photo_accuracy import cloud_failure_stage
 
 
 class FocusMetricsTest(unittest.TestCase):
@@ -34,6 +35,16 @@ class FocusMetricsTest(unittest.TestCase):
         self.assertEqual(2, result["timeouts"])
         self.assertEqual(1, result["cloud_timeouts"])
         self.assertEqual(1, result["result_timeouts"])
+        self.assertEqual(1, result["connection_errors"])
+
+    def test_explicit_cloud_failure_overrides_elapsed_time_without_changing_old_reports(self):
+        deadline = cloud_failure_stage("2", "Cloud didn't answer in time. Tap to retry.")
+        connection = cloud_failure_stage("2", "Couldn't reach the cloud. Check the connection and retry.")
+        self.assertIsNone(cloud_failure_stage("3", "Cloud didn't answer in time."))
+        result = metrics([{"kind": 2, "failure_stage": deadline, "model_ms": 400},
+                          {"kind": 2, "failure_stage": connection, "model_ms": 8000},
+                          {"kind": 2, "model_ms": 8000}])
+        self.assertEqual(2, result["cloud_timeouts"])
         self.assertEqual(1, result["connection_errors"])
 
     def test_unconfirmed_service_and_missing_key_are_not_photo_retakes(self):

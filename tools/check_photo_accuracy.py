@@ -17,6 +17,16 @@ from acceptlib import code_hash, expected_line1, load_rules
 from focus_report import metrics
 
 
+def cloud_failure_stage(kind, guidance):
+    if kind != "2":
+        return None
+    if guidance.startswith("Cloud didn't answer in time."):
+        return "cloud_deadline"
+    if guidance.startswith("Couldn't reach the cloud."):
+        return "connection"
+    return None  # Older reports have only elapsed time; keep their historical fallback.
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--apk", required=True, type=Path)
@@ -128,6 +138,9 @@ def main():
                     raise RuntimeError("Photo was evaluated under an unexpected city")
                 row.update(kind=kind, got_item=item, bin=bin_name, p=probability, calls=int(calls),
                            prep_ms=int(prep), model_ms=int(model), total_ms=int(total), got=title, guidance=guidance)
+                stage = cloud_failure_stage(kind, guidance)
+                if stage:
+                    row["failure_stage"] = stage
                 if kind == "3":
                     if "BB_GALLERY file=" + name + " unreadable:" in text:
                         row["failure_stage"] = "input"

@@ -32,8 +32,11 @@ def metrics(rows):
             else:
                 counts["retakes"] += 1
         elif kind == "2":
-            counts["timeouts" if int(row.get("model_ms", -1)) >= 7000 else "connection_errors"] += 1
-            if int(row.get("model_ms", -1)) >= 7000:
+            stage = row.get("failure_stage")
+            deadline = stage == "cloud_deadline" or (stage not in {"cloud_deadline", "connection"} and
+                                                    int(row.get("model_ms", -1)) >= 7000)
+            counts["timeouts" if deadline else "connection_errors"] += 1
+            if deadline:
                 counts["cloud_timeouts"] += 1
         elif kind == "3":
             category = {"input": "input_errors", "processing": "processing_errors"}.get(row.get("failure_stage"), "service_errors")
