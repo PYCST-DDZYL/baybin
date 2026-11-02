@@ -50,6 +50,7 @@
 
     <EditText
         android:id="@+id/key_input"
+        android:hint="@string/key_input_hint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -102,6 +103,7 @@
 
         <EditText
             android:id="@+id/model_input"
+            android:hint="@string/model_input_hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

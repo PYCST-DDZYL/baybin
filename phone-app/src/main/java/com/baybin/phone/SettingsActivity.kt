@@ -34,6 +34,7 @@ class SettingsActivity : Activity() {
         advancedOpen = savedInstanceState?.getBoolean("advanced_open") ?: false
         modelBlock.visibility = if (advancedOpen) View.VISIBLE else View.GONE
         val modelInput = findViewById<EditText>(R.id.model_input)
+        modelInput.hint = Lang.s(app.lang, "model_hint")
         val modelSave = findViewById<Button>(R.id.model_save)
         val modelNote = findViewById<TextView>(R.id.model_note)
         val lang = app.lang
