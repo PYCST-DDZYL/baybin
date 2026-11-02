@@ -99,10 +99,11 @@ class App : Application(), GlassesLink.Listener {
         return if (serviceCovered(cityRule.id)) answer else ServiceScope.blocked(cityRule)
     }
 
-    private fun inspect(runPipeline: Pipeline, jpeg: ByteArray, rotation: Int, cityId: String, token: Int): Pipeline.Answer {
+    private fun inspect(runPipeline: Pipeline, jpeg: ByteArray, rotation: Int, cityId: String,
+                        token: Int, deadlineMs: Long): Pipeline.Answer {
         val cityRule = rules.cities.getValue(cityId)
         if (!serviceCovered(cityId)) return ServiceScope.blocked(cityRule)
-        return runPipeline.run(jpeg, rotation, cityId) { token == busyToken }
+        return runPipeline.run(jpeg, rotation, cityId, deadlineMs) { token == busyToken }
     }
 
     /** True when this phone has a key saved. The key itself is never logged or shown. */
@@ -264,7 +265,7 @@ class App : Application(), GlassesLink.Listener {
         worker.execute {
             if (token != busyToken) return@execute
             val a = try {
-                inspect(runPipeline, jpeg, rotation, cityNow, token)
+                inspect(runPipeline, jpeg, rotation, cityNow, token, Pipeline.GLASSES_DEADLINE_MS)
             } catch (e: Exception) {
                 EventLog.add("scan $reqId failed: ${e.message}")
                 Pipeline.Answer(Proto.KIND_ERROR, "Try again", Recognition.Help.INVALID.text, cityId = cityNow)
@@ -375,7 +376,7 @@ class App : Application(), GlassesLink.Listener {
     /** Worker thread. [cityNow] is the city captured when the job started, so the log matches the answer. */
     private fun classifyNow(jpeg: ByteArray, label: String, t0: Long, cityNow: String, token: Int, runPipeline: Pipeline, resultSource: String = "gallery") {
         val a = try {
-            inspect(runPipeline, jpeg, 0, cityNow, token)
+            inspect(runPipeline, jpeg, 0, cityNow, token, Pipeline.PHONE_DEADLINE_MS)
         } catch (e: Exception) {
             EventLog.add("BB_GALLERY file=$label failed: ${e.message}")
             Pipeline.Answer(Proto.KIND_ERROR, "Try again", Recognition.Help.INVALID.text, cityId = cityNow)

@@ -64,7 +64,8 @@ class Pipeline(private val context: Context, private val rules: Rules, private v
         if (Net.online(context)) qwen?.warmUp()
     }
 
-    fun run(jpeg: ByteArray, rotation: Int, cityId: String, isCurrent: () -> Boolean = { true }): Answer {
+    fun run(jpeg: ByteArray, rotation: Int, cityId: String, deadlineMs: Long,
+            isCurrent: () -> Boolean = { true }): Answer {
         // Missing id is not another city. Cupertino's file must not answer for it.
         val city = rules.cities[cityId]
             ?: return Answer(Proto.KIND_UNSURE, Proto.TEXT_UNSURE, "No rules for this city", cityId = cityId)
@@ -93,7 +94,7 @@ class Pipeline(private val context: Context, private val rules: Rules, private v
         // One response carries the item and its visible evidence. The first token
         // belongs to the bare id, so probability remains meaningful. No second wait.
         val reply = try {
-            qwen.ask(image, rules.inspectionPrompt, HEDGE_AT_MS, DEADLINE_MS,
+            qwen.ask(image, rules.inspectionPrompt, HEDGE_AT_MS, deadlineMs,
                 maxTokens = 160, isCurrent = isCurrent)
         } catch (e: IOException) {
             val noAnswer = e as? QwenClient.NoAnswer
@@ -166,7 +167,9 @@ class Pipeline(private val context: Context, private val rules: Rules, private v
          * Give up and show "No connection". The glasses give up 8 s after sending, so this leaves
          * room for the trip back; a right answer at 6 s beats "No connection" at 5.5 s.
          */
-        const val DEADLINE_MS = 7000L
+        const val GLASSES_DEADLINE_MS = 7000L
+        /** Phone photos have no 8 s lens timeout; give in-flight responses longer to finish. */
+        const val PHONE_DEADLINE_MS = 12000L
         const val P_MIN = 0.5
         const val P_ALT = 0.25
 
