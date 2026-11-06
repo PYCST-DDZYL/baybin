@@ -13,6 +13,7 @@ import xml.etree.ElementTree as ET
 
 from adbutil import ROOT, phone
 from acceptlib import code_hash
+from review_cleanup import remove_review
 
 
 def main():
@@ -24,7 +25,7 @@ def main():
     if not re.fullmatch(r"com\.baybin\.phone\.review[a-z0-9]*", package):
         parser.error("Only a disposable review APK is allowed")
     p = phone()
-    if p.shell("pm path " + package).strip():
+    if p.shell("pm path " + package, check=True).strip():
         parser.error("Review package already installed; refusing to replace existing data")
     report = {"checkout_hash": code_hash(), "apk_sha256": hashlib.sha256(args.apk.read_bytes()).hexdigest(),
               "package": package, "checks": [], "mode": "no-key touch UI; no photo accuracy or camera capture"}
@@ -184,12 +185,12 @@ def main():
                 report["evidence_error"] = str(evidence_error)
         raise
     finally:
-        if installed:
-            p.run("uninstall", package, check=True)
-            report["removed"] = not bool(p.shell("pm path " + package).strip())
+        cleanup_error = remove_review(p, package, report) if installed else None
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(json.dumps({"pass": report.get("pass"), "checks": len(report["checks"]), "removed": report.get("removed")}))
+        if cleanup_error and "error" not in report:
+            raise RuntimeError(cleanup_error)
 
 
 if __name__ == "__main__":
