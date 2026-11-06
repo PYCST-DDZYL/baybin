@@ -60,7 +60,7 @@ def main():
     if not key or len(key) < 20:
         parser.error("No configured local test key")
     p = phone()
-    if p.shell("pm path " + package).strip():
+    if p.shell("pm path " + package, check=True).strip():
         parser.error("Review package exists; refusing to overwrite existing data")
     rows = []
     report = {"when": datetime.now(timezone.utc).isoformat(), "code_hash": code_hash(),
@@ -87,8 +87,8 @@ def main():
             raise RuntimeError("Private review-package write failed")
 
     try:
-        installed = True
         p.run("install", "-t", str(args.apk.resolve()), check=True, timeout=120)
+        installed = True
         stream(key.encode(), "mkdir -p files && cat > files/qwen.key")
         key = None
         props.clear()
