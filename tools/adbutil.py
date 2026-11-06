@@ -29,7 +29,12 @@ except Exception:
 
 def devices():
     """[(serial, model)] of attached, authorised devices."""
-    out = subprocess.run([ADB, "devices", "-l"], capture_output=True, text=True).stdout
+    result = subprocess.run([ADB, "devices", "-l"], capture_output=True, text=True,
+                            encoding="utf-8", errors="replace")
+    if result.returncode:
+        detail = (result.stderr or result.stdout).strip()
+        raise RuntimeError("adb devices failed: " + (detail or f"exit {result.returncode}"))
+    out = result.stdout
     found = []
     for line in out.splitlines()[1:]:
         parts = line.split()
