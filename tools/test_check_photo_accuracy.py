@@ -10,7 +10,7 @@ import check_photo_accuracy
 
 class ReviewInstallSafetyTest(unittest.TestCase):
     def test_install_failure_does_not_uninstall_review_package(self):
-        with TemporaryDirectory(dir=Path(check_photo_accuracy.ROOT) / "tools/out") as folder:
+        with TemporaryDirectory(dir=Path(check_photo_accuracy.ROOT)) as folder:
             root = Path(folder)
             apk = root / "review.apk"
             apk.write_bytes(b"test apk")
