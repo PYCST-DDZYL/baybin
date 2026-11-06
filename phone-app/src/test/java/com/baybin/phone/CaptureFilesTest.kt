@@ -28,10 +28,15 @@ class CaptureFilesTest {
     @Test fun staleCapturesArePrunedWithoutTouchingOtherCacheFilesOrCurrentShot() {
         val stale = CaptureFiles.create(temp.root)
         stale.setLastModified(System.currentTimeMillis() - 48 * 60 * 60 * 1000L)
+        val adjacent = File(temp.root, "capture/photo_notes.txt").apply {
+            writeText("keep")
+            setLastModified(System.currentTimeMillis() - 48 * 60 * 60 * 1000L)
+        }
         val current = CaptureFiles.create(temp.root)
         val unrelated = File(temp.root, "other-cache").apply { writeText("keep") }
         assertFalse(stale.exists())
         assertTrue(current.exists())
+        assertTrue(adjacent.exists())
         assertTrue(unrelated.exists())
     }
 }
