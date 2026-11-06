@@ -17,6 +17,8 @@ from review_cleanup import remove_review
 
 
 def main():
+    if not __debug__:
+        raise RuntimeError("Flow checks require Python assertions; do not run with -O")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--apk", required=True, type=Path)
     parser.add_argument("--output", type=Path, default=Path(ROOT) / "tools/out/local_flows.json")

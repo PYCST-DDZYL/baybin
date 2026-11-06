@@ -17,6 +17,8 @@ from review_cleanup import remove_review
 
 
 def main():
+    if not __debug__:
+        raise RuntimeError("UI checks require Python assertions; do not run with -O")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--apk", required=True, type=Path)
     args = parser.parse_args()
