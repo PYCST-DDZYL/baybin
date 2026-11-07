@@ -69,6 +69,9 @@ class Pipeline(private val context: Context, private val rules: Rules, private v
         // Missing id is not another city. Cupertino's file must not answer for it.
         val city = rules.cities[cityId]
             ?: return Answer(Proto.KIND_UNSURE, Proto.TEXT_UNSURE, "No rules for this city", cityId = cityId)
+        if (qwen == null) {
+            return Answer(Proto.KIND_INFO, "No API key", "Type your own key in the phone app.", cityId = city.id)
+        }
         if (!Net.online(context)) {
             return Answer(Proto.KIND_NO_CONNECTION, Proto.TEXT_NO_CONNECTION, "Phone is offline", cityId = city.id)
         }
@@ -81,10 +84,6 @@ class Pipeline(private val context: Context, private val rules: Rules, private v
         val image = Upright.prepare(upright, 0, MODEL_SIDE, quality = 80)
         val prepMs = SystemClock.elapsedRealtime() - t0
 
-        if (qwen == null) {
-            return Answer(Proto.KIND_INFO, "No API key", "Type your own key in the phone app.",
-                prepMs = prepMs, cityId = city.id)
-        }
         val fingerprint = MessageDigest.getInstance("SHA-256").digest(upright).joinToString("") { "%02x".format(it) }
         recent[fingerprint]?.takeIf { SystemClock.elapsedRealtime() - it.at < 180_000L }?.let { cached ->
             EventLog.add("identical photo: reusing checked evidence from memory")
