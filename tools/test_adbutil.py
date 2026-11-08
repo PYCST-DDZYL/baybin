@@ -1,6 +1,8 @@
 """ADB discovery must surface tool failures before a device test changes state."""
 import subprocess
+import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 import adbutil
@@ -30,6 +32,25 @@ class DeviceDiscoveryTest(unittest.TestCase):
         with patch.object(adbutil.subprocess, "run", return_value=listed):
             with self.assertRaisesRegex(RuntimeError, "Multiple phones connected"):
                 adbutil.phone_serial()
+
+    def test_failed_screenshot_preserves_existing_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "screen.png"
+            target.write_bytes(b"previous screenshot")
+            failed = subprocess.CompletedProcess([], 1, stdout=b"", stderr=b"device offline")
+            with patch.object(adbutil.subprocess, "run", return_value=failed):
+                with self.assertRaisesRegex(RuntimeError, "ADB screenshot failed"):
+                    adbutil.Dev("phone1", "phone").screenshot(target)
+            self.assertEqual(b"previous screenshot", target.read_bytes())
+
+    def test_non_png_screenshot_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "screen.png"
+            invalid = subprocess.CompletedProcess([], 0, stdout=b"adb error", stderr=b"")
+            with patch.object(adbutil.subprocess, "run", return_value=invalid):
+                with self.assertRaisesRegex(RuntimeError, "invalid PNG"):
+                    adbutil.Dev("phone1", "phone").screenshot(target)
+            self.assertFalse(target.exists())
 
 
 if __name__ == "__main__":

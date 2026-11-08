@@ -107,7 +107,10 @@ class Dev:
 
     def screenshot(self, local_path):
         """PNG straight to the PC (exec-out); nothing is saved on the device."""
-        png = subprocess.run([ADB, "-s", self.serial, "exec-out", "screencap", "-p"], capture_output=True).stdout
+        result = subprocess.run([ADB, "-s", self.serial, "exec-out", "screencap", "-p"], capture_output=True)
+        png = result.stdout
+        if result.returncode or not png.startswith(b"\x89PNG\r\n\x1a\n"):
+            raise RuntimeError("ADB screenshot failed or returned an invalid PNG")
         with open(local_path, "wb") as f:
             f.write(png)
         return local_path
