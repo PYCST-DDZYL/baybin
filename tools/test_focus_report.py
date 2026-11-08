@@ -37,6 +37,13 @@ class FocusMetricsTest(unittest.TestCase):
         self.assertEqual(1, result["result_timeouts"])
         self.assertEqual(1, result["connection_errors"])
 
+    def test_missing_or_invalid_legacy_elapsed_time_does_not_crash_or_claim_timeout(self):
+        rows = [{"kind": 2, "model_ms": None}, {"kind": 2, "model_ms": "unknown"},
+                {"kind": 2, "failure_stage": "cloud_deadline", "model_ms": None}]
+        result = metrics(rows)
+        self.assertEqual(1, result["cloud_timeouts"])
+        self.assertEqual(2, result["connection_errors"])
+
     def test_explicit_cloud_failure_overrides_elapsed_time_without_changing_old_reports(self):
         deadline = cloud_failure_stage("2", "Cloud didn't answer in time. Tap to retry.")
         connection = cloud_failure_stage("2", "Couldn't reach the cloud. Check the connection and retry.")
