@@ -52,10 +52,10 @@ def glasses_serial():
 
 
 def phone_serial():
-    for serial, model in devices():
-        if model != GLASSES_MODEL:
-            return serial
-    return None
+    phones = [serial for serial, model in devices() if model != GLASSES_MODEL]
+    if len(phones) > 1:
+        raise RuntimeError("Multiple phones connected; disconnect extras before running device tools")
+    return phones[0] if phones else None
 
 
 class Dev:

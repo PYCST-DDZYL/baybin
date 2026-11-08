@@ -22,6 +22,15 @@ class DeviceDiscoveryTest(unittest.TestCase):
             self.assertEqual("phone1", adbutil.phone_serial())
             self.assertEqual("glass1", adbutil.glasses_serial())
 
+    def test_multiple_phones_are_not_selected_arbitrarily(self):
+        listed = subprocess.CompletedProcess([], 0, stdout=(
+            "List of devices attached\n"
+            "phone1 device model:Pixel_8\n"
+            "phone2 device model:SM-S928U\n"), stderr="")
+        with patch.object(adbutil.subprocess, "run", return_value=listed):
+            with self.assertRaisesRegex(RuntimeError, "Multiple phones connected"):
+                adbutil.phone_serial()
+
 
 if __name__ == "__main__":
     unittest.main()
