@@ -56,6 +56,20 @@ def scan_without_link(p, g):
         p.shell("am broadcast -a com.baybin.phone.RECONNECT -p %s" % PHONE_PKG, check=True)
 
 
+def passed(steps, crashes, same_processes):
+    def no_connection(step):
+        result = steps[step]["scan"]
+        return bool(result) and result["outcome"] in ("result_2", "no_link", "send_failed") and result["total"] <= 8000
+
+    def answered(step):
+        result = steps[step]["scan"]
+        return bool(result) and result["outcome"] in ("result_0", "result_1")
+
+    return (steps["A_offline"]["phone_saw_offline"] and steps["A_recovered"]["online_again"] and
+            steps["B_recovered"]["relinked"] and no_connection("A_offline") and no_connection("B_no_link") and
+            answered("A_recovered") and answered("B_recovered") and not crashes and same_processes)
+
+
 def main():
     g, p = both()
     if not ensure_link(g, p):
@@ -90,17 +104,7 @@ def main():
 
     crashes = crash_lines(g, GLASS_PKG) + crash_lines(p, PHONE_PKG)
     same = pids == (glass_pid(g), phone_pid(p))
-
-    def nc(step):  # "No connection" shown, quickly
-        s = steps[step]["scan"]
-        return bool(s) and s["outcome"] in ("result_2", "no_link", "send_failed") and s["total"] <= 8000
-
-    def answered(step):
-        s = steps[step]["scan"]
-        return bool(s) and s["outcome"] in ("result_0", "result_1")
-
-    ok = nc("A_offline") and nc("B_no_link") and answered("A_recovered") and answered("B_recovered") \
-        and not crashes and same
+    ok = passed(steps, crashes, same)
     save("6_offline", {"pass": ok, "steps": steps, "crash_lines": crashes, "restarted": not same})
     fmt = lambda s: "%s in %s ms" % (s["outcome"], s["total"]) if s else "no BB_SCAN line"
     verdict(ok, "断网显示 No connection，不崩溃不卡死", [

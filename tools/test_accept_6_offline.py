@@ -1,11 +1,27 @@
 """Offline acceptance must preserve connectivity even when a check fails."""
 import unittest
+from copy import deepcopy
 from unittest.mock import Mock, patch
 
 import accept_6_offline
 
 
 class OfflineRecoveryTest(unittest.TestCase):
+    def test_pass_requires_observed_offline_and_both_recoveries(self):
+        steps = {
+            "A_offline": {"phone_saw_offline": True, "scan": {"outcome": "result_2", "total": 2000}},
+            "A_recovered": {"online_again": True, "scan": {"outcome": "result_0"}},
+            "B_no_link": {"scan": {"outcome": "no_link", "total": 500}},
+            "B_recovered": {"relinked": True, "scan": {"outcome": "result_0"}},
+        }
+        self.assertTrue(accept_6_offline.passed(steps, [], True))
+        for step, flag in (("A_offline", "phone_saw_offline"), ("A_recovered", "online_again"),
+                           ("B_recovered", "relinked")):
+            incomplete = deepcopy(steps)
+            incomplete[step][flag] = False
+            with self.subTest(step=step):
+                self.assertFalse(accept_6_offline.passed(incomplete, [], True))
+
     def test_unknown_initial_radio_state_stops_before_changes(self):
         for value in ("", "null", "permission denied"):
             with self.subTest(value=value), self.assertRaisesRegex(RuntimeError, "refusing to change connectivity"):
