@@ -33,6 +33,23 @@ class DeviceDiscoveryTest(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "Multiple phones connected"):
                 adbutil.phone_serial()
 
+    def test_multiple_glasses_are_not_selected_arbitrarily(self):
+        listed = subprocess.CompletedProcess([], 0, stdout=(
+            "List of devices attached\n"
+            "glass1 device model:RG_glasses\n"
+            "glass2 device model:RG_glasses\n"), stderr="")
+        with patch.object(adbutil.subprocess, "run", return_value=listed):
+            with self.assertRaisesRegex(RuntimeError, "Multiple glasses connected"):
+                adbutil.glasses_serial()
+
+    def test_unknown_model_is_not_assumed_to_be_a_phone(self):
+        listed = subprocess.CompletedProcess([], 0, stdout=(
+            "List of devices attached\n"
+            "unidentified device usb:1-1\n"), stderr="")
+        with patch.object(adbutil.subprocess, "run", return_value=listed):
+            with self.assertRaisesRegex(RuntimeError, "did not report every device model"):
+                adbutil.phone_serial()
+
     def test_failed_screenshot_preserves_existing_file(self):
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp) / "screen.png"

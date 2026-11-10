@@ -45,14 +45,17 @@ def devices():
 
 
 def glasses_serial():
-    for serial, model in devices():
-        if model == GLASSES_MODEL:
-            return serial
-    return None
+    matches = [serial for serial, model in devices() if model == GLASSES_MODEL]
+    if len(matches) > 1:
+        raise RuntimeError("Multiple glasses connected; disconnect extras before running device tools")
+    return matches[0] if matches else None
 
 
 def phone_serial():
-    phones = [serial for serial, model in devices() if model != GLASSES_MODEL]
+    connected = devices()
+    if any(model == "?" for _, model in connected):
+        raise RuntimeError("ADB did not report every device model; cannot safely identify the phone")
+    phones = [serial for serial, model in connected if model != GLASSES_MODEL]
     if len(phones) > 1:
         raise RuntimeError("Multiple phones connected; disconnect extras before running device tools")
     return phones[0] if phones else None
