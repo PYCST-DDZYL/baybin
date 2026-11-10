@@ -69,6 +69,12 @@ class DeviceDiscoveryTest(unittest.TestCase):
                     adbutil.Dev("phone1", "phone").screenshot(target)
             self.assertFalse(target.exists())
 
+    def test_log_clear_failure_cannot_leave_stale_test_evidence(self):
+        failed = subprocess.CompletedProcess([], 1, stdout="", stderr="permission denied")
+        with patch.object(adbutil.subprocess, "run", return_value=failed):
+            with self.assertRaisesRegex(RuntimeError, "adb logcat -c failed"):
+                adbutil.Dev("phone1", "phone").logcat_clear()
+
 
 if __name__ == "__main__":
     unittest.main()

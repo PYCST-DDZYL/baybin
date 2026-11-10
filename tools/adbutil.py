@@ -84,7 +84,7 @@ class Dev:
         return int(out.split()[0]) if out else None
 
     def logcat_clear(self):
-        self.run("logcat", "-c")
+        self.run("logcat", "-c", check=True)
 
     def logcat(self, *filters):
         """Dump the current log buffer (no blocking)."""
