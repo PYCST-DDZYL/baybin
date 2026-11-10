@@ -93,8 +93,8 @@ class Dev:
     def wait_log(self, pattern, timeout=15.0, filters=("BayBin:I", "*:S")):
         """Poll logcat until a line matches; returns the regex match or None."""
         rx = re.compile(pattern)
-        end = time.time() + timeout
-        while time.time() < end:
+        end = time.monotonic() + timeout
+        while time.monotonic() < end:
             for line in self.logcat(*filters).splitlines():
                 m = rx.search(line)
                 if m:

@@ -75,6 +75,15 @@ class DeviceDiscoveryTest(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "adb logcat -c failed"):
                 adbutil.Dev("phone1", "phone").logcat_clear()
 
+    def test_log_wait_uses_elapsed_time_even_if_wall_clock_changes(self):
+        device = adbutil.Dev("phone1", "phone")
+        with patch.object(device, "logcat", return_value="") as logcat, \
+             patch.object(adbutil.time, "monotonic", side_effect=[10, 10.1, 11.1]), \
+             patch.object(adbutil.time, "time", side_effect=AssertionError("wall clock used")), \
+             patch.object(adbutil.time, "sleep"):
+            self.assertIsNone(device.wait_log("BB_SCAN", timeout=1))
+        logcat.assert_called_once()
+
 
 if __name__ == "__main__":
     unittest.main()
