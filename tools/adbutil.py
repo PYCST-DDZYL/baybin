@@ -112,7 +112,8 @@ class Dev:
         """PNG straight to the PC (exec-out); nothing is saved on the device."""
         result = subprocess.run([ADB, "-s", self.serial, "exec-out", "screencap", "-p"], capture_output=True)
         png = result.stdout
-        if result.returncode or not png.startswith(b"\x89PNG\r\n\x1a\n"):
+        if (result.returncode or not png.startswith(b"\x89PNG\r\n\x1a\n") or
+                not png.endswith(b"\x00\x00\x00\x00IEND\xaeB`\x82")):
             raise RuntimeError("ADB screenshot failed or returned an invalid PNG")
         with open(local_path, "wb") as f:
             f.write(png)

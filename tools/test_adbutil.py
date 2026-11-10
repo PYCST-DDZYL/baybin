@@ -69,6 +69,16 @@ class DeviceDiscoveryTest(unittest.TestCase):
                     adbutil.Dev("phone1", "phone").screenshot(target)
             self.assertFalse(target.exists())
 
+    def test_truncated_png_screenshot_does_not_replace_previous_image(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "screen.png"
+            target.write_bytes(b"previous screenshot")
+            truncated = subprocess.CompletedProcess([], 0, stdout=b"\x89PNG\r\n\x1a\npartial", stderr=b"")
+            with patch.object(adbutil.subprocess, "run", return_value=truncated):
+                with self.assertRaisesRegex(RuntimeError, "invalid PNG"):
+                    adbutil.Dev("phone1", "phone").screenshot(target)
+            self.assertEqual(b"previous screenshot", target.read_bytes())
+
     def test_log_clear_failure_cannot_leave_stale_test_evidence(self):
         failed = subprocess.CompletedProcess([], 1, stdout="", stderr="permission denied")
         with patch.object(adbutil.subprocess, "run", return_value=failed):
