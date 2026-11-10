@@ -20,13 +20,40 @@ from adbutil import GLASS_PKG, PHONE_PKG
 
 
 def wait_online(p, want, timeout):
-    end = time.time() + timeout
-    while time.time() < end:
+    end = time.monotonic() + timeout
+    while time.monotonic() < end:
         st = phone_status(p)
         if st and st["online"] == ("true" if want else "false"):
             return True
         time.sleep(2)
     return False
+
+
+def radio_enabled(value, name):
+    state = value.strip()
+    if state not in ("0", "1"):
+        raise RuntimeError("Cannot read original %s state; refusing to change connectivity" % name)
+    return state == "1"
+
+
+def restore_radios(p, wifi, data):
+    try:
+        if wifi:
+            p.shell("svc wifi enable", check=True)
+    finally:
+        if data:
+            p.shell("svc data enable", check=True)
+
+
+def scan_without_link(p, g):
+    try:
+        p.shell("am broadcast -a com.baybin.phone.DISCONNECT -p %s --ez stay true" % PHONE_PKG, check=True)
+        time.sleep(3)
+        result = scan(g, key=True)
+        glasses_screenshot(g, "6_nolink_lens.png")
+        return result
+    finally:
+        p.shell("am broadcast -a com.baybin.phone.RECONNECT -p %s" % PHONE_PKG, check=True)
 
 
 def main():
@@ -39,31 +66,24 @@ def main():
     steps = {}
 
     # A. phone offline
-    wifi = p.shell("settings get global wifi_on").strip()
-    data = p.shell("settings get global mobile_data").strip()
+    wifi = radio_enabled(p.shell("settings get global wifi_on", check=True), "Wi-Fi")
+    data = radio_enabled(p.shell("settings get global mobile_data", check=True), "mobile data")
     try:
-        p.shell("svc wifi disable")
-        p.shell("svc data disable")
+        p.shell("svc wifi disable", check=True)
+        p.shell("svc data disable", check=True)
         offline = wait_online(p, False, 30)
         r = scan(g, key=True)
         glasses_screenshot(g, "6_offline_lens.png")
         steps["A_offline"] = {"phone_saw_offline": offline, "scan": r}
     finally:
-        if wifi != "0":
-            p.shell("svc wifi enable")
-        if data not in ("0", "null", ""):
-            p.shell("svc data enable")
+        restore_radios(p, wifi, data)
     back = wait_online(p, True, 90)
     time.sleep(3)
     steps["A_recovered"] = {"online_again": back, "scan": scan(g, key=True)}
 
     # B. Bluetooth link to the phone dropped
-    p.shell("am broadcast -a com.baybin.phone.DISCONNECT -p %s --ez stay true" % PHONE_PKG)
-    time.sleep(3)
-    r = scan(g, key=True)
-    glasses_screenshot(g, "6_nolink_lens.png")
+    r = scan_without_link(p, g)
     steps["B_no_link"] = {"scan": r}
-    p.shell("am broadcast -a com.baybin.phone.RECONNECT -p %s" % PHONE_PKG)
     relinked = ensure_link(g, p, timeout=40)
     time.sleep(2)
     steps["B_recovered"] = {"relinked": relinked, "scan": scan(g, key=True)}
