@@ -19,6 +19,13 @@ class PhoneTestSafety(unittest.TestCase):
             acceptlib.phone_status(device)
         self.assertTrue(device.shell.call_args.kwargs["check"])
 
+    def test_city_change_fails_when_broadcast_is_rejected(self):
+        device = Mock()
+        device.shell.side_effect = RuntimeError("broadcast failed")
+        with self.assertRaisesRegex(RuntimeError, "broadcast failed"):
+            acceptlib.set_city(device, "san_jose")
+        self.assertTrue(device.shell.call_args.kwargs["check"])
+
     def test_photo_manifests_cannot_select_files_outside_the_test_set(self):
         with TemporaryDirectory() as folder:
             root = Path(folder)

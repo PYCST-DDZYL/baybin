@@ -153,7 +153,7 @@ def ensure_link(g, p, timeout=40):
 
 
 def set_city(p, city):
-    p.shell("am broadcast -a com.baybin.phone.CITY -p %s --es id %s" % (PHONE_PKG, city))
+    p.shell("am broadcast -a com.baybin.phone.CITY -p %s --es id %s" % (PHONE_PKG, city), check=True)
 
 
 def scan(g, key=True, timeout=20):
