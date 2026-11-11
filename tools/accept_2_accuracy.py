@@ -95,12 +95,12 @@ def main(argv):
     if not sets:
         sys.exit("no test set with ≥50 photos")
 
-    p = phone()
-    p.shell("am start -n %s/.MainActivity" % PHONE_PKG)
     rules = load_rules()
     cities_to_test = list(rules) if args.city == "all" else ["cupertino", "san_jose"] if args.city == "both" else [args.city]
     if any(c not in rules for c in cities_to_test):
         parser.error("Unsupported city")
+    p = phone()
+    p.shell("am start -n %s/.MainActivity" % PHONE_PKG, check=True)
     report, lines, ok = {}, [], True
     save("2_accuracy", {"pass": False, "error": "Accuracy run not completed", "sets": {}})
     with preserve_phone(p) as before:

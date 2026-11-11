@@ -100,6 +100,18 @@ class PhoneTestSafety(unittest.TestCase):
                 with self.subTest(item=item), self.assertRaisesRegex(ValueError, "Invalid test item ID"):
                     accept_2_accuracy.load_set(folder)
 
+    def test_unsupported_accuracy_city_rejected_before_phone_launch(self):
+        with TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / "photo.jpg").write_bytes(b"photo")
+            (root / "manifest.json").write_text(json.dumps({"photos": [
+                {"file": "photo.jpg", "item": "cup"} for _ in range(50)]}), encoding="utf-8")
+            with patch.object(accept_2_accuracy, "phone") as phone, \
+                 patch.object(accept_2_accuracy, "load_rules", return_value={"san_jose": {}}), \
+                 self.assertRaises(SystemExit):
+                accept_2_accuracy.main(["--set", folder, "--city", "invalid"])
+            phone.assert_not_called()
+
     def test_report_preserves_brief_homepage_and_updates_detailed_results(self):
         with TemporaryDirectory() as folder:
             root = Path(folder)
