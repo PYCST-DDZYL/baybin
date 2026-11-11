@@ -21,6 +21,7 @@ Material/contents evidence is not annotated in these old sets: abstentions count
 import json
 import argparse
 import os
+import re
 import sys
 
 from acceptlib import (clear_private, classify_private, expected_line1, load_rules, preserve_phone,
@@ -39,9 +40,14 @@ def load_set(path):
     with open(os.path.join(path, "manifest.json"), encoding="utf-8") as f:
         man = json.load(f)
     # glasses_set / realworld: {"photos": [{"file":..,"item":..}]};  commons_probe: {item: {"file":..}}
+    def item_id(value):
+        if not isinstance(value, str) or not re.fullmatch(r"[A-Za-z0-9_]+", value):
+            raise ValueError("Invalid test item ID in manifest")
+        return value
+
     if "photos" in man:
-        return [(test_photo_path(path, m["file"]), m["item"]) for m in man["photos"]]
-    return [(test_photo_path(path, m["file"]), m.get("expect", item)) for item, m in sorted(man.items())]
+        return [(test_photo_path(path, m["file"]), item_id(m["item"])) for m in man["photos"]]
+    return [(test_photo_path(path, m["file"]), item_id(m.get("expect", item))) for item, m in sorted(man.items())]
 
 
 def run_set(p, rules, path, cities_to_test):
