@@ -221,7 +221,7 @@ def clear_private(p):
 def classify_private(p, name, timeout=20):
     """Runs the phone pipeline on files/eval/<name> (gallery test mode hook). Returns the parsed BB_GALLERY line."""
     p.logcat_clear()
-    p.shell("am broadcast -a com.baybin.phone.CLASSIFY -p %s --es file %s" % (PHONE_PKG, name))
+    p.shell("am broadcast -a com.baybin.phone.CLASSIFY -p %s --es file %s" % (PHONE_PKG, name), check=True)
     m = p.wait_log(r"BB_GALLERY file=%s city=(\S+) kind=(\d+) item=(\S+) bin=(\S+) p=(\S+) calls=(\d+) prep=(-?\d+) "
                    r"model=(-?\d+) total=(\d+) \| (.*) \| (.*)$" % re.escape(name), timeout=timeout, filters=PHONE_LOG)
     if not m:

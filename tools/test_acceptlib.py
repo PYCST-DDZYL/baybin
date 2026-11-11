@@ -35,6 +35,14 @@ class PhoneTestSafety(unittest.TestCase):
             self.assertTrue(device.shell.call_args.kwargs["check"])
             device.wait_log.assert_not_called()
 
+    def test_classification_request_failure_is_reported(self):
+        device = Mock()
+        device.shell.side_effect = RuntimeError("classification broadcast failed")
+        with self.assertRaisesRegex(RuntimeError, "classification broadcast failed"):
+            acceptlib.classify_private(device, "photo.jpg")
+        self.assertTrue(device.shell.call_args.kwargs["check"])
+        device.wait_log.assert_not_called()
+
     def test_photo_manifests_cannot_select_files_outside_the_test_set(self):
         with TemporaryDirectory() as folder:
             root = Path(folder)
