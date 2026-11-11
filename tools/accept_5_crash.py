@@ -23,12 +23,17 @@ def main(argv):
     camera = sum(r["outcome"] == "camera_error" for r in rows)
     restarted = [k for k in ("glasses", "phone") if run["pids_before"][k] != run["pids_after"][k]]
     crashes = len(run["crash_glasses"]) + len(run["crash_phone"])
+    complete = len(rows) == n and all(run[point].get(device) for point in ("pids_before", "pids_after")
+                                          for device in ("glasses", "phone"))
     outcomes = {}
     for r in rows:
         outcomes[r["outcome"]] = outcomes.get(r["outcome"], 0) + 1
-    ok = missing == 0 and camera == 0 and not restarted and crashes == 0
-    save("5_crash", {"pass": ok, "n": n, "crash_lines": crashes, "restarted": restarted, "unfinished": missing,
-                     "camera_errors": camera, "outcomes": outcomes, "run": run["when"]})
+    ok = complete and missing == 0 and camera == 0 and not restarted and crashes == 0
+    data = {"pass": ok, "n": n, "crash_lines": crashes, "restarted": restarted, "unfinished": missing,
+            "camera_errors": camera, "outcomes": outcomes, "run": run["when"]}
+    if not complete:
+        data["error"] = "Incomplete scan count or missing process IDs"
+    save("5_crash", data)
     verdict(ok, "%d 次扫描 0 崩溃" % n, [
         "crash/ANR log lines: %d   restarted: %s   unfinished scans: %d   camera errors: %d" % (
             crashes, ", ".join(restarted) or "none", missing, camera),
