@@ -22,6 +22,11 @@ class OfflineRecoveryTest(unittest.TestCase):
             with self.subTest(step=step):
                 self.assertFalse(accept_6_offline.passed(incomplete, [], True))
 
+    def test_missing_process_identity_cannot_prove_no_restart(self):
+        self.assertFalse(accept_6_offline.processes_unchanged((None, None), (None, None)))
+        self.assertFalse(accept_6_offline.processes_unchanged((123, 456), (123, None)))
+        self.assertTrue(accept_6_offline.processes_unchanged((123, 456), (123, 456)))
+
     def test_unknown_initial_radio_state_stops_before_changes(self):
         for value in ("", "null", "permission denied"):
             with self.subTest(value=value), self.assertRaisesRegex(RuntimeError, "refusing to change connectivity"):

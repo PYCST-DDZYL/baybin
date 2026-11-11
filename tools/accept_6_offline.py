@@ -70,6 +70,10 @@ def passed(steps, crashes, same_processes):
             answered("A_recovered") and answered("B_recovered") and not crashes and same_processes)
 
 
+def processes_unchanged(before, after):
+    return all(before) and all(after) and before == after
+
+
 def main():
     g, p = both()
     if not ensure_link(g, p):
@@ -103,7 +107,7 @@ def main():
     steps["B_recovered"] = {"relinked": relinked, "scan": scan(g, key=True)}
 
     crashes = crash_lines(g, GLASS_PKG) + crash_lines(p, PHONE_PKG)
-    same = pids == (glass_pid(g), phone_pid(p))
+    same = processes_unchanged(pids, (glass_pid(g), phone_pid(p)))
     ok = passed(steps, crashes, same)
     save("6_offline", {"pass": ok, "steps": steps, "crash_lines": crashes, "restarted": not same})
     fmt = lambda s: "%s in %s ms" % (s["outcome"], s["total"]) if s else "no BB_SCAN line"
