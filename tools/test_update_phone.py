@@ -1,8 +1,16 @@
 import unittest
-from update_phone import package_info
+from unittest.mock import Mock
+from update_phone import package_info, startup_log
 
 
 class UpdateMetadataTest(unittest.TestCase):
+    def test_startup_log_read_requires_adb_success(self):
+        device = Mock()
+        device.run.side_effect = RuntimeError("logcat failed")
+        with self.assertRaisesRegex(RuntimeError, "logcat failed"):
+            startup_log(device, 123)
+        self.assertTrue(device.run.call_args.kwargs["check"])
+
     def test_android_user_id_and_new_app_id_preserve_the_same_identity(self):
         base = "  versionName=0.6.1\n  firstInstallTime=2026-10-02 04:05:15\n"
         self.assertEqual(package_info(base + "  userId=10400\n"), package_info(base + "  appId=10400\n"))

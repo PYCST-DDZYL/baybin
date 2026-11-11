@@ -22,6 +22,11 @@ def package_info(text):
     return {"version": version.group(1), "identity": identity.group(1), "first_install": first.group(1).strip()}
 
 
+def startup_log(device, pid):
+    return device.run("logcat", "-d", "--pid=" + str(pid), "-v", "brief",
+                      "BayBinPhone:I", "AndroidRuntime:E", "*:S", check=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--apk", type=Path, default=Path(ROOT) / "phone-app/build/outputs/apk/release/phone-app-release.apk")
@@ -62,7 +67,7 @@ def main():
         pid = p.pid(package)
         report["process_started"] = bool(pid)
         if pid:
-            log = p.run("logcat", "-d", "--pid=" + str(pid), "-v", "brief", "BayBinPhone:I", "AndroidRuntime:E", "*:S")
+            log = startup_log(p, pid)
             report["saved_key_seen_in_startup_log"] = "Qwen: key on this phone" in log
             report["startup_fatal_exception_seen"] = "FATAL EXCEPTION" in log
             if report["startup_fatal_exception_seen"]:
