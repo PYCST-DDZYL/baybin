@@ -190,9 +190,9 @@ def phone_pid(p):
 
 
 def crash_lines(dev, pkg):
-    out = dev.run("logcat", "-d", "-v", "time", "-b", "crash")
+    out = dev.run("logcat", "-d", "-v", "time", "-b", "crash", check=True)
     bad = [l for l in out.splitlines() if pkg in l or "FATAL EXCEPTION" in l]
-    main = dev.run("logcat", "-d", "-v", "time", "-b", "system")
+    main = dev.run("logcat", "-d", "-v", "time", "-b", "system", check=True)
     bad += [l for l in main.splitlines() if ("ANR in " + pkg) in l]
     return bad
 

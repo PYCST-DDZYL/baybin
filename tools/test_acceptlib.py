@@ -57,6 +57,13 @@ class PhoneTestSafety(unittest.TestCase):
             acceptlib.clear_private(phone)
         self.assertTrue(phone.shell.call_args.kwargs["check"])
 
+    def test_crash_checks_require_successful_log_reads(self):
+        device = Mock()
+        device.run.side_effect = RuntimeError("adb logcat failed")
+        with self.assertRaisesRegex(RuntimeError, "adb logcat failed"):
+            acceptlib.crash_lines(device, "com.baybin.phone")
+        self.assertTrue(device.run.call_args.kwargs["check"])
+
     def test_preferences_are_restored_even_when_a_test_raises(self):
         before = {"city": "berkeley", "lang": "en", "auto": "false", "link": "DISCONNECTED"}
         phone = Mock()
