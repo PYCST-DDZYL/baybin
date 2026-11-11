@@ -12,6 +12,13 @@ import accept_2_accuracy
 
 
 class PhoneTestSafety(unittest.TestCase):
+    def test_phone_status_fails_when_status_request_is_rejected(self):
+        device = Mock()
+        device.shell.side_effect = RuntimeError("broadcast failed")
+        with self.assertRaisesRegex(RuntimeError, "broadcast failed"):
+            acceptlib.phone_status(device)
+        self.assertTrue(device.shell.call_args.kwargs["check"])
+
     def test_photo_manifests_cannot_select_files_outside_the_test_set(self):
         with TemporaryDirectory() as folder:
             root = Path(folder)

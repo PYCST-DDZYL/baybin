@@ -109,7 +109,7 @@ def both():
 def phone_status(p):
     """Asks the phone app for BB_STATUS; returns dict or None."""
     p.logcat_clear()
-    p.shell("am broadcast -a com.baybin.phone.STATUS -p %s" % PHONE_PKG)
+    p.shell("am broadcast -a com.baybin.phone.STATUS -p %s" % PHONE_PKG, check=True)
     m = p.wait_log(STATUS_RX, timeout=8, filters=PHONE_LOG)
     if not m:
         return None
