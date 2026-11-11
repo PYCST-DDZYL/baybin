@@ -19,6 +19,8 @@ from acceptlib import both, ensure_link, phone_result, save, scan, stats, verdic
 
 
 def main(n):
+    if n <= 0:
+        raise ValueError("Latency check requires a positive scan count")
     g, p = both()
     if not ensure_link(g, p):
         sys.exit("phone app is not connected to the glasses app")
