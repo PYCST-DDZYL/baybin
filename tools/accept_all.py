@@ -8,6 +8,7 @@ Needs the glasses and the phone on adb (USB or wireless), both apps installed (d
 and the phone app connected to the glasses.
 """
 import os
+import argparse
 import subprocess
 import sys
 
@@ -108,7 +109,10 @@ def report():
 
 
 def main(argv):
-    if "--report" not in argv:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--report", action="store_true", help="Only rebuild the report from saved results")
+    args = parser.parse_args(argv)
+    if not args.report:
         for index, cmd in enumerate(RUNS + [["accept_8_readme.py"]], 1):
             print("\n=== %s" % " ".join(cmd))
             started = __import__("time").time()

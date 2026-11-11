@@ -213,6 +213,13 @@ class PhoneTestSafety(unittest.TestCase):
         for criterion in range(1, 9):
             self.assertEqual("Script failed", accept_all.detail(criterion, {"pass": False, "error": "Script failed"}))
 
+    def test_unknown_acceptance_flag_cannot_start_device_runs(self):
+        with patch.object(accept_all.subprocess, "call") as run, patch.object(accept_all, "report") as report:
+            with self.assertRaises(SystemExit):
+                accept_all.main(["--reprot"])
+            run.assert_not_called()
+            report.assert_not_called()
+
     def test_expected_failure_preserves_fresh_measurements(self):
         def result(name):
             return {"pass": name != "2_accuracy", "code_hash": "current", "sets": {"sample": {"n": 51}}}
