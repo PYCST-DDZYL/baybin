@@ -33,14 +33,14 @@ def main():
         manifest = json.load(f)
     sources = {item: test_photo_path(sample_dir, manifest[item]["file"]) for item in SAMPLE}
     p = phone()
-    p.shell("input keyevent KEYCODE_WAKEUP")
-    p.shell("am start -n %s/.MainActivity" % PHONE_PKG)
+    p.shell("input keyevent KEYCODE_WAKEUP", check=True)
+    p.shell("am start -n %s/.MainActivity" % PHONE_PKG, check=True)
     rules = load_rules()
     rows = []
     clear_private(p)
     with preserve_phone(p):
-        p.shell("am broadcast -a com.baybin.phone.DISCONNECT -p %s --ez stay true" % PHONE_PKG)
-        p.shell("am broadcast -a com.baybin.phone.LANG -p %s --es id en" % PHONE_PKG)
+        p.shell("am broadcast -a com.baybin.phone.DISCONNECT -p %s --ez stay true" % PHONE_PKG, check=True)
+        p.shell("am broadcast -a com.baybin.phone.LANG -p %s --es id en" % PHONE_PKG, check=True)
         time.sleep(2)
         try:
             set_city(p, "cupertino")
