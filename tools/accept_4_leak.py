@@ -24,14 +24,17 @@ def slope(ys):
 
 def main(argv):
     n = int(argv[0]) if argv and argv[0].isdigit() else 100
+    if n < 30:
+        raise ValueError("Leak check needs at least 30 scans for separate early and late windows")
     reuse = int(argv[argv.index("--reuse") + 1]) if "--reuse" in argv else 0
     run = long_run(n, reuse)
     pss = [r.get("pss_kb") for r in run["rows"]]
-    if len([x for x in pss if x]) < n * 0.9:
-        verdict(False, "100 次扫描无内存泄漏", ["too few PSS samples"])
-        return False
     early = [x for x in pss[10:20] if x]
     late = [x for x in pss[-10:] if x]
+    if len(pss) != n or len([x for x in pss if x]) < n * 0.9 or len(early) != 10 or len(late) != 10:
+        save("4_leak", {"pass": False, "error": "Insufficient early or late PSS samples", "n": n, "run": run["when"]})
+        verdict(False, "%d 次扫描无内存泄漏" % n, ["insufficient early or late PSS samples"])
+        return False
     growth = statistics.mean(late) - statistics.mean(early)
     k = slope([x for x in pss[10:] if x])
     ok = growth <= 5 * 1024 and k <= 50
