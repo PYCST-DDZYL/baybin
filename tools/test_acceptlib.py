@@ -149,6 +149,12 @@ class PhoneTestSafety(unittest.TestCase):
         self.assertFalse(acceptlib.reusable_run({**previous, "rows": [{}]}, 2, 10, "current", now + 30))
         self.assertFalse(acceptlib.reusable_run({**previous, "n": 1}, 2, 10, "current", now + 30))
 
+    def test_long_run_rejects_zero_scans_before_device_work(self):
+        with patch.object(acceptlib, "both") as both:
+            with self.assertRaisesRegex(ValueError, "positive scan count"):
+                acceptlib.long_run(0)
+            both.assert_not_called()
+
     def test_zero_timeout_city_review_returns_no_result(self):
         phone = Mock()
         self.assertEqual({}, acceptlib.review_all(phone, ["san_jose"], timeout=0))

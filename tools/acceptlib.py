@@ -316,6 +316,8 @@ def long_run(n=100, reuse_minutes=0):
 
     Saved as tools/out/accept/run_<n>.json. With reuse_minutes > 0 a saved run that recent
     is returned instead of scanning again (the three criteria are judged on one run)."""
+    if n <= 0:
+        raise ValueError("Long run requires a positive scan count")
     from adbutil import GLASS_PKG as G
     prev = load("run_%d" % n)
     if prev and reusable_run(prev, n, reuse_minutes, code_hash(), time.time()):
