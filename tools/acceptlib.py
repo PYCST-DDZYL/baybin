@@ -137,16 +137,16 @@ def preserve_phone(p):
 def ensure_link(g, p, timeout=40):
     """Phone app open and connected to the glasses app. Returns True when linked."""
     wake_glasses(g)
-    p.shell("input keyevent KEYCODE_WAKEUP")
-    p.shell("am start -n %s/.MainActivity" % PHONE_PKG)
-    end = time.time() + timeout
+    p.shell("input keyevent KEYCODE_WAKEUP", check=True)
+    p.shell("am start -n %s/.MainActivity" % PHONE_PKG, check=True)
+    end = time.monotonic() + timeout
     asked = False
-    while time.time() < end:
+    while time.monotonic() < end:
         st = phone_status(p)
         if st and st["link"] == "CONNECTED":
             return True
         if st and not asked and st["mac"] != "null":
-            p.shell("am broadcast -a com.baybin.phone.RECONNECT -p %s" % PHONE_PKG)
+            p.shell("am broadcast -a com.baybin.phone.RECONNECT -p %s" % PHONE_PKG, check=True)
             asked = True
         time.sleep(2)
     return False

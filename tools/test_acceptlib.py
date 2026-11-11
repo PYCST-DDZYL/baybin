@@ -84,6 +84,19 @@ class PhoneTestSafety(unittest.TestCase):
         self.assertEqual({}, acceptlib.review_all(phone, ["san_jose"], timeout=0))
         phone.logcat.assert_not_called()
 
+    def test_link_setup_requires_successful_device_commands(self):
+        phone = Mock()
+        phone.shell.side_effect = RuntimeError("adb failed")
+        with patch.object(acceptlib, "wake_glasses"):
+            with self.assertRaisesRegex(RuntimeError, "adb failed"):
+                acceptlib.ensure_link(Mock(), phone)
+        self.assertTrue(phone.shell.call_args.kwargs["check"])
+
+    def test_link_timeout_uses_elapsed_time(self):
+        with patch.object(acceptlib, "wake_glasses"), patch.object(acceptlib.time, "monotonic", side_effect=[10, 10]), \
+             patch.object(acceptlib.time, "time", side_effect=AssertionError("wall clock used")):
+            self.assertFalse(acceptlib.ensure_link(Mock(), Mock(), timeout=0))
+
     def test_preferences_are_restored_even_when_a_test_raises(self):
         before = {"city": "berkeley", "lang": "en", "auto": "false", "link": "DISCONNECTED"}
         phone = Mock()
