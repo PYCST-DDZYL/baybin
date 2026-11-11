@@ -251,8 +251,9 @@ def review_all(p, cities, timeout=5):
     rx = re.compile(r"BB_REVIEW city=(\S+) kind=(\d+) item=(\S+) bin=(\S+) p=(\S+) calls=(\d+) prep=(-?\d+) "
                     r"model=(-?\d+) \| (.*) \| (.*)$", re.M)
     keys = ("kind", "item", "bin", "p", "calls", "prep", "model", "line1", "line2")
-    end = time.time() + timeout
-    while time.time() < end:
+    results = {}
+    end = time.monotonic() + timeout
+    while time.monotonic() < end:
         results = {m.group(1): dict(zip(keys, m.groups()[1:])) for m in rx.finditer(p.logcat(*PHONE_LOG))}
         if all(c in results for c in cities):
             return results

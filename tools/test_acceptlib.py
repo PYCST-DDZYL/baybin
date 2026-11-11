@@ -79,6 +79,11 @@ class PhoneTestSafety(unittest.TestCase):
         self.assertFalse(acceptlib.reusable_run({**previous, "rows": [{}]}, 2, 10, "current", now + 30))
         self.assertFalse(acceptlib.reusable_run({**previous, "n": 1}, 2, 10, "current", now + 30))
 
+    def test_zero_timeout_city_review_returns_no_result(self):
+        phone = Mock()
+        self.assertEqual({}, acceptlib.review_all(phone, ["san_jose"], timeout=0))
+        phone.logcat.assert_not_called()
+
     def test_preferences_are_restored_even_when_a_test_raises(self):
         before = {"city": "berkeley", "lang": "en", "auto": "false", "link": "DISCONNECTED"}
         phone = Mock()
