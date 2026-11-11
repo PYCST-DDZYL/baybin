@@ -153,6 +153,8 @@ def ensure_link(g, p, timeout=40):
 
 
 def set_city(p, city):
+    if not isinstance(city, str) or not re.fullmatch(r"[a-z_]+", city):
+        raise ValueError("Invalid city ID")
     p.shell("am broadcast -a com.baybin.phone.CITY -p %s --es id %s" % (PHONE_PKG, city), check=True)
 
 
@@ -237,6 +239,8 @@ def classify_private(p, name, timeout=20):
 
 def review_private(p, city, timeout=5):
     """Reapply one city's rules to the last verified photo, without another model request."""
+    if not isinstance(city, str) or not re.fullmatch(r"[a-z_]+", city):
+        raise ValueError("Invalid city ID")
     p.logcat_clear()
     p.shell("am broadcast -a com.baybin.phone.REVIEW -p %s --es id %s" % (PHONE_PKG, city), check=True)
     m = p.wait_log(r"BB_REVIEW city=%s kind=(\d+) item=(\S+) bin=(\S+) p=(\S+) calls=(\d+) prep=(-?\d+) "

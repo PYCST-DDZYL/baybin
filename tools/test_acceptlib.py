@@ -50,6 +50,15 @@ class PhoneTestSafety(unittest.TestCase):
                 acceptlib.classify_private(device, name)
         device.logcat_clear.assert_not_called()
 
+    def test_city_commands_reject_shell_unsafe_ids(self):
+        device = Mock()
+        for city in ("san_jose;id", "../rules", "San Jose", None):
+            with self.subTest(city=city), self.assertRaisesRegex(ValueError, "Invalid city ID"):
+                acceptlib.set_city(device, city)
+            with self.subTest(city=city), self.assertRaisesRegex(ValueError, "Invalid city ID"):
+                acceptlib.review_private(device, city)
+        device.shell.assert_not_called()
+
     def test_photo_manifests_cannot_select_files_outside_the_test_set(self):
         with TemporaryDirectory() as folder:
             root = Path(folder)
