@@ -201,10 +201,14 @@ def clear_crash_log(dev):
     dev.run("logcat", "-b", "crash", "-c", check=True)
 
 
+def private_test_name(name):
+    if not isinstance(name, str) or not re.fullmatch(r"[A-Za-z0-9_.-]+", name) or name in (".", ".."):
+        raise ValueError("Private test filename must be a simple basename")
+
+
 def push_private(p, local_path, name):
     """Copies a file into the phone app's private files/eval folder (run-as; nothing in shared storage)."""
-    if not re.fullmatch(r"[A-Za-z0-9_.-]+", name) or name in (".", ".."):
-        raise ValueError("Private test filename must be a simple basename")
+    private_test_name(name)
     with open(local_path, "rb") as f:
         data = f.read()
     cmd = [ADB, "-s", p.serial, "exec-in", "run-as", PHONE_PKG, "sh", "-c",
@@ -220,6 +224,7 @@ def clear_private(p):
 
 def classify_private(p, name, timeout=20):
     """Runs the phone pipeline on files/eval/<name> (gallery test mode hook). Returns the parsed BB_GALLERY line."""
+    private_test_name(name)
     p.logcat_clear()
     p.shell("am broadcast -a com.baybin.phone.CLASSIFY -p %s --es file %s" % (PHONE_PKG, name), check=True)
     m = p.wait_log(r"BB_GALLERY file=%s city=(\S+) kind=(\d+) item=(\S+) bin=(\S+) p=(\S+) calls=(\d+) prep=(-?\d+) "

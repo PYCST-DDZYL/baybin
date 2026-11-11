@@ -43,6 +43,13 @@ class PhoneTestSafety(unittest.TestCase):
         self.assertTrue(device.shell.call_args.kwargs["check"])
         device.wait_log.assert_not_called()
 
+    def test_classification_rejects_shell_unsafe_name_before_device_work(self):
+        device = Mock()
+        for name in ("../photo.jpg", "photo;id", "photo name.jpg", None):
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, "simple basename"):
+                acceptlib.classify_private(device, name)
+        device.logcat_clear.assert_not_called()
+
     def test_photo_manifests_cannot_select_files_outside_the_test_set(self):
         with TemporaryDirectory() as folder:
             root = Path(folder)
