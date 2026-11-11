@@ -1,6 +1,7 @@
 """Device-free regression tests for phone cleanup and truthful acceptance reporting."""
 import unittest
 import json
+import time
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import Mock, patch
@@ -68,6 +69,15 @@ class PhoneTestSafety(unittest.TestCase):
         device = Mock()
         acceptlib.clear_crash_log(device)
         device.run.assert_called_once_with("logcat", "-b", "crash", "-c", check=True)
+
+    def test_long_run_reuse_rejects_incomplete_or_future_results(self):
+        stamp = "2026-11-11 12:00:00"
+        now = time.mktime(time.strptime(stamp, "%Y-%m-%d %H:%M:%S"))
+        previous = {"n": 2, "rows": [{}, {}], "code_hash": "current", "when": stamp}
+        self.assertTrue(acceptlib.reusable_run(previous, 2, 10, "current", now + 30))
+        self.assertFalse(acceptlib.reusable_run(previous, 2, 10, "current", now - 30))
+        self.assertFalse(acceptlib.reusable_run({**previous, "rows": [{}]}, 2, 10, "current", now + 30))
+        self.assertFalse(acceptlib.reusable_run({**previous, "n": 1}, 2, 10, "current", now + 30))
 
     def test_preferences_are_restored_even_when_a_test_raises(self):
         before = {"city": "berkeley", "lang": "en", "auto": "false", "link": "DISCONNECTED"}

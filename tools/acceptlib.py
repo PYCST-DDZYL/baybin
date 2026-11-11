@@ -283,6 +283,17 @@ def load_rules():
 
 # ---- the long run shared by accept_3 (memory), accept_4 (leak) and accept_5 (crashes) ----
 
+def reusable_run(prev, n, reuse_minutes, current_hash, now):
+    if (not prev or reuse_minutes <= 0 or prev.get("n") != n or
+            len(prev.get("rows", [])) != n or prev.get("code_hash") != current_hash):
+        return False
+    try:
+        age = now - time.mktime(time.strptime(prev["when"], "%Y-%m-%d %H:%M:%S"))
+    except (KeyError, ValueError, TypeError):
+        return False
+    return 0 <= age < reuse_minutes * 60
+
+
 def long_run(n=100, reuse_minutes=0):
     """n scans by key press with the phone connected; glasses PSS after every scan.
 
@@ -290,11 +301,9 @@ def long_run(n=100, reuse_minutes=0):
     is returned instead of scanning again (the three criteria are judged on one run)."""
     from adbutil import GLASS_PKG as G
     prev = load("run_%d" % n)
-    if prev and reuse_minutes > 0:
-        age = time.time() - time.mktime(time.strptime(prev["when"], "%Y-%m-%d %H:%M:%S"))
-        if age < reuse_minutes * 60 and prev.get("code_hash") == code_hash():
-            print("(using the %d-scan run from %s)" % (n, prev["when"]))
-            return prev
+    if prev and reusable_run(prev, n, reuse_minutes, code_hash(), time.time()):
+        print("(using the %d-scan run from %s)" % (n, prev["when"]))
+        return prev
     g, p = both()
     if not ensure_link(g, p):
         raise SystemExit("phone app is not connected to the glasses app")
