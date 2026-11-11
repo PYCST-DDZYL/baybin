@@ -79,6 +79,12 @@ class DeviceDiscoveryTest(unittest.TestCase):
                     adbutil.Dev("phone1", "phone").screenshot(target)
             self.assertEqual(b"previous screenshot", target.read_bytes())
 
+    def test_screenshot_capture_has_a_timeout(self):
+        with patch.object(adbutil.subprocess, "run", side_effect=subprocess.TimeoutExpired("adb", 30)) as run:
+            with self.assertRaises(subprocess.TimeoutExpired):
+                adbutil.Dev("phone1", "phone").screenshot("unused.png")
+        self.assertEqual(30, run.call_args.kwargs["timeout"])
+
     def test_log_clear_failure_cannot_leave_stale_test_evidence(self):
         failed = subprocess.CompletedProcess([], 1, stdout="", stderr="permission denied")
         with patch.object(adbutil.subprocess, "run", return_value=failed):
