@@ -83,7 +83,7 @@ def main(argv):
         print(p.shell("ls -la %s 2>/dev/null || echo '%s does not exist (nothing of ours on the phone)'" % (PHONE_DIR, PHONE_DIR)))
     elif cmd == "phone-clean":
         p = phone()
-        p.shell("rm -rf %s" % PHONE_DIR)
+        p.shell("rm -rf %s && test ! -e %s" % (PHONE_DIR, PHONE_DIR), check=True)
         print("removed %s" % PHONE_DIR)
     elif cmd == "all":
         build(variant)
