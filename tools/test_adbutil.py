@@ -3,12 +3,19 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import adbutil
 
 
 class DeviceDiscoveryTest(unittest.TestCase):
+    def test_glasses_launch_requires_successful_adb_commands(self):
+        device = Mock()
+        device.shell.side_effect = RuntimeError("wake failed")
+        with self.assertRaisesRegex(RuntimeError, "wake failed"):
+            adbutil.wake_glasses(device)
+        self.assertTrue(device.shell.call_args.kwargs["check"])
+
     def test_adb_server_failure_is_reported_instead_of_no_phone(self):
         failed = subprocess.CompletedProcess([], 1, stdout="", stderr="could not start daemon")
         with patch.object(adbutil.subprocess, "run", return_value=failed):

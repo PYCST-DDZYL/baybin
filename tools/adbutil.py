@@ -151,6 +151,6 @@ def phone(required=True):
 
 def wake_glasses(g):
     """Screen on + our activity in front. Camera access is refused to background apps."""
-    g.shell("input keyevent KEYCODE_WAKEUP")
-    g.shell("am start -n %s/.MainActivity" % GLASS_PKG)
+    g.shell("input keyevent KEYCODE_WAKEUP", check=True)
+    g.shell("am start -n %s/.MainActivity" % GLASS_PKG, check=True)
     time.sleep(0.8)
