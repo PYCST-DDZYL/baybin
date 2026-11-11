@@ -27,15 +27,24 @@ def startup_log(device, pid):
                       "BayBinPhone:I", "AndroidRuntime:E", "*:S", check=True)
 
 
+def release_version(metadata, apk):
+    elements = metadata.get("elements", [])
+    if (metadata.get("applicationId") != "com.baybin.phone" or metadata.get("variantName") != "release" or
+            len(elements) != 1 or elements[0].get("outputFile") != apk.name):
+        raise ValueError("Expected the matching production release APK and metadata")
+    return elements[0]["versionName"]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--apk", type=Path, default=Path(ROOT) / "phone-app/build/outputs/apk/release/phone-app-release.apk")
     args = parser.parse_args()
     metadata = json.loads(args.apk.with_name("output-metadata.json").read_text(encoding="utf-8"))
-    package = metadata["applicationId"]
-    if package != "com.baybin.phone":
-        parser.error("Expected the production phone package")
-    expected_version = metadata["elements"][0]["versionName"]
+    try:
+        expected_version = release_version(metadata, args.apk)
+    except (ValueError, KeyError) as error:
+        parser.error(str(error))
+    package = "com.baybin.phone"
     expected_hash = hashlib.sha256(args.apk.read_bytes()).hexdigest()
     p = phone()
     before = package_info(p.shell("dumpsys package " + package))
