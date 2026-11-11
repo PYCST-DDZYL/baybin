@@ -22,10 +22,14 @@ def main(argv):
     run = long_run(n, reuse)
     pss = [r["pss_kb"] for r in run["rows"] if r.get("pss_kb")]
     peak = max(pss) if pss else None
-    ok = peak is not None and peak <= LIMIT_KB and len(pss) >= n * 0.9
+    complete = len(run["rows"]) == n
+    ok = complete and peak is not None and peak <= LIMIT_KB and len(pss) >= n * 0.9
     s = stats(pss)
-    save("3_memory", {"pass": ok, "peak_kb": peak, "limit_kb": LIMIT_KB, "samples": len(pss), "pss_kb": s,
-                      "idle_before_kb": run["pss_before_kb"], "run": run["when"]})
+    data = {"pass": ok, "peak_kb": peak, "limit_kb": LIMIT_KB, "samples": len(pss), "pss_kb": s,
+            "idle_before_kb": run["pss_before_kb"], "run": run["when"]}
+    if not complete:
+        data["error"] = "Incomplete scan count"
+    save("3_memory", data)
     verdict(ok, "眼镜峰值 PSS ≤150 MB", [
         "peak %s KB = %.1f MB over %d samples (limit 150 MB)" % (peak, (peak or 0) / 1024, len(pss)),
         "median %s KB, idle before the run %s KB" % (s.get("median"), run["pss_before_kb"]),
