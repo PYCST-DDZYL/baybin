@@ -1,6 +1,7 @@
 """Device-free regression tests for phone cleanup and truthful acceptance reporting."""
 import unittest
 import json
+import subprocess
 import time
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -58,6 +59,18 @@ class PhoneTestSafety(unittest.TestCase):
             with self.subTest(city=city), self.assertRaisesRegex(ValueError, "Invalid city ID"):
                 acceptlib.review_private(device, city)
         device.shell.assert_not_called()
+
+    def test_private_photo_transfer_rejects_corrupted_device_copy(self):
+        with TemporaryDirectory() as folder:
+            photo = Path(folder) / "photo.jpg"
+            photo.write_bytes(b"photo bytes")
+            device = Mock(serial="phone1")
+            device.shell.return_value = "deadbeef  files/eval/photo.jpg"
+            copied = subprocess.CompletedProcess([], 0, stdout=b"", stderr=b"")
+            with patch.object(acceptlib.subprocess, "run", return_value=copied), \
+                 self.assertRaisesRegex(RuntimeError, "transfer hash mismatch"):
+                acceptlib.push_private(device, photo, "photo.jpg")
+            self.assertTrue(device.shell.call_args.kwargs["check"])
 
     def test_photo_manifests_cannot_select_files_outside_the_test_set(self):
         with TemporaryDirectory() as folder:

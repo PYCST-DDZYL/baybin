@@ -218,6 +218,9 @@ def push_private(p, local_path, name):
     r = subprocess.run(cmd, input=data, capture_output=True, timeout=60)
     if r.returncode != 0:
         raise RuntimeError("push %s failed: %s" % (name, r.stderr.decode(errors="replace")))
+    remote_hash = p.shell("run-as %s sha256sum files/eval/%s" % (PHONE_PKG, name), check=True).split()
+    if not remote_hash or remote_hash[0] != hashlib.sha256(data).hexdigest():
+        raise RuntimeError("Private test photo transfer hash mismatch")
 
 
 def clear_private(p):
