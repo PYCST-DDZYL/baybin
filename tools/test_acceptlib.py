@@ -179,6 +179,18 @@ class PhoneTestSafety(unittest.TestCase):
         restore = [c.args[0] for c in phone.shell.call_args_list if "RESTORE" in c.args[0]]
         self.assertIn("--ez auto false --ez connected false", restore[0])
 
+    def test_language_and_link_restore_continue_after_city_restore_failure(self):
+        before = {"city": "berkeley", "lang": "en", "auto": "false", "link": "DISCONNECTED"}
+        device = Mock()
+        with patch.object(acceptlib, "phone_status", return_value=before), \
+             patch.object(acceptlib, "set_city", side_effect=RuntimeError("city failed")):
+            with self.assertRaisesRegex(RuntimeError, "city failed"):
+                with acceptlib.preserve_phone(device):
+                    pass
+        commands = [call.args[0] for call in device.shell.call_args_list]
+        self.assertTrue(any(".LANG" in command for command in commands))
+        self.assertTrue(any(".RESTORE" in command for command in commands))
+
     def test_failed_script_gets_a_visible_failure_detail(self):
         for criterion in range(1, 9):
             self.assertEqual("Script failed", accept_all.detail(criterion, {"pass": False, "error": "Script failed"}))

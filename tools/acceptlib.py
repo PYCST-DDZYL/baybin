@@ -125,10 +125,14 @@ def preserve_phone(p):
     try:
         yield before
     finally:
-        set_city(p, before["city"])
-        p.shell("am broadcast -a com.baybin.phone.LANG -p %s --es id %s" % (PHONE_PKG, before["lang"]), check=True)
-        p.shell("am broadcast -a com.baybin.phone.RESTORE -p %s --ez auto %s --ez connected %s" % (
-            PHONE_PKG, before["auto"], str(before["link"] == "CONNECTED").lower()), check=True)
+        try:
+            set_city(p, before["city"])
+        finally:
+            try:
+                p.shell("am broadcast -a com.baybin.phone.LANG -p %s --es id %s" % (PHONE_PKG, before["lang"]), check=True)
+            finally:
+                p.shell("am broadcast -a com.baybin.phone.RESTORE -p %s --ez auto %s --ez connected %s" % (
+                    PHONE_PKG, before["auto"], str(before["link"] == "CONNECTED").lower()), check=True)
         after = phone_status(p)
         if not after or any(after[k] != before[k] for k in ("city", "lang", "auto")):
             raise RuntimeError("Phone app state restoration could not be verified")
