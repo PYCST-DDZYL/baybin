@@ -161,9 +161,9 @@ def scan(g, key=True, timeout=20):
     debug broadcast. Returns the BB_SCAN fields, or None if no line appeared."""
     g.logcat_clear()
     if key:
-        g.shell("input keyevent KEYCODE_DPAD_CENTER")
+        g.shell("input keyevent KEYCODE_DPAD_CENTER", check=True)
     else:
-        g.shell("am broadcast -a com.baybin.glass.SCAN -p %s" % GLASS_PKG)
+        g.shell("am broadcast -a com.baybin.glass.SCAN -p %s" % GLASS_PKG, check=True)
     m = g.wait_log(SCAN_RX, timeout=timeout, filters=GLASS_LOG)
     if not m:
         return None

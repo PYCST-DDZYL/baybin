@@ -26,6 +26,15 @@ class PhoneTestSafety(unittest.TestCase):
             acceptlib.set_city(device, "san_jose")
         self.assertTrue(device.shell.call_args.kwargs["check"])
 
+    def test_scan_trigger_failure_cannot_be_treated_as_a_slow_scan(self):
+        for use_key in (True, False):
+            device = Mock()
+            device.shell.side_effect = RuntimeError("trigger failed")
+            with self.subTest(use_key=use_key), self.assertRaisesRegex(RuntimeError, "trigger failed"):
+                acceptlib.scan(device, key=use_key)
+            self.assertTrue(device.shell.call_args.kwargs["check"])
+            device.wait_log.assert_not_called()
+
     def test_photo_manifests_cannot_select_files_outside_the_test_set(self):
         with TemporaryDirectory() as folder:
             root = Path(folder)
