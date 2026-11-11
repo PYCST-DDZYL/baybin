@@ -82,10 +82,19 @@ def report():
              "| # | Criterion | Result | Data | When |", "|---|---|---|---|---|"]
     for i in range(1, 9):
         d = load(FILES[i])
-        res = "—" if not d else ("PASS" if d["pass"] else "FAIL")
-        if d and d.get("code_hash") != code_hash():
-            res = "STALE"
-        lines.append("| %d | %s | %s | %s | %s |" % (i, TITLES[i], res, detail(i, d), d["when"] if d else ""))
+        if d is None:
+            res, summary, when = "—", "not run", ""
+        else:
+            try:
+                if not isinstance(d, dict) or not isinstance(d["pass"], bool) or not d["when"]:
+                    raise ValueError("Invalid saved result")
+                res = "PASS" if d["pass"] else "FAIL"
+                if d.get("code_hash") != code_hash():
+                    res = "STALE"
+                summary, when = detail(i, d), d["when"]
+            except (KeyError, TypeError, ValueError, ZeroDivisionError):
+                res, summary, when = "FAIL", "Invalid saved result", ""
+        lines.append("| %d | %s | %s | %s | %s |" % (i, TITLES[i], res, summary, when))
     os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
     path = os.path.join(ROOT, "docs", "acceptance.md")
     with open(path, "w", encoding="utf-8") as f:

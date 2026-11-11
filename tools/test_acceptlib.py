@@ -128,6 +128,17 @@ class PhoneTestSafety(unittest.TestCase):
             self.assertIn("| 8 |", details.read_text(encoding="utf-8"))
             self.assertTrue((root / "docs" / "acceptance.md").is_file())
 
+    def test_report_marks_incomplete_saved_result_without_crashing(self):
+        with TemporaryDirectory() as folder:
+            root = Path(folder)
+            incomplete = {"pass": True, "when": "today", "code_hash": "current"}
+            with patch.object(accept_all, "ROOT", folder), \
+                 patch.object(accept_all, "load", side_effect=lambda name: incomplete if name == "1_latency" else None), \
+                 patch.object(accept_all, "code_hash", return_value="current"), patch("builtins.print"):
+                accept_all.report()
+            report = (root / "docs" / "acceptance.md").read_text(encoding="utf-8")
+            self.assertIn("| 1 | Button to lens text ≤5 s | FAIL | Invalid saved result |", report)
+
     def test_unsafe_private_filename_is_rejected_before_reading_or_pushing(self):
         for name in ("../photo.jpg", "x;touch.jpg", "x y.jpg", "..", "/sdcard/x.jpg"):
             with self.assertRaises(ValueError):
