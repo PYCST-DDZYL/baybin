@@ -52,10 +52,12 @@ def install_glasses(variant):
     wake_glasses(g)
 
 
-def install_phone(variant):
-    p = phone(required=False)
+def install_phone(variant, required=True):
+    p = phone(required=required)
     path = apk("phone-app", variant)
     if p is None:
+        if required:
+            raise RuntimeError("Phone installation requested but no phone is connected")
         print("[phone] 手机没连 adb，跳过。APK 在：\n    %s" % path)
         return
     print("[phone] install %s" % os.path.basename(path))
@@ -88,7 +90,7 @@ def main(argv):
     elif cmd == "all":
         build(variant)
         install_glasses(variant)
-        install_phone(variant)
+        install_phone(variant, required=False)
     else:
         print(__doc__)
 
