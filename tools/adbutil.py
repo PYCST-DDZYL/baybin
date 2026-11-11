@@ -122,7 +122,7 @@ class Dev:
 
     def ui_xml(self):
         """Current screen's UI tree, printed to stdout (/dev/tty) so no window_dump.xml lands on the device."""
-        out = self.run("exec-out", "uiautomator", "dump", "/dev/tty", timeout=30)
+        out = self.run("exec-out", "uiautomator", "dump", "/dev/tty", timeout=30, check=True)
         return out[:out.rfind(">") + 1] if ">" in out else ""
 
     def crashes(self, pkg):

@@ -85,6 +85,12 @@ class DeviceDiscoveryTest(unittest.TestCase):
                 adbutil.Dev("phone1", "phone").screenshot("unused.png")
         self.assertEqual(30, run.call_args.kwargs["timeout"])
 
+    def test_ui_dump_reports_adb_failure(self):
+        failed = subprocess.CompletedProcess([], 1, stdout="", stderr="device offline")
+        with patch.object(adbutil.subprocess, "run", return_value=failed):
+            with self.assertRaisesRegex(RuntimeError, "adb exec-out uiautomator dump"):
+                adbutil.Dev("phone1", "phone").ui_xml()
+
     def test_log_clear_failure_cannot_leave_stale_test_evidence(self):
         failed = subprocess.CompletedProcess([], 1, stdout="", stderr="permission denied")
         with patch.object(adbutil.subprocess, "run", return_value=failed):
