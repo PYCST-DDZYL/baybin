@@ -64,6 +64,11 @@ class PhoneTestSafety(unittest.TestCase):
             acceptlib.crash_lines(device, "com.baybin.phone")
         self.assertTrue(device.run.call_args.kwargs["check"])
 
+    def test_crash_log_clear_requires_adb_success(self):
+        device = Mock()
+        acceptlib.clear_crash_log(device)
+        device.run.assert_called_once_with("logcat", "-b", "crash", "-c", check=True)
+
     def test_preferences_are_restored_even_when_a_test_raises(self):
         before = {"city": "berkeley", "lang": "en", "auto": "false", "link": "DISCONNECTED"}
         phone = Mock()

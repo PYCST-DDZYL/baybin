@@ -14,7 +14,7 @@ answered normally, no crash or ANR, neither app restarted.
 """
 import time
 
-from acceptlib import (both, crash_lines, ensure_link, glass_pid, glasses_screenshot, phone_pid, phone_status, save,
+from acceptlib import (both, clear_crash_log, crash_lines, ensure_link, glass_pid, glasses_screenshot, phone_pid, phone_status, save,
                        scan, verdict)
 from adbutil import GLASS_PKG, PHONE_PKG
 
@@ -75,7 +75,7 @@ def main():
     if not ensure_link(g, p):
         raise SystemExit("phone app is not connected to the glasses app")
     for d in (g, p):
-        d.run("logcat", "-b", "crash", "-c")
+        clear_crash_log(d)
     pids = (glass_pid(g), phone_pid(p))
     steps = {}
 

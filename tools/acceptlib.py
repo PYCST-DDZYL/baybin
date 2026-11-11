@@ -197,6 +197,10 @@ def crash_lines(dev, pkg):
     return bad
 
 
+def clear_crash_log(dev):
+    dev.run("logcat", "-b", "crash", "-c", check=True)
+
+
 def push_private(p, local_path, name):
     """Copies a file into the phone app's private files/eval folder (run-as; nothing in shared storage)."""
     if not re.fullmatch(r"[A-Za-z0-9_.-]+", name) or name in (".", ".."):
@@ -295,7 +299,7 @@ def long_run(n=100, reuse_minutes=0):
     if not ensure_link(g, p):
         raise SystemExit("phone app is not connected to the glasses app")
     for d in (g, p):
-        d.run("logcat", "-b", "crash", "-c")
+        clear_crash_log(d)
     pids = {"glasses": glass_pid(g), "phone": phone_pid(p)}
     pss0 = g.pss_kb(G)
     rows = []
