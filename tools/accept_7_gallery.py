@@ -21,19 +21,21 @@ import time
 import xml.etree.ElementTree as ET
 
 from acceptlib import (clear_private, classify_private, expected_line1, load_rules, preserve_phone, push_private, save, set_city,
-                       verdict)
+                       test_photo_path, verdict)
 from adbutil import PHONE_PKG, ROOT, phone
 
 SAMPLE = ["plastic_bottle", "battery", "pizza_box_greasy", "food_scraps", "carton", "snack_wrapper"]
 
 
 def main():
+    sample_dir = os.path.join(ROOT, "eval", "commons_probe")
+    with open(os.path.join(sample_dir, "manifest.json"), encoding="utf-8") as f:
+        manifest = json.load(f)
+    sources = {item: test_photo_path(sample_dir, manifest[item]["file"]) for item in SAMPLE}
     p = phone()
     p.shell("input keyevent KEYCODE_WAKEUP")
     p.shell("am start -n %s/.MainActivity" % PHONE_PKG)
     rules = load_rules()
-    with open(os.path.join(ROOT, "eval", "commons_probe", "manifest.json"), encoding="utf-8") as f:
-        man = json.load(f)
     rows = []
     clear_private(p)
     with preserve_phone(p):
@@ -44,7 +46,7 @@ def main():
             set_city(p, "cupertino")
             for item in SAMPLE:
                 name = "g_%s.jpg" % item
-                push_private(p, os.path.join(ROOT, "eval", "commons_probe", man[item]["file"]), name)
+                push_private(p, sources[item], name)
                 r = classify_private(p, name) or {"line1": "(no answer)", "item": "-", "model": "-1", "total": "-1"}
                 want = expected_line1(rules, "cupertino", item)
                 rows.append({"item": item, "got_item": r["item"], "want": want, "got": r["line1"], "line2": r.get("line2"),

@@ -8,6 +8,7 @@ import json
 import hashlib
 from contextlib import contextmanager
 import os
+from pathlib import Path
 import re
 import statistics
 import subprocess
@@ -22,6 +23,15 @@ GLASS_LOG = ("BayBin:I", "*:S")
 STATUS_RX = (r"BB_STATUS link=(\S+) mac=(\S+) glasses=(\S+) city=(\S+) online=(\S+)"
              r"(?: auto=(\S+) lang=(\S+) app=(\S+))?"
              r"(?: housing=(\S+) city_service=(\S+))?")
+
+
+def test_photo_path(folder, filename):
+    """Resolve a manifest photo only inside its test set, before sending it to a device."""
+    root = Path(folder).resolve()
+    photo = (root / filename).resolve()
+    if not photo.is_relative_to(root) or not photo.is_file():
+        raise ValueError("Test photo is missing or outside its test set: %s" % filename)
+    return str(photo)
 
 
 def parse_phone_status(text):

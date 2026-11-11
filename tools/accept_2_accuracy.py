@@ -24,7 +24,8 @@ import os
 import sys
 
 from acceptlib import (clear_private, classify_private, expected_line1, load_rules, preserve_phone,
-                       phone_status, push_private, require_residential_scope, review_all, save, set_city, verdict)
+                       phone_status, push_private, require_residential_scope, review_all, save, set_city,
+                       test_photo_path, verdict)
 from adbutil import PHONE_PKG, ROOT, phone
 
 KINDS = {
@@ -39,8 +40,8 @@ def load_set(path):
         man = json.load(f)
     # glasses_set / realworld: {"photos": [{"file":..,"item":..}]};  commons_probe: {item: {"file":..}}
     if "photos" in man:
-        return [(os.path.join(path, m["file"]), m["item"]) for m in man["photos"]]
-    return [(os.path.join(path, m["file"]), m.get("expect", item)) for item, m in sorted(man.items())]
+        return [(test_photo_path(path, m["file"]), m["item"]) for m in man["photos"]]
+    return [(test_photo_path(path, m["file"]), m.get("expect", item)) for item, m in sorted(man.items())]
 
 
 def run_set(p, rules, path, cities_to_test):

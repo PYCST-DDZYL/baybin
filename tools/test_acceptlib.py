@@ -1,14 +1,34 @@
 """Device-free regression tests for phone cleanup and truthful acceptance reporting."""
 import unittest
+import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import Mock, patch
 
 import acceptlib
 import accept_all
+import accept_2_accuracy
 
 
 class PhoneTestSafety(unittest.TestCase):
+    def test_photo_manifests_cannot_select_files_outside_the_test_set(self):
+        with TemporaryDirectory() as folder:
+            root = Path(folder)
+            sample = root / "sample"
+            sample.mkdir()
+            (sample / "photo.jpg").write_bytes(b"photo")
+            outside = root / "outside.jpg"
+            outside.write_bytes(b"private")
+            manifest = sample / "manifest.json"
+            for entry in ({"photos": [{"file": "photo.jpg", "item": "cup"}]},
+                          {"cup": {"file": "photo.jpg"}}):
+                manifest.write_text(json.dumps(entry), encoding="utf-8")
+                self.assertEqual(str(sample / "photo.jpg"), accept_2_accuracy.load_set(str(sample))[0][0])
+            for filename in ("../outside.jpg", str(outside), "missing.jpg"):
+                manifest.write_text(json.dumps({"photos": [{"file": filename, "item": "cup"}]}), encoding="utf-8")
+                with self.subTest(filename=filename), self.assertRaisesRegex(ValueError, "outside its test set"):
+                    accept_2_accuracy.load_set(str(sample))
+
     def test_report_preserves_brief_homepage_and_updates_detailed_results(self):
         with TemporaryDirectory() as folder:
             root = Path(folder)
