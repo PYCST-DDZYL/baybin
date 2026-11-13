@@ -54,7 +54,9 @@ object Upright {
             val upright = Bitmap.createBitmap(src, 0, 0, src.width, src.height, m, true)
             out = upright
             // Re-encoding drops the EXIF block, so the tag can't be applied twice.
-            ByteArrayOutputStream(jpeg.size / 2).also { upright.compress(Bitmap.CompressFormat.JPEG, quality, it) }.toByteArray()
+            ByteArrayOutputStream(jpeg.size / 2).also {
+                check(upright.compress(Bitmap.CompressFormat.JPEG, quality, it)) { "Could not encode upright JPEG" }
+            }.toByteArray()
         } finally {
             if (out !== src) out?.recycle()
             src.recycle()
