@@ -6,6 +6,20 @@ import deploy
 
 
 class DeploySafetyTest(unittest.TestCase):
+    def test_missing_phone_apk_stops_before_install(self):
+        device = Mock()
+        with patch.object(deploy, "phone", return_value=device), patch.object(deploy, "apk", return_value="missing-phone.apk"):
+            with self.assertRaisesRegex(FileNotFoundError, "Phone APK is missing"):
+                deploy.install_phone("debug")
+        device.run.assert_not_called()
+
+    def test_missing_glasses_apk_stops_before_install(self):
+        device = Mock()
+        with patch.object(deploy, "glasses", return_value=device), patch.object(deploy, "apk", return_value="missing-glasses.apk"):
+            with self.assertRaisesRegex(FileNotFoundError, "Glasses APK is missing"):
+                deploy.install_glasses("debug")
+        device.run.assert_not_called()
+
     def test_unknown_command_cannot_report_success(self):
         with self.assertRaisesRegex(ValueError, "Unknown deployment command"):
             deploy.main(["phon"])

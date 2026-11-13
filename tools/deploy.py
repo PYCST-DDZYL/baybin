@@ -45,6 +45,8 @@ def build(variant):
 def install_glasses(variant):
     g = glasses()
     path = apk("glasses-app", variant)
+    if not os.path.isfile(path):
+        raise FileNotFoundError("Glasses APK is missing: %s" % path)
     print("[glasses] install %s" % os.path.basename(path))
     print(g.run("install", "-r", "-t", path, check=True).strip())
     for perm in ("CAMERA", "BLUETOOTH_CONNECT"):
@@ -60,6 +62,8 @@ def install_phone(variant, required=True):
             raise RuntimeError("Phone installation requested but no phone is connected")
         print("[phone] 手机没连 adb，跳过。APK 在：\n    %s" % path)
         return
+    if not os.path.isfile(path):
+        raise FileNotFoundError("Phone APK is missing: %s" % path)
     print("[phone] install %s" % os.path.basename(path))
     print(p.run("install", "-r", "-t", path, check=True).strip())
     for perm in ("BLUETOOTH_SCAN", "BLUETOOTH_CONNECT", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION",
