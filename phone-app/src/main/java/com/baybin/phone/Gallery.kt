@@ -23,7 +23,9 @@ object Gallery {
             decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE // hardware bitmaps can't be compressed
         }
         return try {
-            ByteArrayOutputStream(256 * 1024).also { bitmap.compress(Bitmap.CompressFormat.JPEG, quality, it) }.toByteArray()
+            ByteArrayOutputStream(256 * 1024).also {
+                check(bitmap.compress(Bitmap.CompressFormat.JPEG, quality, it)) { "Could not encode gallery JPEG" }
+            }.toByteArray()
         } finally {
             bitmap.recycle()
         }
