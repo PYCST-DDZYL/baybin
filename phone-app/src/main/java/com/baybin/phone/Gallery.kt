@@ -13,6 +13,8 @@ import kotlin.math.roundToInt
 object Gallery {
 
     fun toJpeg(source: ImageDecoder.Source, maxSide: Int, quality: Int = 80): ByteArray {
+        require(maxSide > 0) { "maxSide must be positive" }
+        require(quality in 0..100) { "JPEG quality must be 0..100" }
         val bitmap = ImageDecoder.decodeBitmap(source) { decoder, info, _ ->
             val w = info.size.width
             val h = info.size.height

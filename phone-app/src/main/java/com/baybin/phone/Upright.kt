@@ -33,6 +33,8 @@ object Upright {
      * input unchanged when it is already upright and small enough.
      */
     fun prepare(jpeg: ByteArray, fallbackDegrees: Int, maxSide: Int, quality: Int = 85): ByteArray {
+        require(maxSide > 0) { "maxSide must be positive" }
+        require(quality in 0..100) { "JPEG quality must be 0..100" }
         val degrees = (exifDegrees(jpeg) ?: fallbackDegrees).mod(360)
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         BitmapFactory.decodeByteArray(jpeg, 0, jpeg.size, bounds)
