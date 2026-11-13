@@ -6,6 +6,10 @@ import deploy
 
 
 class DeploySafetyTest(unittest.TestCase):
+    def test_unknown_command_cannot_report_success(self):
+        with self.assertRaisesRegex(ValueError, "Unknown deployment command"):
+            deploy.main(["phon"])
+
     def test_explicit_phone_install_cannot_succeed_without_phone(self):
         with patch.object(deploy, "phone", return_value=None):
             with self.assertRaisesRegex(RuntimeError, "no phone is connected"):

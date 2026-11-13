@@ -92,7 +92,7 @@ def main(argv):
         install_glasses(variant)
         install_phone(variant, required=False)
     else:
-        print(__doc__)
+        raise ValueError("Unknown deployment command: %s" % cmd)
 
 
 if __name__ == "__main__":
