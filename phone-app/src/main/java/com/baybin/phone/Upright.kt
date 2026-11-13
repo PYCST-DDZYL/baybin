@@ -49,12 +49,14 @@ object Upright {
             if (scale < 1f) postScale(scale, scale)
             if (degrees != 0) postRotate(degrees.toFloat())
         }
-        val out = Bitmap.createBitmap(src, 0, 0, src.width, src.height, m, true)
+        var out: Bitmap? = null
         return try {
+            val upright = Bitmap.createBitmap(src, 0, 0, src.width, src.height, m, true)
+            out = upright
             // Re-encoding drops the EXIF block, so the tag can't be applied twice.
-            ByteArrayOutputStream(jpeg.size / 2).also { out.compress(Bitmap.CompressFormat.JPEG, quality, it) }.toByteArray()
+            ByteArrayOutputStream(jpeg.size / 2).also { upright.compress(Bitmap.CompressFormat.JPEG, quality, it) }.toByteArray()
         } finally {
-            if (out !== src) out.recycle()
+            if (out !== src) out?.recycle()
             src.recycle()
         }
     }
