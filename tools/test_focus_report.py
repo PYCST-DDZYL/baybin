@@ -68,3 +68,10 @@ class FocusMetricsTest(unittest.TestCase):
         self.assertEqual("STALE", result["status"])
         self.assertEqual(1, result["first_pass"]["total"])
         self.assertEqual(1, result["user_supplemented"]["total"])
+
+    def test_unknown_evidence_cannot_disappear_from_accuracy_denominator(self):
+        report = {"sets": {"sample": {"results": {"san_jose": [
+            {"item": "paper_cup", "evidence": "unknown", "kind": 0, "want": "Garbage", "got": "Garbage"}]}}}}
+        focus = {"city": "san_jose", "residence": "single-family", "items": ["paper_cup"]}
+        with self.assertRaisesRegex(ValueError, "Unsupported evidence"):
+            summarize(report, "current", focus)

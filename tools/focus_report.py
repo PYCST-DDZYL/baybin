@@ -59,6 +59,8 @@ def metrics(rows):
 def summarize(report, expected_hash, focus):
     rows = [row for sample in report.get("sets", {}).values()
             for row in sample.get("results", {}).get(focus["city"], []) if row.get("item") in focus["items"]]
+    if any(row.get("evidence", "photo") not in ("photo", "user") for row in rows):
+        raise ValueError("Unsupported evidence type in measured results")
     first = [row for row in rows if row.get("evidence", "photo") == "photo"]
     supplemented = [row for row in rows if row.get("evidence") == "user"]
     return {"city": focus["city"], "residence": focus["residence"],
