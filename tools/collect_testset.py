@@ -28,6 +28,14 @@ def request_capture(device):
                  check=True)
 
 
+def pull_photo(device, name):
+    path = os.path.join(SET, name)
+    device.run("pull", "/sdcard/Android/data/%s/files/last.jpg" % GLASS_PKG, path, check=True)
+    if not os.path.isfile(path) or os.path.getsize(path) == 0:
+        raise RuntimeError("Captured photo is missing or empty: %s" % path)
+    return path
+
+
 def load_manifest():
     path = os.path.join(SET, "manifest.json")
     if os.path.exists(path):
@@ -81,7 +89,7 @@ def main():
             continue
         n = counts.get(item, 0) + 1
         name = "%s__%d.jpg" % (item, n)
-        g.run("pull", "/sdcard/Android/data/%s/files/last.jpg" % GLASS_PKG, os.path.join(SET, name), check=True)
+        pull_photo(g, name)
         man["photos"].append({"file": name, "item": item, "taken": time.strftime("%Y-%m-%d %H:%M:%S")})
         save_manifest(man)
         print("存好了：eval\\glasses_set\\%s（%s 字节）" % (name, m.group(6)))
