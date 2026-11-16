@@ -80,7 +80,7 @@ class Dev:
         return self.run("shell", cmd, **kw)
 
     def pid(self, pkg):
-        out = self.shell("pidof %s" % pkg).strip()
+        out = self.shell("pidof %s 2>/dev/null || true" % pkg, check=True).strip()
         return int(out.split()[0]) if out else None
 
     def logcat_clear(self):

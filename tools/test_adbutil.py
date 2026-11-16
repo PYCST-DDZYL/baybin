@@ -116,6 +116,15 @@ class DeviceDiscoveryTest(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "dumpsys meminfo"):
                 adbutil.Dev("glass1", "glasses").pss_kb("com.baybin.glass")
 
+    def test_pid_distinguishes_absent_process_from_adb_failure(self):
+        missing = subprocess.CompletedProcess([], 0, stdout="", stderr="")
+        failed = subprocess.CompletedProcess([], 1, stdout="", stderr="device offline")
+        with patch.object(adbutil.subprocess, "run", return_value=missing):
+            self.assertIsNone(adbutil.Dev("glass1", "glasses").pid("com.baybin.glass"))
+        with patch.object(adbutil.subprocess, "run", return_value=failed):
+            with self.assertRaisesRegex(RuntimeError, "device offline"):
+                adbutil.Dev("glass1", "glasses").pid("com.baybin.glass")
+
     def test_log_wait_uses_elapsed_time_even_if_wall_clock_changes(self):
         device = adbutil.Dev("phone1", "phone")
         with patch.object(device, "logcat", return_value="") as logcat, \
