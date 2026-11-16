@@ -7,6 +7,13 @@ import probe
 
 
 class ProbeSafetyTest(unittest.TestCase):
+    def test_rejected_probe_broadcast_is_reported(self):
+        device = Mock()
+        device.shell.side_effect = RuntimeError("broadcast failed")
+        with self.assertRaisesRegex(RuntimeError, "broadcast failed"):
+            probe.broadcast(device, "SCAN")
+        self.assertTrue(device.shell.call_args.kwargs["check"])
+
     def test_lens_show_uses_validated_screenshot_capture(self):
         device = Mock()
         with tempfile.TemporaryDirectory() as folder, \

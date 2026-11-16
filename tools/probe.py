@@ -32,7 +32,7 @@ def log(text):
 
 
 def broadcast(g, action, *extras):
-    g.shell("am broadcast -a com.baybin.glass.%s -p %s %s" % (action, GLASS_PKG, " ".join(extras)))
+    g.shell("am broadcast -a com.baybin.glass.%s -p %s %s" % (action, GLASS_PKG, " ".join(extras)), check=True)
 
 
 def one_scan(g, capture_only, save=False, timeout=15):
