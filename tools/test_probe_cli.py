@@ -12,6 +12,12 @@ class ProbeCliTest(unittest.TestCase):
                 probe.main(["scna"])
         glasses.assert_not_called()
 
+    def test_bad_pair_address_is_not_treated_as_scan_request(self):
+        with patch.object(probe, "glasses") as glasses:
+            with self.assertRaisesRegex(ValueError, "Bluetooth address"):
+                probe.main(["pair", "invalid-address"])
+        glasses.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -147,10 +147,14 @@ def cmd_show(g, count=4):
         log("show-%d: %d chars  %s | %s" % (n, len(l2), l1, l2))
 
 
-def cmd_pair(g, mac=None):
-    """Phone connects to the glasses app: straight to MAC if given, else BLE scan + address lookup."""
+def validate_pair_address(mac):
     if mac is not None and not re.fullmatch(r"(?i)(?:[0-9a-f]{2}:){5}[0-9a-f]{2}", mac):
         raise ValueError("Bluetooth address must be six hexadecimal byte pairs")
+
+
+def cmd_pair(g, mac=None):
+    """Phone connects to the glasses app: straight to MAC if given, else BLE scan + address lookup."""
+    validate_pair_address(mac)
     from adbutil import PHONE_PKG, phone
     p = phone()
     if p.shell("settings get global bluetooth_on").strip() != "1":
@@ -205,6 +209,8 @@ def main(argv):
         return
     if argv[0] not in ("photo", "camera", "transfer", "scan", "show", "record", "pair"):
         raise ValueError("Unknown probe command: %s" % argv[0])
+    if argv[0] == "pair" and len(argv) > 1:
+        validate_pair_address(argv[1])
     g = glasses()
     log("== %s  %s" % (time.strftime("%Y-%m-%d %H:%M:%S"), " ".join(argv)))
     cmd = argv[0]
@@ -222,7 +228,7 @@ def main(argv):
     elif cmd == "record":
         cmd_record(g)
     elif cmd == "pair":
-        cmd_pair(g, argv[1] if len(argv) > 1 and ":" in argv[1] else None)
+        cmd_pair(g, argv[1] if len(argv) > 1 else None)
 
 
 if __name__ == "__main__":
