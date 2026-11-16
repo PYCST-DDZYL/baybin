@@ -203,6 +203,8 @@ def main(argv):
     if not argv:
         print(__doc__)
         return
+    if argv[0] not in ("photo", "camera", "transfer", "scan", "show", "record", "pair"):
+        raise ValueError("Unknown probe command: %s" % argv[0])
     g = glasses()
     log("== %s  %s" % (time.strftime("%Y-%m-%d %H:%M:%S"), " ".join(argv)))
     cmd = argv[0]
@@ -221,8 +223,6 @@ def main(argv):
         cmd_record(g)
     elif cmd == "pair":
         cmd_pair(g, argv[1] if len(argv) > 1 and ":" in argv[1] else None)
-    else:
-        print(__doc__)
 
 
 if __name__ == "__main__":
