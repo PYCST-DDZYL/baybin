@@ -29,6 +29,14 @@ class ReviewCleanupTest(unittest.TestCase):
         self.assertFalse(report["removed"])
         self.assertFalse(report["pass"])
 
+    def test_failed_presence_check_cannot_report_review_removed(self):
+        device = Mock()
+        device.shell.side_effect = RuntimeError("pm path failed")
+        report = {"pass": True}
+        self.assertEqual("pm path failed", remove_review(device, "com.baybin.phone.reviewtest", report))
+        self.assertFalse(report["removed"])
+        self.assertFalse(report["pass"])
+
 
 if __name__ == "__main__":
     unittest.main()

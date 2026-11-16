@@ -15,6 +15,7 @@ import time
 from adbutil import ADB, ROOT, phone
 from acceptlib import code_hash, expected_line1, load_rules
 from focus_report import metrics
+from review_cleanup import remove_review
 
 
 def cloud_failure_stage(kind, guidance):
@@ -171,15 +172,7 @@ def main():
         raise
     finally:
         if installed:
-            try:
-                if p.shell("pm path " + package).strip():
-                    p.run("uninstall", package, check=True)
-                report["removed"] = not bool(p.shell("pm path " + package).strip())
-            except Exception:
-                report["removed"] = False
-                report["cleanup_error"] = "Review uninstall could not be verified"
-            if not report.get("removed"):
-                report["pass"] = False
+            remove_review(p, package, report)
         save()
         print(json.dumps({k: report.get(k) for k in ("completed", "pass", "removed", "metrics")}))
 
