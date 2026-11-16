@@ -15,6 +15,13 @@ class ReviewInstallSafetyTest(unittest.TestCase):
         self.assertIn("test ! -e files/qwen.key", device.shell.call_args.args[0])
         self.assertTrue(device.shell.call_args.kwargs["check"])
 
+    def test_review_log_read_failure_is_not_treated_as_no_reply(self):
+        device = Mock()
+        device.run.side_effect = RuntimeError("logcat unavailable")
+        with self.assertRaisesRegex(RuntimeError, "logcat unavailable"):
+            check_photo_accuracy.review_log(device, 123)
+        self.assertTrue(device.run.call_args.kwargs["check"])
+
     def test_install_failure_does_not_uninstall_review_package(self):
         with TemporaryDirectory(dir=Path(check_photo_accuracy.ROOT)) as folder:
             root = Path(folder)

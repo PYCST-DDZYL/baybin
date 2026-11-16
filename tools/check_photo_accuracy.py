@@ -31,6 +31,11 @@ def verify_key_consumed(device, package):
     device.shell("run-as " + package + " sh -c 'test ! -e files/qwen.key'", check=True)
 
 
+def review_log(device, pid):
+    return device.run("logcat", "-d", "--pid=" + str(pid), "-v", "brief",
+                      "BayBinPhone:I", "AndroidRuntime:E", "*:S", check=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--apk", required=True, type=Path)
@@ -106,7 +111,7 @@ def main():
             p.shell("am broadcast --receiver-foreground -a com.baybin.phone." + action + " -p " + package + " " + extras, check=True)
 
         def log():
-            return p.run("logcat", "-d", "--pid=" + str(pid), "-v", "brief", "BayBinPhone:I", "AndroidRuntime:E", "*:S")
+            return review_log(p, pid)
 
         broadcast("CITY", "--es id san_jose")
         broadcast("LANG", "--es id en")
