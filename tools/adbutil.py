@@ -127,7 +127,7 @@ class Dev:
 
     def crashes(self, pkg):
         """FATAL EXCEPTION / ANR lines mentioning pkg in the current log buffer."""
-        out = self.run("logcat", "-d", "-v", "time", "-b", "crash,main,system")
+        out = self.run("logcat", "-d", "-v", "time", "-b", "crash,main,system", check=True)
         bad = []
         for line in out.splitlines():
             if pkg in line and ("FATAL EXCEPTION" in line or "ANR in" in line or "Process: " in line):
