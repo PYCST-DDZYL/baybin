@@ -77,7 +77,12 @@ def main(argv):
         print(__doc__)
         return
     cmd = argv[0]
-    variant = "release" if "release" in argv[1:] else "debug"
+    if cmd in ("build", "glasses", "phone", "all"):
+        if argv[1:] not in ([], ["release"]):
+            raise ValueError("Expected at most one variant argument: release")
+    elif len(argv) > 1:
+        raise ValueError("Unexpected arguments for %s" % cmd)
+    variant = "release" if argv[1:] == ["release"] else "debug"
     if cmd == "build":
         build(variant)
     elif cmd == "glasses":
