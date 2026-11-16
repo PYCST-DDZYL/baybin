@@ -104,7 +104,7 @@ class Dev:
 
     def pss_kb(self, pkg):
         """TOTAL PSS of a package in KB, or None if it is not running."""
-        out = self.shell("dumpsys meminfo %s" % pkg, timeout=30)
+        out = self.shell("dumpsys meminfo %s" % pkg, timeout=30, check=True)
         m = re.search(r"TOTAL PSS:\s+(\d+)", out) or re.search(r"^\s*TOTAL\s+(\d+)", out, re.M)
         return int(m.group(1)) if m else None
 

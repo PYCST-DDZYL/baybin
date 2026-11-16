@@ -110,6 +110,12 @@ class DeviceDiscoveryTest(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "adb logcat -d .* failed"):
                 adbutil.Dev("phone1", "phone").wait_log("BB_SCAN", timeout=1)
 
+    def test_failed_memory_read_is_not_reported_as_missing_process(self):
+        failed = subprocess.CompletedProcess([], 1, stdout="", stderr="device offline")
+        with patch.object(adbutil.subprocess, "run", return_value=failed):
+            with self.assertRaisesRegex(RuntimeError, "dumpsys meminfo"):
+                adbutil.Dev("glass1", "glasses").pss_kb("com.baybin.glass")
+
     def test_log_wait_uses_elapsed_time_even_if_wall_clock_changes(self):
         device = adbutil.Dev("phone1", "phone")
         with patch.object(device, "logcat", return_value="") as logcat, \
