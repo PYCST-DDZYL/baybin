@@ -9,6 +9,12 @@ import check_photo_accuracy
 
 
 class ReviewInstallSafetyTest(unittest.TestCase):
+    def test_one_shot_key_removal_requires_successful_device_check(self):
+        device = Mock()
+        check_photo_accuracy.verify_key_consumed(device, "com.baybin.phone.reviewtest")
+        self.assertIn("test ! -e files/qwen.key", device.shell.call_args.args[0])
+        self.assertTrue(device.shell.call_args.kwargs["check"])
+
     def test_install_failure_does_not_uninstall_review_package(self):
         with TemporaryDirectory(dir=Path(check_photo_accuracy.ROOT)) as folder:
             root = Path(folder)

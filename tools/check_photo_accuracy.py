@@ -27,6 +27,10 @@ def cloud_failure_stage(kind, guidance):
     return None  # Older reports have only elapsed time; keep their historical fallback.
 
 
+def verify_key_consumed(device, package):
+    device.shell("run-as " + package + " sh -c 'test ! -e files/qwen.key'", check=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--apk", required=True, type=Path)
@@ -93,8 +97,7 @@ def main():
         key = None
         props.clear()
         p.shell("am start -W -n " + package + "/com.baybin.phone.MainActivity", check=True)
-        if p.shell("run-as " + package + " ls files/qwen.key").strip():
-            raise RuntimeError("One-shot key file was not removed after encrypted import")
+        verify_key_consumed(p, package)
         pid = p.pid(package)
         if not pid:
             raise RuntimeError("Review app did not start")
