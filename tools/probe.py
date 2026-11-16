@@ -129,8 +129,6 @@ def cmd_show(g, count=4):
     """Lens layout check: the longest rule texts, plus the not-sure text, as the glasses draw them."""
     import json
     import shlex
-    import subprocess
-    from adbutil import ADB
     rows = []
     for city in ("cupertino", "san_jose"):
         with open(os.path.join(ROOT, "rules", city + ".json"), encoding="utf-8") as f:
@@ -144,10 +142,8 @@ def cmd_show(g, count=4):
     for n, (l1, l2) in enumerate(rows, 1):
         broadcast(g, "SHOW", "--es l1 %s" % shlex.quote(l1), "--es l2 %s" % shlex.quote(l2))
         time.sleep(0.6)
-        png = subprocess.run([ADB, "-s", g.serial, "exec-out", "screencap", "-p"], capture_output=True).stdout
         path = os.path.join(OUT, "show-%d.png" % n)
-        with open(path, "wb") as f:
-            f.write(png)
+        g.screenshot(path)
         log("show-%d: %d chars  %s | %s" % (n, len(l2), l1, l2))
 
 
