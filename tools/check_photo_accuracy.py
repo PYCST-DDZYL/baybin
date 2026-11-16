@@ -37,6 +37,15 @@ def review_log(device, pid):
                       "BayBinPhone:I", "AndroidRuntime:E", "*:S", check=True)
 
 
+def verify_report_target(output, apk, sample, root):
+    target = output.resolve()
+    repository = Path(root).resolve()
+    if (target == apk.resolve() or target == apk.with_name("output-metadata.json").resolve() or
+            target.is_relative_to(sample.resolve()) or
+            (target.is_relative_to(repository) and not target.is_relative_to(repository / "tools/out"))):
+        raise ValueError("Report output would overwrite a project input or source file")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--apk", required=True, type=Path)
@@ -45,6 +54,10 @@ def main():
     parser.add_argument("--start-index", type=int, default=0, help="Zero-based manifest offset for diagnostic subsets")
     parser.add_argument("--output", type=Path, default=Path(ROOT) / "tools/out/photo_accuracy.json")
     args = parser.parse_args()
+    try:
+        verify_report_target(args.output, args.apk, args.set, ROOT)
+    except ValueError as error:
+        parser.error(str(error))
     metadata = json.loads(args.apk.with_name("output-metadata.json").read_text(encoding="utf-8"))
     package = metadata["applicationId"]
     if not re.fullmatch(r"com\.baybin\.phone\.review[a-z0-9]*", package):

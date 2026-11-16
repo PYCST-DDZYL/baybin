@@ -22,6 +22,18 @@ class ReviewInstallSafetyTest(unittest.TestCase):
             check_photo_accuracy.review_log(device, 123)
         self.assertTrue(device.run.call_args.kwargs["check"])
 
+    def test_report_target_cannot_overwrite_apk_or_photo_set(self):
+        with TemporaryDirectory(dir=Path(check_photo_accuracy.ROOT)) as folder:
+            root = Path(folder)
+            sample = root / "eval"
+            sample.mkdir()
+            apk = root / "review.apk"
+            apk.write_bytes(b"apk")
+            for target in (apk, sample / "manifest.json", root / "tools/check_photo_accuracy.py"):
+                with self.subTest(target=target), self.assertRaisesRegex(ValueError, "overwrite"):
+                    check_photo_accuracy.verify_report_target(target, apk, sample, root)
+            check_photo_accuracy.verify_report_target(root / "tools/out/report.json", apk, sample, root)
+
     def test_install_failure_does_not_uninstall_review_package(self):
         with TemporaryDirectory(dir=Path(check_photo_accuracy.ROOT)) as folder:
             root = Path(folder)
