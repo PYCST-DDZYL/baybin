@@ -22,6 +22,11 @@ class FocusMetricsTest(unittest.TestCase):
         self.assertIsNone(metrics([])["success_rate"])
         self.assertIsNone(metrics([])["definite_precision"])
 
+    def test_empty_focus_report_does_not_claim_current_measurements(self):
+        focus = {"city": "san_jose", "residence": "single-family", "items": ["paper_cup"]}
+        report = {"code_hash": "current", "sets": {}}
+        self.assertEqual("NO_MEASUREMENTS", summarize(report, "current", focus)["status"])
+
     def test_input_and_processing_failures_are_not_cloud_service_errors(self):
         result = metrics([{"kind": 3, "failure_stage": "input"}, {"kind": 3, "failure_stage": "processing"},
                           {"kind": 3, "failure_stage": "service"}, {"kind": 3}])

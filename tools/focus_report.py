@@ -65,7 +65,8 @@ def summarize(report, expected_hash, focus):
     supplemented = [row for row in rows if row.get("evidence") == "user"]
     return {"city": focus["city"], "residence": focus["residence"],
             "source_hash": report.get("code_hash"), "current_hash": expected_hash,
-            "status": "CURRENT" if report.get("code_hash") == expected_hash else "STALE",
+            "status": "NO_MEASUREMENTS" if not rows else
+                      ("CURRENT" if report.get("code_hash") == expected_hash else "STALE"),
             "measured_at": report.get("when"), "first_pass": metrics(first),
             "user_supplemented": metrics(supplemented),
             "per_item": {item: metrics([r for r in first if r["item"] == item]) for item in focus["items"]},
