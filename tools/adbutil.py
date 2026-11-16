@@ -88,7 +88,7 @@ class Dev:
 
     def logcat(self, *filters):
         """Dump the current log buffer (no blocking)."""
-        return self.run("logcat", "-d", "-v", "time", *filters)
+        return self.run("logcat", "-d", "-v", "time", *filters, check=True)
 
     def wait_log(self, pattern, timeout=15.0, filters=("BayBin:I", "*:S")):
         """Poll logcat until a line matches; returns the regex match or None."""
