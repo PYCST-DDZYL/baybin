@@ -23,6 +23,11 @@ SET = os.path.join(ROOT, "eval", "glasses_set")
 SCAN_RX = r"BB_SCAN id=(\d+) outcome=(\S+) open=(-?\d+) shot=(-?\d+) send=(-?\d+) bytes=(-?\d+) total=(\d+)"
 
 
+def request_capture(device):
+    device.shell("am broadcast -a com.baybin.glass.SCAN -p %s --ez captureOnly true --ez save true" % GLASS_PKG,
+                 check=True)
+
+
 def load_manifest():
     path = os.path.join(SET, "manifest.json")
     if os.path.exists(path):
@@ -69,7 +74,7 @@ def main():
         input("对准「%s」，回车拍照…" % item)
         wake_glasses(g)
         g.logcat_clear()
-        g.shell("am broadcast -a com.baybin.glass.SCAN -p %s --ez captureOnly true --ez save true" % GLASS_PKG)
+        request_capture(g)
         m = g.wait_log(SCAN_RX, timeout=15)
         if not m or m.group(2) != "capture_only":
             print("拍照失败，再试一次。")
