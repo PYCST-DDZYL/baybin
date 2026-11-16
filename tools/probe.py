@@ -149,12 +149,14 @@ def cmd_show(g, count=4):
 
 def cmd_pair(g, mac=None):
     """Phone connects to the glasses app: straight to MAC if given, else BLE scan + address lookup."""
+    if mac is not None and not re.fullmatch(r"(?i)(?:[0-9a-f]{2}:){5}[0-9a-f]{2}", mac):
+        raise ValueError("Bluetooth address must be six hexadecimal byte pairs")
     from adbutil import PHONE_PKG, phone
     p = phone()
     if p.shell("settings get global bluetooth_on").strip() != "1":
         sys.exit("手机蓝牙没开。")
     wake_glasses(g)
-    p.shell("am start -n %s/.MainActivity" % PHONE_PKG)
+    p.shell("am start -n %s/.MainActivity" % PHONE_PKG, check=True)
     time.sleep(1.5)
     from acceptlib import phone_status
     st = phone_status(p)
@@ -163,7 +165,8 @@ def cmd_pair(g, mac=None):
         return
     p.logcat_clear()
     g.logcat_clear()
-    p.shell("am broadcast -a com.baybin.phone.FIND -p %s %s" % (PHONE_PKG, ("--es mac " + mac) if mac else ""))
+    p.shell("am broadcast -a com.baybin.phone.FIND -p %s %s" % (PHONE_PKG, ("--es mac " + mac) if mac else ""),
+            check=True)
     m = p.wait_log(r"link: (CONNECTED|FAILED) \((.*)\)", timeout=60, filters=("BayBinPhone:I", "*:S"))
     log("phone: %s" % (m.group(0) if m else "no connection result within 60 s"))
     for line in p.logcat("BayBinPhone:I", "*:S").splitlines()[-10:]:

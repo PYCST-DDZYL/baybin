@@ -7,6 +7,12 @@ import probe
 
 
 class ProbeSafetyTest(unittest.TestCase):
+    def test_pair_rejects_unsafe_bluetooth_address_before_device_work(self):
+        device = Mock()
+        with self.assertRaisesRegex(ValueError, "Bluetooth address"):
+            probe.cmd_pair(device, "AA:BB:CC:DD:EE:FF;id")
+        device.shell.assert_not_called()
+
     def test_rejected_probe_broadcast_is_reported(self):
         device = Mock()
         device.shell.side_effect = RuntimeError("broadcast failed")
