@@ -16,6 +16,11 @@ from acceptlib import code_hash
 from review_cleanup import remove_review
 
 
+def flow_log(device, pid):
+    return device.run("logcat", "-d", "--pid=" + str(pid), "-v", "brief",
+                      "BayBinPhone:I", "AndroidRuntime:E", "*:S", check=True)
+
+
 def main():
     if not __debug__:
         raise RuntimeError("Flow checks require Python assertions; do not run with -O")
@@ -43,7 +48,7 @@ def main():
             raise RuntimeError("Isolated app did not start")
 
         def log():
-            return p.run("logcat", "-d", "--pid=" + str(pid), "-v", "brief", "BayBinPhone:I", "AndroidRuntime:E", "*:S")
+            return flow_log(p, pid)
 
         def broadcast(action, extras=""):
             p.shell("am broadcast -a com.baybin.phone." + action + " -p " + package + " " + extras, check=True)
