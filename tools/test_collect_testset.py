@@ -9,6 +9,12 @@ import collect_testset
 
 
 class CaptureRequestTest(unittest.TestCase):
+    def test_new_glasses_photo_does_not_overwrite_unlisted_file(self):
+        with tempfile.TemporaryDirectory() as tmp, patch.object(collect_testset, "SET", tmp):
+            (Path(tmp) / "battery__2.jpg").write_bytes(b"existing")
+            name = collect_testset.next_photo_name("battery", [{"file": "battery__1.jpg"}])
+            self.assertEqual("battery__3.jpg", name)
+
     def test_rejected_capture_broadcast_is_reported(self):
         device = Mock()
         device.shell.side_effect = RuntimeError("capture refused")

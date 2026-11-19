@@ -36,6 +36,16 @@ def pull_photo(device, name):
     return path
 
 
+def next_photo_name(item, photos):
+    used = {photo["file"] for photo in photos}
+    number = 1
+    while True:
+        name = "%s__%d.jpg" % (item, number)
+        if name not in used and not os.path.exists(os.path.join(SET, name)):
+            return name
+        number += 1
+
+
 def load_manifest():
     path = os.path.join(SET, "manifest.json")
     if os.path.exists(path):
@@ -87,8 +97,7 @@ def main():
         if not m or m.group(2) != "capture_only":
             print("拍照失败，再试一次。")
             continue
-        n = counts.get(item, 0) + 1
-        name = "%s__%d.jpg" % (item, n)
+        name = next_photo_name(item, man["photos"])
         pull_photo(g, name)
         man["photos"].append({"file": name, "item": item, "taken": time.strftime("%Y-%m-%d %H:%M:%S")})
         save_manifest(man)
