@@ -133,7 +133,7 @@ def search():
                 print("  %s %r failed: %s" % (fn.__name__, query, e))
             time.sleep(3.5)  # Openverse: 20 requests/minute anonymous
         for c in found:
-            if c["page"] in seen:
+            if not c.get("page") or c["page"] in seen:
                 continue
             seen.add(c["page"])
             c.update({"id": "c%d" % (len(cands) + 1), "group": group, "query": query})

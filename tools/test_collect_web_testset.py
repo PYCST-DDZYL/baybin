@@ -9,6 +9,17 @@ import collect_web_testset
 
 
 class WebSetPickTest(unittest.TestCase):
+    def test_search_excludes_photos_without_attribution_page(self):
+        with tempfile.TemporaryDirectory(dir=collect_web_testset.ROOT) as folder, \
+             patch.object(collect_web_testset, "OUT", folder), \
+             patch.object(collect_web_testset, "QUERIES", [("trash", "can")]), \
+             patch.object(collect_web_testset, "commons", return_value=[{"page": None}]), \
+             patch.object(collect_web_testset, "openverse", return_value=[]), \
+             patch.object(collect_web_testset, "sheets"), \
+             patch.object(collect_web_testset.time, "sleep"):
+            collect_web_testset.search()
+            self.assertEqual([], json.loads((Path(folder) / "candidates.json").read_text(encoding="utf-8")))
+
     def test_invalid_label_cannot_escape_photo_directory(self):
         with tempfile.TemporaryDirectory(dir=collect_web_testset.ROOT) as folder:
             root = Path(folder)
