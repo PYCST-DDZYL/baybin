@@ -331,7 +331,7 @@ def long_run(n=100, reuse_minutes=0):
     pids = {"glasses": glass_pid(g), "phone": phone_pid(p)}
     pss0 = g.pss_kb(G)
     rows = []
-    t_start = time.time()
+    t_start = time.monotonic()
     for i in range(n):
         r = scan(g, key=True) or {"outcome": "no_line", "total": -1}
         r["pss_kb"] = g.pss_kb(G)
@@ -341,7 +341,7 @@ def long_run(n=100, reuse_minutes=0):
         print("  #%3d %-12s total %5s ms  glasses PSS %s KB" % (i + 1, r["outcome"], r["total"], r["pss_kb"]))
         time.sleep(1.0)
     data = {
-        "n": n, "minutes": round((time.time() - t_start) / 60, 1),
+        "n": n, "minutes": round((time.monotonic() - t_start) / 60, 1),
         "pids_before": pids, "pids_after": {"glasses": glass_pid(g), "phone": phone_pid(p)},
         "pss_before_kb": pss0, "rows": rows,
         "crash_glasses": crash_lines(g, G), "crash_phone": crash_lines(p, PHONE_PKG),
