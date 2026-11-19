@@ -29,8 +29,8 @@ def test_photo_path(folder, filename):
     """Resolve a manifest photo only inside its test set, before sending it to a device."""
     root = Path(folder).resolve()
     photo = (root / filename).resolve()
-    if not photo.is_relative_to(root) or not photo.is_file():
-        raise ValueError("Test photo is missing or outside its test set: %s" % filename)
+    if not photo.is_relative_to(root) or not photo.is_file() or photo.stat().st_size == 0:
+        raise ValueError("Test photo is missing, empty, or outside its test set: %s" % filename)
     return str(photo)
 
 

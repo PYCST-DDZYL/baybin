@@ -89,6 +89,10 @@ class PhoneTestSafety(unittest.TestCase):
                 manifest.write_text(json.dumps({"photos": [{"file": filename, "item": "cup"}]}), encoding="utf-8")
                 with self.subTest(filename=filename), self.assertRaisesRegex(ValueError, "outside its test set"):
                     accept_2_accuracy.load_set(str(sample))
+            (sample / "empty.jpg").write_bytes(b"")
+            manifest.write_text(json.dumps({"photos": [{"file": "empty.jpg", "item": "cup"}]}), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "empty"):
+                accept_2_accuracy.load_set(str(sample))
 
     def test_invalid_item_ids_are_rejected_before_device_work(self):
         with TemporaryDirectory() as folder:
