@@ -6,6 +6,9 @@ import accept_4_leak
 
 
 class LeakWindowTest(unittest.TestCase):
+    def test_slope_uses_scan_positions_when_interior_samples_are_missing(self):
+        self.assertAlmostEqual(10, accept_4_leak.slope([(10, 100), (12, 120), (13, 130)]))
+
     def test_too_short_run_is_rejected_before_device_work(self):
         with patch.object(accept_4_leak, "long_run") as run:
             with self.assertRaisesRegex(ValueError, "at least 30 scans"):

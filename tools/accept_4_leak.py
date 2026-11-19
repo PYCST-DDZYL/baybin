@@ -15,8 +15,9 @@ import sys
 from acceptlib import long_run, save, verdict
 
 
-def slope(ys):
-    xs = range(len(ys))
+def slope(samples):
+    xs = [index for index, value in samples]
+    ys = [value for index, value in samples]
     mx, my = statistics.mean(xs), statistics.mean(ys)
     den = sum((x - mx) ** 2 for x in xs)
     return sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / den if den else 0.0
@@ -36,7 +37,7 @@ def main(argv):
         verdict(False, "%d 次扫描无内存泄漏" % n, ["insufficient early or late PSS samples"])
         return False
     growth = statistics.mean(late) - statistics.mean(early)
-    k = slope([x for x in pss[10:] if x])
+    k = slope([(index, value) for index, value in enumerate(pss[10:], start=10) if value])
     ok = growth <= 5 * 1024 and k <= 50
     save("4_leak", {"pass": ok, "n": n, "early_mean_kb": statistics.mean(early), "late_mean_kb": statistics.mean(late),
                     "growth_kb": growth, "slope_kb_per_scan": k, "run": run["when"]})
