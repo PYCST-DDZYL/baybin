@@ -15,6 +15,7 @@ import subprocess
 import time
 
 from adbutil import ADB, GLASS_PKG, PHONE_PKG, ROOT, glasses, phone, wake_glasses
+from atomicfile import write_text
 
 OUT = os.path.join(ROOT, "tools", "out", "accept")
 SCAN_RX = r"BB_SCAN id=(\d+) outcome=(\S+) open=(-?\d+) shot=(-?\d+) send=(-?\d+) bytes=(-?\d+) total=(\d+)"
@@ -50,8 +51,7 @@ def save(name, data):
     os.makedirs(OUT, exist_ok=True)
     data["when"] = time.strftime("%Y-%m-%d %H:%M:%S")
     data["code_hash"] = code_hash()
-    with open(os.path.join(OUT, name + ".json"), "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=1)
+    write_text(os.path.join(OUT, name + ".json"), json.dumps(data, ensure_ascii=False, indent=1))
     return data
 
 
