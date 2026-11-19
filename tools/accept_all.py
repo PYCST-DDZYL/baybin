@@ -14,6 +14,7 @@ import sys
 
 from acceptlib import code_hash, load, save
 from adbutil import ROOT
+from atomicfile import write_text
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RUNS = [
@@ -102,8 +103,7 @@ def report():
         lines.append("| " + " | ".join(table_cell(value) for value in cells) + " |")
     os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
     path = os.path.join(ROOT, "docs", "acceptance.md")
-    with open(path, "w", encoding="utf-8") as f:
-        f.write("\n".join(lines) + "\n")
+    write_text(path, "\n".join(lines) + "\n")
     print("\n".join(lines))
     print("\n->", path)
     # Update existing result markers; the brief homepage need not contain a table.
@@ -117,8 +117,7 @@ def report():
         if 0 <= a < b:
             table = [l for l in lines if l.startswith("|")]
             text = text[:a] + "<!-- RESULTS -->\n" + "\n".join(table) + "\n" + text[b:]
-            with open(path, "w", encoding="utf-8") as f:
-                f.write(text)
+            write_text(path, text)
             print("->", relative)
 
 
