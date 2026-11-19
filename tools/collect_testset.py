@@ -17,6 +17,7 @@ import os
 import sys
 import time
 
+from atomicfile import write_text
 from adbutil import GLASS_PKG, ROOT, glasses, wake_glasses
 
 SET = os.path.join(ROOT, "eval", "glasses_set")
@@ -56,8 +57,7 @@ def load_manifest():
 
 
 def save_manifest(man):
-    with open(os.path.join(SET, "manifest.json"), "w", encoding="utf-8") as f:
-        json.dump(man, f, ensure_ascii=False, indent=1)
+    write_text(os.path.join(SET, "manifest.json"), json.dumps(man, ensure_ascii=False, indent=1))
 
 
 def main():
