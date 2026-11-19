@@ -47,7 +47,7 @@ def main():
     package = "com.baybin.phone"
     expected_hash = hashlib.sha256(args.apk.read_bytes()).hexdigest()
     p = phone()
-    before = package_info(p.shell("dumpsys package " + package))
+    before = package_info(p.shell("dumpsys package " + package, check=True))
     report = {"before": before, "expected_version": expected_version, "apk_sha256": expected_hash,
               "source_hash": code_hash(), "state": "pending", "permissions_auto_granted": False}
     output = Path(ROOT) / "tools/out/phone_update.json"
@@ -60,14 +60,14 @@ def main():
     try:
         print("Updating %s to %s; retaining existing app data" % (before["version"], expected_version), flush=True)
         p.run("install", "-r", str(args.apk.resolve()), check=True, timeout=120)
-        after = package_info(p.shell("dumpsys package " + package))
+        after = package_info(p.shell("dumpsys package " + package, check=True))
         report["after"] = after
         if after["version"] != expected_version or any(before[k] != after[k] for k in ("identity", "first_install")):
             raise RuntimeError("Version or retained application identity verification failed")
-        remote = p.shell("pm path " + package).strip().removeprefix("package:")
+        remote = p.shell("pm path " + package, check=True).strip().removeprefix("package:")
         if not re.fullmatch(r"/data/app/[A-Za-z0-9_+/.=~\-]+\.apk", remote):
             raise RuntimeError("Unexpected installed APK path")
-        installed_hash = p.shell("sha256sum " + remote).split()
+        installed_hash = p.shell("sha256sum " + remote, check=True).split()
         if not installed_hash or installed_hash[0] != expected_hash:
             raise RuntimeError("Installed APK does not match the requested build")
         report["data_identity_preserved"] = True
@@ -81,7 +81,7 @@ def main():
             report["startup_fatal_exception_seen"] = "FATAL EXCEPTION" in log
             if report["startup_fatal_exception_seen"]:
                 raise RuntimeError("A fatal exception was observed after updating")
-        report["locked"] = "isKeyguardShowing=true" in p.shell("dumpsys window")
+        report["locked"] = "isKeyguardShowing=true" in p.shell("dumpsys window", check=True)
         report["state"] = "installed" if report["process_started"] else "startup_unverified"
         print(json.dumps({k: report[k] for k in ("state", "data_identity_preserved", "installed_hash_verified", "locked")}))
     except Exception as error:
