@@ -69,7 +69,7 @@ def install_phone(variant, required=True):
     for perm in ("BLUETOOTH_SCAN", "BLUETOOTH_CONNECT", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION",
                  "POST_NOTIFICATIONS"):
         p.shell("pm grant %s android.permission.%s" % (PHONE_PKG, perm))
-    p.shell("am start -n %s/.MainActivity" % PHONE_PKG)
+    p.shell("am start -n %s/.MainActivity" % PHONE_PKG, check=True)
 
 
 def main(argv):
