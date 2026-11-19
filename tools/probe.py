@@ -157,7 +157,7 @@ def cmd_pair(g, mac=None):
     validate_pair_address(mac)
     from adbutil import PHONE_PKG, phone
     p = phone()
-    if p.shell("settings get global bluetooth_on").strip() != "1":
+    if p.shell("settings get global bluetooth_on", check=True).strip() != "1":
         sys.exit("手机蓝牙没开。")
     wake_glasses(g)
     p.shell("am start -n %s/.MainActivity" % PHONE_PKG, check=True)
