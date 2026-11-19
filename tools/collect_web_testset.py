@@ -21,6 +21,7 @@ import urllib.parse
 import urllib.request
 
 from PIL import Image, ImageDraw
+from atomicfile import write_text
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "tools", "out", "web_candidates")
@@ -218,8 +219,7 @@ def pick(args):
         man["photos"].append({"file": name, "item": item, "title": c["title"], "page": c["page"], "license": c["license"],
                               "creator": c["creator"], "source": c["src"], "query": c["query"]})
         have.add(c["page"])
-        with open(man_path, "w", encoding="utf-8") as f:
-            json.dump(man, f, ensure_ascii=False, indent=1)
+        write_text(man_path, json.dumps(man, ensure_ascii=False, indent=1))
         print("%-5s -> %-28s %s (%s)" % (cid, name, c["title"][:50], c["license"]))
         time.sleep(1.5)
 
