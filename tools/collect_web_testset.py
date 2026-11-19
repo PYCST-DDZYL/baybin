@@ -170,6 +170,16 @@ def sheets(cands):
         print("-> %s (%d)" % (path, len(items)))
 
 
+def next_photo_name(item, photos, folder):
+    used = {photo["file"] for photo in photos}
+    number = 1
+    while True:
+        name = "%s__%d.jpg" % (item, number)
+        if name not in used and not os.path.exists(os.path.join(folder, name)):
+            return name
+        number += 1
+
+
 def pick(args):
     with open(os.path.join(OUT, "candidates.json"), encoding="utf-8") as f:
         cands = {c["id"]: c for c in json.load(f)}
@@ -203,8 +213,7 @@ def pick(args):
             url = c["full"]
         im = Image.open(io.BytesIO(get(url))).convert("RGB")
         im.thumbnail((1024, 1024))
-        n = sum(p["item"] == item for p in man["photos"]) + 1
-        name = "%s__%d.jpg" % (item, n)
+        name = next_photo_name(item, man["photos"], SET)
         im.save(os.path.join(SET, name), "JPEG", quality=88)
         man["photos"].append({"file": name, "item": item, "title": c["title"], "page": c["page"], "license": c["license"],
                               "creator": c["creator"], "source": c["src"], "query": c["query"]})

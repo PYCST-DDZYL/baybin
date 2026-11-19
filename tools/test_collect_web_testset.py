@@ -9,6 +9,12 @@ import collect_web_testset
 
 
 class WebSetPickTest(unittest.TestCase):
+    def test_next_photo_name_preserves_unlisted_existing_image(self):
+        with tempfile.TemporaryDirectory(dir=collect_web_testset.ROOT) as folder:
+            (Path(folder) / "battery__2.jpg").write_bytes(b"existing")
+            name = collect_web_testset.next_photo_name("battery", [{"file": "battery__1.jpg"}], folder)
+            self.assertEqual("battery__3.jpg", name)
+
     def test_search_excludes_photos_without_attribution_page(self):
         with tempfile.TemporaryDirectory(dir=collect_web_testset.ROOT) as folder, \
              patch.object(collect_web_testset, "OUT", folder), \
