@@ -27,6 +27,22 @@ from adbutil import PHONE_PKG, ROOT, phone
 SAMPLE = ["plastic_bottle", "battery", "pizza_box_greasy", "food_scraps", "carton", "snack_wrapper"]
 
 
+def picker_opened(device, bounds):
+    match = re.fullmatch(r'\[(\d+),(\d+)\]\[(\d+),(\d+)\]', bounds)
+    if not match:
+        return False
+    x1, y1, x2, y2 = map(int, match.groups())
+    device.shell("input tap %d %d" % ((x1 + x2) // 2, (y1 + y2) // 2), check=True)
+    try:
+        time.sleep(2.5)
+        top = device.shell("dumpsys activity activities | grep -E 'topResumedActivity|mResumedActivity' | head -1",
+                           check=True)
+        return PHONE_PKG not in top and any(word in top.lower() for word in ("media", "photo", "gallery"))
+    finally:
+        device.shell("input keyevent KEYCODE_BACK", check=True)
+        time.sleep(1)
+
+
 def main():
     sample_dir = os.path.join(ROOT, "eval", "commons_probe")
     with open(os.path.join(sample_dir, "manifest.json"), encoding="utf-8") as f:
@@ -57,7 +73,7 @@ def main():
             locked = "isKeyguardShowing=true" in p.shell("dumpsys window | grep isKeyguardShowing")
             ui_shows = picker = None
             if not locked:
-                p.shell("am start -n %s/.MainActivity" % PHONE_PKG)
+                p.shell("am start -n %s/.MainActivity" % PHONE_PKG, check=True)
                 time.sleep(1.5)
                 xml = p.ui_xml()
                 root = ET.fromstring(xml[xml.index("<hierarchy"):])
@@ -69,17 +85,7 @@ def main():
                                   "Special handling": "Not in the carts"}.get(got, "Not sure" if got.startswith("Not sure") else got)
                 ui_shows = displayed == expected_title and bool(rows[-1]["line2"]) and rows[-1]["line2"] in detail
                 bounds = nodes.get(PHONE_PKG + ":id/gallery", {}).get("bounds", "")
-                m = re.fullmatch(r'\[(\d+),(\d+)\]\[(\d+),(\d+)\]', bounds)
-                if m:
-                    x1, y1, x2, y2 = map(int, m.groups())
-                    p.shell("input tap %d %d" % ((x1 + x2) // 2, (y1 + y2) // 2))
-                    time.sleep(2.5)
-                    top = p.shell("dumpsys activity activities | grep -E 'topResumedActivity|mResumedActivity' | head -1")
-                    picker = PHONE_PKG not in top and ("media" in top.lower() or "photo" in top.lower() or "gallery" in top.lower())
-                    p.shell("input keyevent KEYCODE_BACK")
-                    time.sleep(1)
-                else:
-                    picker = False
+                picker = picker_opened(p, bounds)
         finally:
             clear_private(p)
 
