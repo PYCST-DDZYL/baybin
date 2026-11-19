@@ -301,8 +301,13 @@ def load_rules():
 # ---- the long run shared by accept_3 (memory), accept_4 (leak) and accept_5 (crashes) ----
 
 def reusable_run(prev, n, reuse_minutes, current_hash, now):
-    if (not prev or reuse_minutes <= 0 or prev.get("n") != n or
-            len(prev.get("rows", [])) != n or prev.get("code_hash") != current_hash):
+    if (not isinstance(prev, dict) or reuse_minutes <= 0 or prev.get("n") != n or
+            not isinstance(prev.get("rows"), list) or len(prev["rows"]) != n or
+            any(not isinstance(row, dict) or "outcome" not in row or "pss_kb" not in row for row in prev["rows"]) or
+            not all(isinstance(prev.get(key), dict) and all(device in prev[key] for device in ("glasses", "phone"))
+                    for key in ("pids_before", "pids_after")) or
+            not all(isinstance(prev.get(key), list) for key in ("crash_glasses", "crash_phone")) or
+            "pss_before_kb" not in prev or prev.get("code_hash") != current_hash):
         return False
     try:
         age = now - time.mktime(time.strptime(prev["when"], "%Y-%m-%d %H:%M:%S"))

@@ -177,11 +177,16 @@ class PhoneTestSafety(unittest.TestCase):
     def test_long_run_reuse_rejects_incomplete_or_future_results(self):
         stamp = "2026-11-11 12:00:00"
         now = time.mktime(time.strptime(stamp, "%Y-%m-%d %H:%M:%S"))
-        previous = {"n": 2, "rows": [{}, {}], "code_hash": "current", "when": stamp}
+        previous = {"n": 2, "rows": [{"outcome": "result_0", "pss_kb": 1000}] * 2,
+                    "pids_before": {"glasses": 1, "phone": 2}, "pids_after": {"glasses": 1, "phone": 2},
+                    "crash_glasses": [], "crash_phone": [], "pss_before_kb": 900,
+                    "code_hash": "current", "when": stamp}
         self.assertTrue(acceptlib.reusable_run(previous, 2, 10, "current", now + 30))
         self.assertFalse(acceptlib.reusable_run(previous, 2, 10, "current", now - 30))
         self.assertFalse(acceptlib.reusable_run({**previous, "rows": [{}]}, 2, 10, "current", now + 30))
         self.assertFalse(acceptlib.reusable_run({**previous, "n": 1}, 2, 10, "current", now + 30))
+        self.assertFalse(acceptlib.reusable_run({**previous, "rows": [None, None]}, 2, 10, "current", now + 30))
+        self.assertFalse(acceptlib.reusable_run({**previous, "crash_phone": None}, 2, 10, "current", now + 30))
 
     def test_long_run_rejects_zero_scans_before_device_work(self):
         with patch.object(acceptlib, "both") as both:
