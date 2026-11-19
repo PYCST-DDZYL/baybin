@@ -50,6 +50,24 @@ def load_set(path):
     return [(test_photo_path(path, m["file"]), item_id(m.get("expect", item))) for item, m in sorted(man.items())]
 
 
+def select_sets(requested):
+    paths = [os.path.abspath(s) for s in requested] if requested else [
+        os.path.join(ROOT, "eval", s) for s in ("glasses_set", "realworld", "commons_probe")]
+    selected = []
+    for path in paths:
+        if not os.path.isfile(os.path.join(path, "manifest.json")):
+            if requested:
+                raise ValueError("Requested test set has no manifest: %s" % path)
+            continue
+        count = len(load_set(path))
+        if count < 50:
+            if requested:
+                raise ValueError("Requested test set has fewer than 50 photos: %s" % path)
+            continue
+        selected.append(path)
+    return selected
+
+
 def run_set(p, rules, path, cities_to_test):
     name = os.path.basename(path.rstrip("\\/"))
     photos = load_set(path)
@@ -89,9 +107,7 @@ def main(argv):
     parser.add_argument("--set", nargs="+")
     parser.add_argument("--city", default="all")
     args = parser.parse_args(argv)
-    sets = [os.path.abspath(s) for s in args.set] if args.set else [
-        os.path.join(ROOT, "eval", s) for s in ("glasses_set", "realworld", "commons_probe")]
-    sets = [s for s in sets if os.path.exists(os.path.join(s, "manifest.json")) and len(load_set(s)) >= 50]
+    sets = select_sets(args.set)
     if not sets:
         sys.exit("no test set with ≥50 photos")
 
