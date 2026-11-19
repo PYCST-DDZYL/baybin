@@ -65,6 +65,9 @@ def select_sets(requested):
                 raise ValueError("Requested test set has fewer than 50 photos: %s" % path)
             continue
         selected.append(path)
+    names = [os.path.basename(path.rstrip("\\/")) for path in selected]
+    if len(set(names)) != len(names):
+        raise ValueError("Test sets must have unique folder names in the accuracy report")
     return selected
 
 
