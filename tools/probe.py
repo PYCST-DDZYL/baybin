@@ -191,15 +191,21 @@ def cmd_record(g, seconds=10):
     wake_glasses(g)
     time.sleep(1)
     rec = subprocess.Popen([ADB, "-s", g.serial, "shell", "screenrecord", "--time-limit", str(seconds), tmp])
-    time.sleep(1.5)
-    g.logcat_clear()
-    g.shell("input keyevent KEYCODE_DPAD_CENTER")
-    m = g.wait_log(SCAN_RX, timeout=seconds)
-    rec.wait(timeout=seconds + 10)
-    os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
-    dst = os.path.join(ROOT, "docs", "demo-lens.mp4")
-    g.run("pull", tmp, dst, check=True)
-    g.shell("rm -f %s" % tmp)
+    try:
+        time.sleep(1.5)
+        g.logcat_clear()
+        g.shell("input keyevent KEYCODE_DPAD_CENTER", check=True)
+        m = g.wait_log(SCAN_RX, timeout=seconds)
+        if rec.wait(timeout=seconds + 10):
+            raise RuntimeError("Lens screen recording failed")
+        os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
+        dst = os.path.join(ROOT, "docs", "demo-lens.mp4")
+        g.run("pull", tmp, dst, check=True)
+    finally:
+        if rec.poll() is None:
+            rec.terminate()
+            rec.wait(timeout=5)
+        g.shell("rm -f %s" % tmp, check=True)
     log("record: %s -> %s (%d KB)" % (m.group(0) if m else "no BB_SCAN line", dst, os.path.getsize(dst) // 1024))
 
 

@@ -30,6 +30,19 @@ class ProbeSafetyTest(unittest.TestCase):
         device.screenshot.assert_called_once()
         self.assertTrue(device.screenshot.call_args.args[0].endswith("show-1.png"))
 
+    def test_recording_removes_remote_video_after_pull_failure(self):
+        device = Mock(serial="glass1")
+        device.run.side_effect = RuntimeError("pull failed")
+        recording = Mock()
+        recording.wait.return_value = 0
+        recording.poll.return_value = 0
+        with patch.object(probe, "wake_glasses"), patch.object(probe.time, "sleep"), \
+             patch.object(probe, "log"), patch("subprocess.Popen", return_value=recording):
+            with self.assertRaisesRegex(RuntimeError, "pull failed"):
+                probe.cmd_record(device, seconds=1)
+        self.assertIn("rm -f", device.shell.call_args.args[0])
+        self.assertTrue(device.shell.call_args.kwargs["check"])
+
 
 if __name__ == "__main__":
     unittest.main()
