@@ -173,14 +173,23 @@ def sheets(cands):
 def pick(args):
     with open(os.path.join(OUT, "candidates.json"), encoding="utf-8") as f:
         cands = {c["id"]: c for c in json.load(f)}
+    with open(os.path.join(ROOT, "rules", "items.json"), encoding="utf-8") as f:
+        valid_items = {item["id"] for item in json.load(f)["items"]}
+    picks = []
+    for arg in args:
+        if arg.count("=") != 1:
+            raise ValueError("Pick must use candidate=item format: %s" % arg)
+        cid, item = arg.split("=", 1)
+        if cid not in cands or item not in valid_items:
+            raise ValueError("Unknown candidate or catalog item: %s" % arg)
+        picks.append((cid, item))
     os.makedirs(SET, exist_ok=True)
     man_path = os.path.join(SET, "manifest.json")
     man = json.load(open(man_path, encoding="utf-8")) if os.path.exists(man_path) else {
         "note": "Openly licensed real-world photos (Wikimedia Commons, Openverse/Flickr), labelled by hand. "
                 "item = catalog id the app should answer.", "photos": []}
     have = {p["page"] for p in man["photos"]}
-    for a in args:
-        cid, item = a.split("=")
+    for cid, item in picks:
         c = cands[cid]
         if c["page"] in have:
             print("%s already in the set" % cid)
