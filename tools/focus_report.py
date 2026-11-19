@@ -78,9 +78,10 @@ def main():
     parser.add_argument("report", type=Path)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    if args.output and args.output.resolve() == args.report.resolve():
-        parser.error("Output must not overwrite the input measurements")
-    focus = json.loads((Path(ROOT) / "eval/focus_san_jose.json").read_text(encoding="utf-8"))
+    focus_path = Path(ROOT) / "eval/focus_san_jose.json"
+    if args.output and args.output.resolve() in (args.report.resolve(), focus_path.resolve()):
+        parser.error("Output must not overwrite report inputs")
+    focus = json.loads(focus_path.read_text(encoding="utf-8"))
     result = summarize(json.loads(args.report.read_text(encoding="utf-8")), code_hash(), focus)
     text = json.dumps(result, ensure_ascii=False, indent=2)
     if args.output:

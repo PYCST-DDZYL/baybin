@@ -1,10 +1,23 @@
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
+import focus_report
 from focus_report import metrics, summarize
 from check_photo_accuracy import cloud_failure_stage
 
 
 class FocusMetricsTest(unittest.TestCase):
+    def test_output_cannot_replace_focus_configuration(self):
+        with TemporaryDirectory(dir=focus_report.ROOT) as folder:
+            report = Path(folder) / "report.json"
+            report.write_text("{}", encoding="utf-8")
+            config = Path(focus_report.ROOT) / "eval/focus_san_jose.json"
+            with patch("sys.argv", ["focus_report", str(report), "--output", str(config)]):
+                with self.assertRaises(SystemExit):
+                    focus_report.main()
+
     def test_retakes_and_timeouts_remain_misses_and_offline_is_separate(self):
         rows = [{"kind": "0", "want": "Garbage", "got": "Garbage"},
                 {"kind": 0, "want": "Garbage", "got": "Recycling"},
