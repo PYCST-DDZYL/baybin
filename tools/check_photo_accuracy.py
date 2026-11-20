@@ -14,6 +14,7 @@ import time
 
 from adbutil import ADB, ROOT, phone
 from acceptlib import code_hash, expected_line1, load_rules
+from atomicfile import write_text
 from focus_report import metrics
 from review_cleanup import remove_review
 
@@ -100,8 +101,7 @@ def main():
 
     def save():
         report["metrics"] = metrics(rows)
-        args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        write_text(args.output, json.dumps(report, ensure_ascii=False, indent=2) + "\n")
 
     def stream(data, command):
         result = subprocess.run([ADB, "-s", p.serial, "exec-in", "run-as", package, "sh", "-c", command],

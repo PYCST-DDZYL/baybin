@@ -11,6 +11,7 @@ import re
 
 from adbutil import ROOT, phone
 from acceptlib import code_hash
+from atomicfile import write_text
 
 
 def package_info(text):
@@ -53,8 +54,7 @@ def main():
     output = Path(ROOT) / "tools/out/phone_update.json"
 
     def save():
-        output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+        write_text(output, json.dumps(report, indent=2) + "\n")
 
     save()
     try:

@@ -10,6 +10,7 @@ from pathlib import Path
 
 from acceptlib import code_hash
 from adbutil import ROOT
+from atomicfile import write_text
 
 
 def metrics(rows):
@@ -85,8 +86,7 @@ def main():
     result = summarize(json.loads(args.report.read_text(encoding="utf-8")), code_hash(), focus)
     text = json.dumps(result, ensure_ascii=False, indent=2)
     if args.output:
-        args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(text + "\n", encoding="utf-8")
+        write_text(args.output, text + "\n")
     print(text)
 
 
