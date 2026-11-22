@@ -107,9 +107,10 @@ class PhoneTestSafety(unittest.TestCase):
     def test_unsupported_accuracy_city_rejected_before_phone_launch(self):
         with TemporaryDirectory() as folder:
             root = Path(folder)
-            (root / "photo.jpg").write_bytes(b"photo")
+            for index in range(50):
+                (root / ("photo_%02d.jpg" % index)).write_bytes(b"photo")
             (root / "manifest.json").write_text(json.dumps({"photos": [
-                {"file": "photo.jpg", "item": "cup"} for _ in range(50)]}), encoding="utf-8")
+                {"file": "photo_%02d.jpg" % index, "item": "cup"} for index in range(50)]}), encoding="utf-8")
             with patch.object(accept_2_accuracy, "phone") as phone, \
                  patch.object(accept_2_accuracy, "load_rules", return_value={"san_jose": {}}), \
                  self.assertRaises(SystemExit):

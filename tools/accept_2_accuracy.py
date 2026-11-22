@@ -46,8 +46,13 @@ def load_set(path):
         return value
 
     if "photos" in man:
-        return [(test_photo_path(path, m["file"]), item_id(m["item"])) for m in man["photos"]]
-    return [(test_photo_path(path, m["file"]), item_id(m.get("expect", item))) for item, m in sorted(man.items())]
+        photos = [(test_photo_path(path, m["file"]), item_id(m["item"])) for m in man["photos"]]
+    else:
+        photos = [(test_photo_path(path, m["file"]), item_id(m.get("expect", item))) for item, m in sorted(man.items())]
+    paths = [os.path.normcase(photo) for photo, item in photos]
+    if len(set(paths)) != len(paths):
+        raise ValueError("Duplicate photo in accuracy test manifest")
+    return photos
 
 
 def select_sets(requested):

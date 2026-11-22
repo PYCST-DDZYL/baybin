@@ -1,4 +1,5 @@
 """Explicit accuracy test sets must be run or rejected."""
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -8,6 +9,16 @@ import accept_2_accuracy
 
 
 class AccuracySetSelectionTest(unittest.TestCase):
+    def test_repeated_photo_cannot_inflate_test_set_size(self):
+        with tempfile.TemporaryDirectory(dir=accept_2_accuracy.ROOT) as folder:
+            sample = Path(folder)
+            (sample / "one.jpg").write_bytes(b"photo")
+            (sample / "manifest.json").write_text(json.dumps({
+                "photos": [{"file": "one.jpg", "item": "battery"}] * 50
+            }), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "Duplicate photo"):
+                accept_2_accuracy.select_sets([folder])
+
     def test_missing_explicit_manifest_is_rejected(self):
         with tempfile.TemporaryDirectory(dir=accept_2_accuracy.ROOT) as folder:
             with self.assertRaisesRegex(ValueError, "no manifest"):
