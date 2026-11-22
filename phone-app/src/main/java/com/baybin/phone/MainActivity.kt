@@ -33,6 +33,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ListView
+import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.ScrollView
 import android.widget.TextView
@@ -844,6 +845,13 @@ class MainActivity : Activity(), App.Ui {
     }
 
     private fun showCities(regionId: Int) {
+        findViewById<RadioButton>(R.id.region_ca).apply {
+            text = if (Lang.zh(app.lang)) {
+                if (regionOpen) "California · 收起城市 ▲" else "California · 切换城市 ▼"
+            } else {
+                if (regionOpen) "California · hide cities ▲" else "California · change city ▼"
+            }
+        }
         val shown = citiesOf(regionId).map { it.second }.toSet()
         val keep = radioOf(app.city)
         CA_CITIES.forEach { (_, radio) ->
