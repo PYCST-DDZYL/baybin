@@ -118,6 +118,8 @@ class MainActivity : Activity(), App.Ui {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
         app = application as App
+        logOpen = savedInstanceState?.getBoolean("log_open") ?: false
+        regionOpen = savedInstanceState?.getBoolean("region_open") ?: false
         pendingCapture = CaptureFiles.restore(cacheDir, savedInstanceState?.getString("camera_file"))
         catalogQuery = savedInstanceState?.getString("catalog_query").orEmpty()
         pendingBluetooth = BluetoothAction.entries.firstOrNull { it.name == savedInstanceState?.getString("pending_bluetooth") }
@@ -134,6 +136,7 @@ class MainActivity : Activity(), App.Ui {
         meta = findViewById(R.id.meta)
         log = findViewById(R.id.log)
         logScroll = findViewById(R.id.log_scroll)
+        logScroll.visibility = if (logOpen) View.VISIBLE else View.GONE
         logToggle = findViewById(R.id.log_toggle)
         photo = findViewById(R.id.photo)
         pageScroll = findViewById(R.id.page_scroll)
@@ -219,6 +222,8 @@ class MainActivity : Activity(), App.Ui {
         pendingBluetooth?.let { outState.putString("pending_bluetooth", it.name) }
         pendingCapture?.let { outState.putString("camera_file", it.name) }
         outState.putBoolean("catalog_open", catalogOpen)
+        outState.putBoolean("log_open", logOpen)
+        outState.putBoolean("region_open", regionOpen)
         outState.putString("catalog_query", catalogQuery)
         questionAnswer?.takeIf { questionDialog?.isShowing == true }?.let {
             outState.putString("question_city", it.cityId)
