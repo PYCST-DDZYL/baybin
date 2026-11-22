@@ -470,6 +470,8 @@ class MainActivity : Activity(), App.Ui {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(full)))
         } catch (_: ActivityNotFoundException) {
             EventLog.add("can't open page")
+            Toast.makeText(this, if (Lang.zh(app.lang)) "无法打开网页，请检查浏览器应用" else
+                "Couldn't open the page. Check your browser app.", Toast.LENGTH_LONG).show()
         }
     }
 
