@@ -590,7 +590,16 @@ class MainActivity : Activity(), App.Ui {
         try {
             startActivityForResult(intent, REQ_PICK)
         } catch (e: ActivityNotFoundException) {
-            message("gallery_closed")
+            if (Build.VERSION.SDK_INT < 33) {
+                message("gallery_closed")
+                return
+            }
+            try {
+                startActivityForResult(Intent(Intent.ACTION_GET_CONTENT)
+                    .addCategory(Intent.CATEGORY_OPENABLE).apply { type = "image/*" }, REQ_PICK)
+            } catch (_: ActivityNotFoundException) {
+                message("gallery_closed")
+            }
         }
     }
 
