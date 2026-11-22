@@ -13,7 +13,7 @@ import xml.etree.ElementTree as ET
 
 from adbutil import ROOT, phone
 from acceptlib import code_hash
-from review_cleanup import remove_review
+from review_cleanup import remove_review, review_package_installed
 
 
 def main():
@@ -27,7 +27,7 @@ def main():
     if not re.fullmatch(r"com\.baybin\.phone\.review[a-z0-9]*", package):
         parser.error("Only a disposable review APK is allowed")
     p = phone()
-    if p.shell("pm path " + package, check=True).strip():
+    if review_package_installed(p, package):
         parser.error("Review package already installed; refusing to replace existing data")
     report = {"checkout_hash": code_hash(), "apk_sha256": hashlib.sha256(args.apk.read_bytes()).hexdigest(),
               "package": package, "checks": [], "mode": "no-key touch UI; no photo accuracy or camera capture"}

@@ -13,7 +13,7 @@ import time
 
 from adbutil import ROOT, phone
 from acceptlib import code_hash
-from review_cleanup import remove_review
+from review_cleanup import remove_review, review_package_installed
 
 
 def flow_log(device, pid):
@@ -33,7 +33,7 @@ def main():
     if not re.fullmatch(r"com\.baybin\.phone\.review[a-z0-9]*", package):
         parser.error("Only a disposable com.baybin.phone.review* APK is allowed")
     p = phone()
-    if p.shell("pm path " + package, check=True).strip():
+    if review_package_installed(p, package):
         parser.error("Disposable package already exists; refusing to replace or remove existing data")
     report = {"checkout_hash": code_hash(), "apk_sha256": hashlib.sha256(args.apk.read_bytes()).hexdigest(),
               "package": package, "version": metadata["elements"][0]["versionName"],

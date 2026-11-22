@@ -1,10 +1,15 @@
 """Verify that a disposable review app was actually removed after a device check."""
 
 
+def review_package_installed(device, package):
+    """A missing package is normal; an ADB transport failure is not."""
+    return bool(device.shell("pm path %s 2>/dev/null || true" % package, check=True).strip())
+
+
 def remove_review(device, package, report):
     try:
         device.run("uninstall", package, check=True)
-        removed = not bool(device.shell("pm path " + package, check=True).strip())
+        removed = not review_package_installed(device, package)
     except Exception as error:
         removed = False
         report["cleanup_error"] = str(error)

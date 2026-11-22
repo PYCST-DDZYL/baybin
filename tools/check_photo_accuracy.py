@@ -16,7 +16,7 @@ from adbutil import ADB, ROOT, phone
 from acceptlib import code_hash, expected_line1, load_rules, test_photo_path
 from atomicfile import write_text
 from focus_report import metrics
-from review_cleanup import remove_review
+from review_cleanup import remove_review, review_package_installed
 
 
 def cloud_failure_stage(kind, guidance):
@@ -89,7 +89,7 @@ def main():
     if not key or len(key) < 20:
         parser.error("No configured local test key")
     p = phone()
-    if p.shell("pm path " + package, check=True).strip():
+    if review_package_installed(p, package):
         parser.error("Review package exists; refusing to overwrite existing data")
     rows = []
     report = {"when": datetime.now(timezone.utc).isoformat(), "code_hash": code_hash(),

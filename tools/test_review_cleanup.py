@@ -11,7 +11,7 @@ class ReviewCleanupTest(unittest.TestCase):
         report = {"pass": True}
         self.assertIsNone(remove_review(device, "com.baybin.phone.reviewtest", report))
         self.assertTrue(report["removed"])
-        device.shell.assert_called_once_with("pm path com.baybin.phone.reviewtest", check=True)
+        device.shell.assert_called_once_with("pm path com.baybin.phone.reviewtest 2>/dev/null || true", check=True)
 
     def test_failed_uninstall_cannot_leave_a_passed_report(self):
         device = Mock()
