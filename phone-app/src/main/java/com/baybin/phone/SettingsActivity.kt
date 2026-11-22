@@ -3,6 +3,7 @@ package com.baybin.phone
 import android.app.Activity
 import android.app.AlertDialog
 import android.os.Bundle
+import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -27,6 +28,7 @@ class SettingsActivity : Activity() {
         val title = findViewById<TextView>(R.id.settings_title)
         val note = findViewById<TextView>(R.id.settings_note)
         val input = findViewById<EditText>(R.id.key_input)
+        val keyVisibility = findViewById<Button>(R.id.key_visibility)
         val save = findViewById<Button>(R.id.key_save)
         val state = findViewById<TextView>(R.id.key_state)
         val advanced = findViewById<TextView>(R.id.model_toggle)
@@ -42,6 +44,18 @@ class SettingsActivity : Activity() {
         title.text = Lang.s(lang, "settings")
         note.text = Lang.s(lang, "settings_note")
         input.hint = Lang.s(lang, if (app.hasQwenKey()) "key_replace" else "key_hint")
+        keyVisibility.text = if (Lang.zh(lang)) "显示输入的密钥" else "Show typed key"
+        keyVisibility.setOnClickListener {
+            val hidden = input.transformationMethod is PasswordTransformationMethod
+            val position = input.selectionStart.coerceAtLeast(0)
+            input.transformationMethod = if (hidden) null else PasswordTransformationMethod.getInstance()
+            input.setSelection(position.coerceAtMost(input.length()))
+            keyVisibility.text = if (hidden) {
+                if (Lang.zh(lang)) "隐藏输入的密钥" else "Hide typed key"
+            } else {
+                if (Lang.zh(lang)) "显示输入的密钥" else "Show typed key"
+            }
+        }
         save.text = Lang.s(lang, "key_save")
         state.text = Lang.s(lang, if (app.hasQwenKey()) "key_set" else "key_missing")
         advanced.text = Lang.s(lang, "model_toggle")
@@ -66,6 +80,8 @@ class SettingsActivity : Activity() {
             when (app.saveQwenKey(typed)) {
                 KeyStorage.Result.SAVED -> {
                     input.text.clear()
+                    input.transformationMethod = PasswordTransformationMethod.getInstance()
+                    keyVisibility.text = if (Lang.zh(lang)) "显示输入的密钥" else "Show typed key"
                     input.error = null
                     input.hint = Lang.s(lang, "key_replace")
                     state.text = Lang.s(lang, "key_set")

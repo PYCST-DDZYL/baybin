@@ -64,6 +64,13 @@
         android:textSize="15sp" />
 
     <Button
+        android:id="@+id/key_visibility"
+        style="@style/Button.Secondary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" />
+
+    <Button
         android:id="@+id/key_save"
         style="@style/Button.Secondary"
         android:layout_width="match_parent"
