@@ -95,7 +95,7 @@ def main():
               "scope": "explicit test-only San Jose single-family city service; not the owner's service eligibility",
               "requested": len(photos), "sets": {args.set.name: {"results": {"san_jose": rows}}}, "pass": False}
     report["manifest_sha256"] = hashlib.sha256((args.set / "manifest.json").read_bytes()).hexdigest()
-    report["locked_at_start"] = "isKeyguardShowing=true" in p.shell("dumpsys window")
+    report["locked_at_start"] = "isKeyguardShowing=true" in p.shell("dumpsys window", check=True)
     report["start_index"] = args.start_index
     report["foreground_test_broadcasts"] = True
     installed = False
@@ -137,7 +137,7 @@ def main():
             data = (args.set / photo["file"]).read_bytes()
             photo_hash = hashlib.sha256(data).hexdigest()
             stream(data, "mkdir -p files/eval && cat > files/eval/" + name)
-            copied_hash = p.shell("run-as " + package + " sha256sum files/eval/" + name).split()
+            copied_hash = p.shell("run-as " + package + " sha256sum files/eval/" + name, check=True).split()
             if not copied_hash or copied_hash[0] != photo_hash:
                 raise RuntimeError("Private photo transfer hash mismatch; classification not started")
             broadcast("CLASSIFY", "--es file " + name)
