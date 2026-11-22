@@ -1,5 +1,7 @@
 """A rejected review install must never uninstall a package it did not install."""
 import json
+import io
+from contextlib import redirect_stderr
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
@@ -9,6 +11,31 @@ import check_photo_accuracy
 
 
 class ReviewInstallSafetyTest(unittest.TestCase):
+    def test_empty_photo_is_rejected_before_phone_access(self):
+        with TemporaryDirectory(dir=Path(check_photo_accuracy.ROOT)) as folder:
+            root = Path(folder)
+            apk = root / "review.apk"
+            apk.write_bytes(b"test apk")
+            apk.with_name("output-metadata.json").write_text(json.dumps({
+                "applicationId": "com.baybin.phone.reviewtest",
+                "elements": [{"versionName": "test"}],
+            }), encoding="utf-8")
+            sample = root / "sample"
+            sample.mkdir()
+            (sample / "empty.jpg").write_bytes(b"")
+            (sample / "manifest.json").write_text(json.dumps({
+                "photos": [{"file": "empty.jpg", "item": "plastic_bag"}],
+            }), encoding="utf-8")
+            errors = io.StringIO()
+            with patch.object(check_photo_accuracy, "ROOT", str(root)), \
+                 patch.object(check_photo_accuracy, "phone") as phone, \
+                 patch("sys.argv", ["check_photo_accuracy", "--apk", str(apk), "--set", str(sample)]), \
+                 redirect_stderr(errors):
+                with self.assertRaises(SystemExit):
+                    check_photo_accuracy.main()
+            self.assertIn("empty", errors.getvalue())
+            phone.assert_not_called()
+
     def test_one_shot_key_removal_requires_successful_device_check(self):
         device = Mock()
         check_photo_accuracy.verify_key_consumed(device, "com.baybin.phone.reviewtest")

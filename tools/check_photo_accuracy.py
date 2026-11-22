@@ -13,7 +13,7 @@ import subprocess
 import time
 
 from adbutil import ADB, ROOT, phone
-from acceptlib import code_hash, expected_line1, load_rules
+from acceptlib import code_hash, expected_line1, load_rules, test_photo_path
 from atomicfile import write_text
 from focus_report import metrics
 from review_cleanup import remove_review
@@ -72,9 +72,10 @@ def main():
             parser.error("limit must be positive")
         photos = photos[:args.limit]
     for row in photos:
-        src = (args.set / row["file"]).resolve()
-        if not src.is_relative_to(args.set.resolve()) or not src.is_file():
-            parser.error("Missing photo or invalid manifest path")
+        try:
+            test_photo_path(args.set, row["file"])
+        except ValueError as error:
+            parser.error(str(error))
     props = {}
     for line in (Path(ROOT) / "local.properties").read_text(encoding="utf-8").splitlines():
         if "=" in line and not line.lstrip().startswith("#"):
