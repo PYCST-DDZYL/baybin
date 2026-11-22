@@ -484,7 +484,12 @@ class MainActivity : Activity(), App.Ui {
 
     @SuppressLint("MissingPermission")
     override fun onDeviceFound(device: BluetoothDevice) {
-        if (devices.any { it.address == device.address }) return
+        val address = try { device.address } catch (_: SecurityException) {
+            devices.clear()
+            deviceBox.visibility = View.GONE
+            return
+        }
+        if (devices.any { try { it.address == address } catch (_: SecurityException) { false } }) return
         devices.add(device)
         if (app.link.savedMac == null && app.link.state == GlassesLink.State.SCANNING) {
             mainHandler.removeCallbacks(autoPick)
@@ -503,6 +508,11 @@ class MainActivity : Activity(), App.Ui {
     @SuppressLint("MissingPermission")
     private fun showDevices() {
         deviceBox.removeAllViews()
+        if (!hasBluetoothPermissions()) {
+            devices.clear()
+            deviceBox.visibility = View.GONE
+            return
+        }
         val hide = devices.isEmpty() ||
             app.link.state == GlassesLink.State.CONNECTED ||
             app.link.state == GlassesLink.State.CONNECTING
@@ -512,7 +522,8 @@ class MainActivity : Activity(), App.Ui {
         val showMac = devices.size > 1
         val ripple = TypedValue()
         val hasRipple = theme.resolveAttribute(android.R.attr.selectableItemBackground, ripple, true)
-        devices.forEachIndexed { index, device ->
+        try {
+            devices.forEachIndexed { index, device ->
             if (index > 0) {
                 deviceBox.addView(View(this).apply {
                     layoutParams = LinearLayout.LayoutParams(
@@ -555,6 +566,11 @@ class MainActivity : Activity(), App.Ui {
                 })
             }
             deviceBox.addView(row)
+            }
+        } catch (_: SecurityException) {
+            devices.clear()
+            deviceBox.removeAllViews()
+            deviceBox.visibility = View.GONE
         }
     }
 

@@ -183,7 +183,14 @@ class GlassesLink(private val context: Context) {
     private fun socketUp(): Boolean = synchronized(lock) { socket?.isConnected == true }
 
     private fun report(device: BluetoothDevice) {
-        if (!seen.add(device.address)) return
+        val address = try { device.address } catch (_: SecurityException) {
+            main.post {
+                cancelScan(restore = false)
+                setState(State.FAILED, "Bluetooth permission missing")
+            }
+            return
+        }
+        if (!seen.add(address)) return
         main.post { listener?.onDeviceFound(device) }
     }
 
@@ -204,7 +211,11 @@ class GlassesLink(private val context: Context) {
             setState(State.FAILED, "Bluetooth permission missing")
             return
         }
-        setState(State.CONNECTING, "asking ${device.address} for its Bluetooth address")
+        val address = try { device.address } catch (_: SecurityException) {
+            setState(State.FAILED, "Bluetooth permission missing")
+            return
+        }
+        setState(State.CONNECTING, "asking $address for its Bluetooth address")
         val api = CxrApi.getInstance()
         try {
             try { api.deinitBluetooth() } catch (_: Exception) {}
