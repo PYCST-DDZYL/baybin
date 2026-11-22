@@ -11,6 +11,32 @@ import check_photo_accuracy
 
 
 class ReviewInstallSafetyTest(unittest.TestCase):
+    def test_unknown_item_label_is_rejected_before_phone_access(self):
+        with TemporaryDirectory(dir=Path(check_photo_accuracy.ROOT)) as folder:
+            root = Path(folder)
+            apk = root / "review.apk"
+            apk.write_bytes(b"test apk")
+            apk.with_name("output-metadata.json").write_text(json.dumps({
+                "applicationId": "com.baybin.phone.reviewtest", "elements": [{"versionName": "test"}]
+            }), encoding="utf-8")
+            (root / "rules").mkdir()
+            (root / "rules/items.json").write_text(json.dumps({"items": [{"id": "plastic_bag"}]}), encoding="utf-8")
+            sample = root / "sample"
+            sample.mkdir()
+            (sample / "one.jpg").write_bytes(b"photo")
+            (sample / "manifest.json").write_text(json.dumps({
+                "photos": [{"file": "one.jpg", "item": "made_up_item"}]
+            }), encoding="utf-8")
+            errors = io.StringIO()
+            with patch.object(check_photo_accuracy, "ROOT", str(root)), \
+                 patch.object(check_photo_accuracy, "phone") as phone, \
+                 patch("sys.argv", ["check_photo_accuracy", "--apk", str(apk), "--set", str(sample)]), \
+                 redirect_stderr(errors):
+                with self.assertRaises(SystemExit):
+                    check_photo_accuracy.main()
+            self.assertIn("Unknown catalog item", errors.getvalue())
+            phone.assert_not_called()
+
     def test_empty_photo_is_rejected_before_phone_access(self):
         with TemporaryDirectory(dir=Path(check_photo_accuracy.ROOT)) as folder:
             root = Path(folder)
@@ -22,6 +48,8 @@ class ReviewInstallSafetyTest(unittest.TestCase):
             }), encoding="utf-8")
             sample = root / "sample"
             sample.mkdir()
+            (root / "rules").mkdir()
+            (root / "rules/items.json").write_text(json.dumps({"items": [{"id": "plastic_bag"}]}), encoding="utf-8")
             (sample / "empty.jpg").write_bytes(b"")
             (sample / "manifest.json").write_text(json.dumps({
                 "photos": [{"file": "empty.jpg", "item": "plastic_bag"}],
@@ -72,6 +100,8 @@ class ReviewInstallSafetyTest(unittest.TestCase):
             }), encoding="utf-8")
             sample = root / "sample"
             sample.mkdir()
+            (root / "rules").mkdir()
+            (root / "rules/items.json").write_text(json.dumps({"items": [{"id": "plastic_bag"}]}), encoding="utf-8")
             (sample / "one.jpg").write_bytes(b"test photo")
             (sample / "manifest.json").write_text(json.dumps({
                 "photos": [{"file": "one.jpg", "item": "plastic_bag"}],

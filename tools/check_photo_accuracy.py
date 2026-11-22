@@ -64,6 +64,8 @@ def main():
     if not re.fullmatch(r"com\.baybin\.phone\.review[a-z0-9]*", package):
         parser.error("Only a disposable review package is allowed")
     manifest = json.loads((args.set / "manifest.json").read_text(encoding="utf-8"))
+    catalog = json.loads((Path(ROOT) / "rules/items.json").read_text(encoding="utf-8"))
+    valid_items = {item["id"] for item in catalog["items"]}
     if args.start_index < 0 or args.start_index >= len(manifest["photos"]):
         parser.error("start-index is outside the manifest")
     photos = manifest["photos"][args.start_index:]
@@ -72,6 +74,8 @@ def main():
             parser.error("limit must be positive")
         photos = photos[:args.limit]
     for row in photos:
+        if row.get("item") not in valid_items:
+            parser.error("Unknown catalog item in photo manifest: %s" % row.get("item"))
         try:
             test_photo_path(args.set, row["file"])
         except ValueError as error:
