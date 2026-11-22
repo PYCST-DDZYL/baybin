@@ -40,6 +40,20 @@ internal object ServiceSettings {
             setSelection(if (app.cityCollection(cityId)) 1 else 0)
         }
         box.addView(service)
+        val scopeStatus = TextView(activity).apply {
+            textSize = 14f
+            setPadding(0, 12, 0, 8)
+        }
+        fun updateScopeStatus() {
+            scopeStatus.text = if (app.serviceCovered(cityId)) {
+                if (zh) "已保存：此城市的独立住宅居民清运规则可用。" else "Saved: single-family residential rules are available for this city."
+            } else {
+                if (zh) "已保存：当前服务不在照片分类规则覆盖范围内；仍可文字查询或查看官方指南。"
+                else "Saved: photo sorting rules do not cover this service. Text lookup and the official guide remain available."
+            }
+        }
+        updateScopeStatus()
+        box.addView(scopeStatus)
         label(city.authority + "\n" + if (zh) "当前规则仅覆盖独立住宅。公寓、商业及其他服务不套用这张表。" else
             "Current tables cover single-family homes only. Apartments, businesses and other services are outside coverage.")
         box.addView(Button(activity).apply {
@@ -53,7 +67,12 @@ internal object ServiceSettings {
             text = if (zh) "保存服务范围" else "Save service area"
             setOnClickListener {
                 app.saveService(cityId, ServiceScope.Housing.entries[housing.selectedItemPosition], service.selectedItemPosition == 1)
-                Toast.makeText(activity, if (zh) "服务范围已保存" else "Service area saved", Toast.LENGTH_SHORT).show()
+                updateScopeStatus()
+                Toast.makeText(activity, if (app.serviceCovered(cityId)) {
+                    if (zh) "服务范围已保存，此城市规则适用" else "Service area saved; this city's rules apply"
+                } else {
+                    if (zh) "服务范围已保存，当前服务不在照片规则覆盖内" else "Saved; photo rules do not cover this service"
+                }, Toast.LENGTH_LONG).show()
             }
         })
         return {
