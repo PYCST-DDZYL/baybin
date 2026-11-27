@@ -379,7 +379,11 @@ class MainActivity : Activity(), App.Ui {
             resultLabel.text = Lang.s(lang, "how")
             line1.text = Lang.s(lang, "no_result")
             line1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22f)
-            line2.text = Lang.s(lang, "how_body")
+            line2.text = Lang.s(lang, when {
+                !app.serviceCovered() -> "how_scope"
+                !app.hasQwenKey() -> "how_key"
+                else -> "how_ready"
+            })
             meta.text = ""
             showPage(null)
             paint(R.color.card, onLight = true)
@@ -782,6 +786,9 @@ class MainActivity : Activity(), App.Ui {
             val item = matches.getOrNull(index) ?: return@setOnItemClickListener
             dialog.dismiss()
             app.lookup(item.id)
+            pageScroll.post {
+                pageScroll.smoothScrollTo(0, (resultCard.top - dp(16)).coerceAtLeast(0))
+            }
             app.answerFor(app.city)?.let { showQuestion(it) }
         }
         dialog.show()

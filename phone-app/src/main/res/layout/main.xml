@@ -213,6 +213,14 @@
                 android:layout_weight="1" />
         </LinearLayout>
 
+        <Button
+            android:id="@+id/gallery"
+            style="@style/Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="相册" />
+
         <LinearLayout
             android:id="@+id/key_block"
             android:layout_width="match_parent"
@@ -284,30 +292,14 @@
             android:layout_marginTop="12dp"
             android:text="搜索眼镜" />
 
-        <LinearLayout
+        <Button
+            android:id="@+id/connect_other"
+            style="@style/Button.Secondary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/gallery"
-                style="@style/Button.Secondary"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="相册" />
-
-            <Button
-                android:id="@+id/connect_other"
-                style="@style/Button.Secondary"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:text="换一副"
-                android:visibility="gone" />
-        </LinearLayout>
+            android:text="换一副"
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/devices"
