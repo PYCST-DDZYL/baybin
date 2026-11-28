@@ -19,6 +19,8 @@
         android:id="@+id/settings_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:gravity="center_vertical"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:textColor="@color/accent"
@@ -90,6 +92,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:minHeight="48dp"
+        android:gravity="center_vertical"
         android:paddingVertical="12dp"
         android:textColor="@color/accent"
         android:textSize="14sp" />

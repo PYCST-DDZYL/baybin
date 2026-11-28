@@ -282,6 +282,7 @@ class MainActivity : Activity(), App.Ui {
         findViewById<Button>(R.id.phone_camera).text = if (Lang.zh(lang)) "拍照识别" else "Take a photo"
         findViewById<Button>(R.id.text_search).text = if (Lang.zh(lang)) "文字查询（免费）" else "Text lookup (free)"
         settingsButton.text = Lang.s(lang, "settings")
+        findViewById<TextView>(R.id.glasses_section).text = Lang.s(lang, "glasses_section")
         val showKey = !app.hasQwenKey()
         keyBlock.visibility = if (showKey) View.VISIBLE else View.GONE
         if (showKey) {
@@ -389,7 +390,11 @@ class MainActivity : Activity(), App.Ui {
             paint(R.color.card, onLight = true)
         } else {
             val face = BinFace.of(a.cityId ?: app.city, a.line1, Lang.zh(lang))
-            resultLabel.text = Lang.s(lang, if (a.kind == com.baybin.protocol.Proto.KIND_OK) "throw" else "result_label")
+            resultLabel.text = Lang.s(lang, when {
+                a.kind == com.baybin.protocol.Proto.KIND_OK -> "throw"
+                app.sourceFor(app.city) == "lookup" -> "lookup_result"
+                else -> "result_label"
+            })
             line1.text = face.title
             line1.setTextSize(TypedValue.COMPLEX_UNIT_SP, if (face.title.length <= 3) 44f else 28f)
             val reason = Lang.reason(a.line2, lang)

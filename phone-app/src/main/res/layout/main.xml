@@ -37,6 +37,8 @@
                 android:id="@+id/settings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:gravity="center_vertical"
                 android:paddingStart="12dp"
                 android:paddingTop="6dp"
                 android:paddingBottom="6dp"
@@ -245,72 +247,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_card"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="16dp">
-
-            <View
-                android:id="@+id/status_dot"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:background="@drawable/bg_dot" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/status"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/ink"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/status_hint"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:textColor="@color/muted"
-                    android:textSize="13sp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/scan"
-            style="@style/Button.Primary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="搜索眼镜" />
-
-        <Button
-            android:id="@+id/connect_other"
-            style="@style/Button.Secondary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="换一副"
-            android:visibility="gone" />
-
-        <LinearLayout
-            android:id="@+id/devices"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_card"
-            android:orientation="vertical"
-            android:visibility="gone" />
-
-        <LinearLayout
             android:id="@+id/result"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -366,7 +302,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:minHeight="44dp"
+                    android:minHeight="48dp"
                 android:gravity="center_vertical"
                 android:textColor="@color/accent"
                 android:textSize="15sp"
@@ -437,6 +373,80 @@
                 android:visibility="gone" />
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/glasses_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/muted"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_card"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <View
+                android:id="@+id/status_dot"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:background="@drawable/bg_dot" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/ink"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/status_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/muted"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/scan"
+            style="@style/Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="搜索眼镜" />
+
+        <Button
+            android:id="@+id/connect_other"
+            style="@style/Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="换一副"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/devices"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:visibility="gone" />
+
         <ImageView
             android:id="@+id/photo"
             android:layout_width="match_parent"
@@ -453,6 +463,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:minHeight="48dp"
+            android:gravity="center_vertical"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:text="记录"
